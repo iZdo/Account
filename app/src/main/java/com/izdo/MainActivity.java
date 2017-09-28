@@ -43,8 +43,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
 
-    // 判断滑动菜单是否打开
-    private Boolean isOpen = false;
     // Toolbar按钮
     private MenuItem mCalendarItem;
     private MenuItem mAdd;
@@ -100,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mDatabaseHelper = new MyDatabaseHelper(this, "Account.db", null, 1);
         mSQLiteDatabase = mDatabaseHelper.getWritableDatabase();
 
+        // 初始化toolbar
         main_toolbar.setTitle(date);
         setSupportActionBar(main_toolbar);
         budgetSetting.setOnClickListener(this);
@@ -174,21 +173,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    // 滑动菜单处理逻辑
+    // 滑动菜单逻辑处理
     private void drawerMenu() {
         // 设置drawerLayout图标
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout, main_toolbar, R.string.open, R.string.close) {
             @Override
             public void onDrawerClosed(View drawerView) {
                 main_toolbar.setTitle(nowDate);
-                isOpen = false;
                 invalidateOptionsMenu();
             }
 
             @Override
             public void onDrawerOpened(View drawerView) {
                 main_toolbar.setTitle("Account");
-                isOpen = true;
                 invalidateOptionsMenu();
             }
         };
@@ -205,18 +202,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
                 switch (item.getItemId()) {
+                    // 支出item
                     case R.id.outcome_item:
                         calendar = Calendar.getInstance();
                         behavior = "outcome";
                         setViewPager();
                         break;
+                    // 收入item
                     case R.id.income_item:
                         calendar = Calendar.getInstance();
                         behavior = "income";
                         setViewPager();
                         break;
+                    // 统计item
                     case R.id.total_item:
+                        //TODO
                         break;
+                    // 设置item
                     case R.id.setting_item:
                         Intent intent = new Intent(getApplicationContext(), SettingActivity.class);
                         intent.putExtra("date", nowDate.substring(0, nowDate.length() - 3));
@@ -225,6 +227,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     default:
                         break;
                 }
+                // 点击之后关闭滑动菜单
                 mDrawerLayout.closeDrawers();
                 return true;
             }
@@ -296,8 +299,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             mCalendarItem.setVisible(false);
             mAdd.setVisible(false);
         }
-//        mCalendarItem.setVisible(!isOpen);
-//        mAdd.setVisible(!isOpen);
         return super.onPrepareOptionsMenu(menu);
     }
 
