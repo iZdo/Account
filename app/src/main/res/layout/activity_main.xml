@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:id="@+id/activity_main"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/main_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="#2f2f37"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
+
+    <android.support.v4.widget.DrawerLayout
+        android:id="@+id/drawerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorMainNormal"
+            android:orientation="vertical">
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/main_viewpager"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_gravity="center"
+                android:layout_weight="6"/>
+
+            <RelativeLayout
+                android:id="@+id/main_budget_setting"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/rela_outcome_selector"
+                android:clickable="true"
+                android:paddingBottom="5dp"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp">
+
+                <RelativeLayout
+                    android:id="@+id/budgetImgLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center|start">
+
+                    <ImageView
+                        android:id="@+id/imageView"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentTop="true"
+                        android:src="@drawable/budget"/>
+
+                    <TextView
+                        android:id="@+id/percent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/imageView"
+                        android:layout_centerInParent="true"/>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/budget_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentEnd="true"
+                    android:layout_toRightOf="@id/budgetImgLayout"
+                    android:gravity="top|end">
+
+                    <!--<TextView-->
+                        <!--android:id="@+id/currency"-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="50dp"-->
+                        <!--android:gravity="center"-->
+                        <!--android:text="¥ "-->
+                        <!--android:textColor="#000000"-->
+                        <!--android:textSize="35sp"/>
+                        android:layout_toRightOf="@id/currency"-->
+
+                    <me.grantland.widget.AutofitTextView
+                        android:id="@+id/surplus_budget"
+                        android:layout_width="200dp"
+                        android:layout_height="50dp"
+                        android:gravity="end|center"
+                        android:maxLines="1"
+                        android:textColor="#000000"
+                        android:textSize="35sp"/>
+
+                    <TextView
+                        android:id="@+id/line"
+                        android:layout_width="wrap_content"
+                        android:layout_height="50dp"
+                        android:layout_toRightOf="@id/surplus_budget"
+                        android:gravity="center"
+                        android:text="/ "
+                        android:textColor="#000000"
+                        android:textSize="30sp"/>
+
+                    <me.grantland.widget.AutofitTextView
+                        android:id="@+id/total_budget"
+                        android:layout_width="100dp"
+                        android:layout_height="50dp"
+                        android:layout_toRightOf="@id/line"
+                        android:gravity="end|center"
+                        android:maxLines="1"
+                        android:textColor="#000000"
+                        android:textSize="35sp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignRight="@id/total_budget"
+                        android:layout_below="@id/total_budget"
+                        android:maxLines="1"
+                        android:text="预算总额"
+                        android:textColor="#000000"/>
+
+                    <TextView
+                        android:id="@+id/textView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/surplus_budget"
+                        android:layout_toStartOf="@+id/line"
+                        android:maxLines="1"
+                        android:text="剩余预算"
+                        android:textColor="#000000"/>
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <android.support.design.widget.NavigationView
+            android:id="@+id/nav_view"
+            android:layout_width="245dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            app:itemTextColor="@color/colorMenu"
+            app:itemIconTint="@color/colorMenu"
+            android:background="@color/colorMainNormal"
+            app:menu="@menu/nav_menu"/>
+
+    </android.support.v4.widget.DrawerLayout>
+
+
+</LinearLayout>

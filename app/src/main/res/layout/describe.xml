@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_outcome"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.izdo.OutcomeActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#2f2f37">
+
+        <LinearLayout
+            android:id="@+id/new_describe"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/back_layout_selector"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="match_parent"
+                android:src="@drawable/back"/>
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="match_parent"
+                android:src="@drawable/icon"/>
+
+            <TextView
+                android:id="@+id/addOutcome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="5dp"
+                android:text="新增描述"
+                android:textColor="#FFFFFF"
+                android:textSize="25sp"/>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/describe_save"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/save_outcome_selector"
+            android:text="储存"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"/>
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorMainNormal"
+        android:padding="20dp">
+
+        <EditText
+            android:id="@+id/describe_edit"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:background="@drawable/edittext_background"
+            android:textSize="24sp"
+            android:gravity="top"
+            />
+
+    </LinearLayout>
+
+
+</LinearLayout>
+

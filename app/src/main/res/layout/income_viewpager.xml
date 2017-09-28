@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@color/colorMainNormal"
+              android:orientation="vertical"
+              android:paddingLeft="5dp"
+              android:paddingRight="5dp"
+              android:paddingTop="5dp">
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <RadioButton
+                android:id="@+id/salary"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/viewpager_radiobutton_selector"
+                android:button="@null"
+                android:drawablePadding="5dp"
+                android:drawableTop="@drawable/salary_black"
+                android:gravity="center"
+                android:text="薪水"
+                android:textColor="#2d3037"/>
+
+            <RadioButton
+                android:id="@+id/bonus"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/viewpager_radiobutton_selector"
+                android:button="@null"
+                android:drawablePadding="5dp"
+                android:drawableTop="@drawable/bonus_black"
+                android:gravity="center"
+                android:text="奖金"
+                android:textColor="#2d3037"/>
+
+            <RadioButton
+                android:id="@+id/subsidy"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/viewpager_radiobutton_selector"
+                android:button="@null"
+                android:drawablePadding="5dp"
+                android:drawableTop="@drawable/subsidy_black"
+                android:gravity="center"
+                android:text="补助"
+                android:textColor="#2d3037"/>
+
+            <RadioButton
+                android:id="@+id/income_investment"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/viewpager_radiobutton_selector"
+                android:button="@null"
+                android:drawablePadding="5dp"
+                android:drawableTop="@drawable/invest_black"
+                android:gravity="center"
+                android:text="投资"
+                android:textColor="#2d3037"/>
+
+            <RadioButton
+                android:id="@+id/income_other"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/viewpager_radiobutton_selector"
+                android:button="@null"
+                android:drawablePadding="5dp"
+                android:drawableTop="@drawable/other_black"
+                android:gravity="center"
+                android:text="其他"
+                android:textColor="#2d3037"/>
+
+        </LinearLayout>
+
+    </RadioGroup>
+
+</LinearLayout>

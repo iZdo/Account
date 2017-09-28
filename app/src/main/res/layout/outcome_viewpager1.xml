@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@color/colorMainNormal"
+              android:orientation="vertical"
+              android:paddingLeft="5dp"
+              android:paddingRight="5dp"
+              android:paddingTop="5dp">
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <RadioButton
+                android:id="@+id/breakfast"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/viewpager_radiobutton_selector"
+                android:button="@null"
+                android:drawablePadding="5dp"
+                android:drawableTop="@drawable/breakfast_black"
+                android:gravity="center"
+                android:text="早餐"
+                android:textColor="#2d3037"/>
+
+            <RadioButton
+                android:id="@+id/lunch"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/viewpager_radiobutton_selector"
+                android:button="@null"
+                android:drawablePadding="5dp"
+                android:drawableTop="@drawable/lunch_blcak"
+                android:gravity="center"
+                android:text="午餐"
+                android:textColor="#2d3037"/>
+
+            <RadioButton
+                android:id="@+id/dinner"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/viewpager_radiobutton_selector"
+                android:button="@null"
+                android:drawablePadding="5dp"
+                android:drawableTop="@drawable/dinner_black"
+                android:gravity="center"
+                android:text="晚餐"
+                android:textColor="#2d3037"/>
+
+            <RadioButton
+                android:id="@+id/beverage"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/viewpager_radiobutton_selector"
+                android:button="@null"
+                android:drawablePadding="5dp"
+                android:drawableTop="@drawable/beverage_black"
+                android:gravity="center"
+                android:text="饮料"
+                android:textColor="#2d3037"/>
+
+            <RadioButton
+                android:id="@+id/snacks"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/viewpager_radiobutton_selector"
+                android:button="@null"
+                android:drawablePadding="5dp"
+                android:drawableTop="@drawable/snacks_black"
+                android:gravity="center"
+                android:text="零食"
+                android:textColor="#2d3037"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="10dp">
+
+            <RadioButton
+                android:id="@+id/traffic"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/viewpager_radiobutton_selector"
+                android:button="@null"
+                android:drawablePadding="5dp"
+                android:drawableTop="@drawable/traffic_black"
+                android:gravity="center"
+                android:text="交通"
+                android:textColor="#2d3037"/>
+
+            <RadioButton
+                android:id="@+id/grocery"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/viewpager_radiobutton_selector"
+                android:button="@null"
+                android:drawablePadding="5dp"
+                android:drawableTop="@drawable/grocery_black"
+                android:gravity="center"
+                android:text="日常用品"
+                android:textColor="#2d3037"/>
+
+            <RadioButton
+                android:id="@+id/entertainment"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/viewpager_radiobutton_selector"
+                android:button="@null"
+                android:drawablePadding="5dp"
+                android:drawableTop="@drawable/entertainment_black"
+                android:gravity="center"
+                android:text="娱乐"
+                android:textColor="#2d3037"/>
+
+            <RadioButton
+                android:id="@+id/social"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/viewpager_radiobutton_selector"
+                android:button="@null"
+                android:drawablePadding="5dp"
+                android:drawableTop="@drawable/social_black"
+                android:gravity="center"
+                android:text="社交"
+                android:textColor="#2d3037"/>
+
+            <RadioButton
+                android:id="@+id/clothes"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/viewpager_radiobutton_selector"
+                android:button="@null"
+                android:drawablePadding="5dp"
+                android:drawableTop="@drawable/clothes_black"
+                android:gravity="center"
+                android:text="衣物 "
+                android:textColor="#2d3037"/>
+
+        </LinearLayout>
+
+    </RadioGroup>
+
+</LinearLayout>

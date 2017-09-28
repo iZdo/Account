@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="colorFullTransparent">#00000000</color>
+
+    <!-- 主色 -->
+    <color name="colorMainNormal">#edead1</color>
+    <color name="colorMainPressed">#dedcca</color>
+
+    <!-- 返回按钮 -->
+    <color name="colorBackNormal">#2f2f37</color>
+    <color name="colorBackPressed">#6D6B70</color>
+
+    <!-- OutCome页面 -->
+    <color name="colorCalcNormal">#faf9e9</color>
+    <color name="colorCalcPressed">#dedcca</color>
+    <color name="OutcomeCalcTextNormal">#E6534B</color>
+    <color name="OutcomeCalcTextPressed">#BF3F39</color>
+    <color name="IncomeCalcTextNormal">#9ac93e</color>
+    <color name="IncomeCalcTextPressed">#7caf18</color>
+
+    <!-- 主界面 -->
+    <color name="colorMenu">#5e5656</color>
+    <color name="colorOutcomeListViewItemNormal">#d7433a</color>
+    <color name="colorOutcomeListViewItemPressed">#bd3f38</color>
+    <color name="colorIncomeListViewItemNormal">#8dbe2e</color>
+    <color name="colorIncomeListViewItemPressed">#7c9f18</color>
+
+    <!-- 详情界面 -->
+    <color name="colorRed">#E6534B</color>
+    <color name="colorDepthRed">#d7433a</color>
+    <color name="colorGreen">#9ac93e</color>
+    <color name="colorDepthGreen">#8dbe2e</color>
+
+
+    <!-- 预算编列 -->
+    <color name="colorBudgetSettingNormal">#ef8750</color>
+    <color name="colorBudgetSettingPressed">#db7036</color>
+
+</resources>

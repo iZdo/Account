@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/outcome_item"
+            android:icon="@drawable/outcome"
+            android:title="支出"/>
+    </group>
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/income_item"
+            android:icon="@drawable/income"
+            android:title="收入"/>
+    </group>
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/total_item"
+            android:icon="@drawable/total"
+            android:title="统计(未实现)"/>
+    </group>
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/setting_item"
+            android:icon="@drawable/setting"
+            android:title="设置"/>
+    </group>
+</menu>
