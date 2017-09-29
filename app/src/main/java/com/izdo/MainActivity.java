@@ -270,7 +270,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // 不可获取焦点
         mPopupWindow.setFocusable(false);
         // 设置动画
-        mPopupWindow.setAnimationStyle(R.style.mypopupwindow_anim_style);
+        mPopupWindow.setAnimationStyle(R.style.date_popupWindow_anim_style);
         // 设置显示位置
         mPopupWindow.showAtLocation(MainActivity.this.findViewById(R.id.activity_main), Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 0);
         // 显示弹出窗口

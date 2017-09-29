@@ -8,7 +8,17 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="mypopupwindow_anim_style">
+    <!-- 时间选择器动画 -->
+    <style name="date_popupWindow_anim_style">
+        <!-- 显示时动画xml -->
+        <item name="android:windowEnterAnimation">@anim/date_popupwindow_in</item>
+
+        <!-- 消失时动画xml -->
+        <item name="android:windowExitAnimation">@anim/date_popupwindow_out</item>
+    </style>
+
+    <!-- 计算器动画 -->
+    <style name="calc_popupWindow_anim_style">
         <!-- 显示时动画xml -->
         <item name="android:windowEnterAnimation">@anim/push_bottom_in</item>
 

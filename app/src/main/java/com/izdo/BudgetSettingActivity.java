@@ -17,7 +17,6 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.izdo.DataBase.MyDatabaseHelper;
-import com.orhanobut.logger.Logger;
 
 /**
  * Created by iZdo on 2017/5/2.
@@ -28,7 +27,6 @@ public class BudgetSettingActivity extends AppCompatActivity implements View.OnC
     /**
      * 主页面
      */
-
     private TextView showBudget;
     private LinearLayout budgetSetting;
     private Button budgetSettingSave;
@@ -68,13 +66,12 @@ public class BudgetSettingActivity extends AppCompatActivity implements View.OnC
         budgetSetting = (LinearLayout) findViewById(R.id.budget_setting);
         budgetSettingSave = (Button) findViewById(R.id.budget_setting_save);
 
-        mCalculatorView = LayoutInflater.from(BudgetSettingActivity.this).inflate(R.layout.budget_calculator, null);
+                mCalculatorView = LayoutInflater.from(BudgetSettingActivity.this).inflate(R.layout.budget_calculator, null);
         mPopupWindow = new PopupWindow(mCalculatorView,
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
 
         mDatabaseHelper = new MyDatabaseHelper(this, "Account.db", null, 1);
         mSQLiteDatabase = mDatabaseHelper.getWritableDatabase();
-        Logger.d(getIntent().getStringExtra("date"));
         Cursor cursor = mSQLiteDatabase.query("Budget", new String[]{"total"}, "date=?",
                 new String[]{getIntent().getStringExtra("date")}, null, null, null);
         cursor.moveToNext();
@@ -129,7 +126,7 @@ public class BudgetSettingActivity extends AppCompatActivity implements View.OnC
         // 是否获取焦点
         mPopupWindow.setFocusable(false);
         // 设置动画
-        mPopupWindow.setAnimationStyle(R.style.mypopupwindow_anim_style);
+        mPopupWindow.setAnimationStyle(R.style.calc_popupWindow_anim_style);
         // 设置显示位置
         mPopupWindow.showAtLocation(BudgetSettingActivity.this.findViewById(R.id.activity_budget_setting), Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 0);
         // 显示弹出窗口

@@ -244,7 +244,7 @@ public class IncomeActivity extends Activity implements View.OnClickListener {
         // 是否获取焦点
         mPopupWindow.setFocusable(false);
         // 设置动画
-        mPopupWindow.setAnimationStyle(R.style.mypopupwindow_anim_style);
+        mPopupWindow.setAnimationStyle(R.style.date_popupWindow_anim_style);
         // 设置显示位置
         mPopupWindow.showAtLocation(IncomeActivity.this.findViewById(R.id.activity_income), Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 0);
         // 显示弹出窗口
