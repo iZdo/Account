@@ -20,6 +20,8 @@ import com.izdo.DataBase.MyDatabaseHelper;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
+import static com.izdo.MainActivity.behavior;
+
 /**
  * Created by zz on 2017/4/20.
  */
@@ -193,7 +195,7 @@ public class MainFragment extends Fragment {
         budget();
 
         mBaseAdapter = new MyBaseAdapter(getContext(), mList);
-        // mBaseAdapter.notifyDataSetChanged();
+//         mBaseAdapter.notifyDataSetChanged();
         mListView.setAdapter(mBaseAdapter);
     }
 }

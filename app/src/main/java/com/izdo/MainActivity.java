@@ -259,8 +259,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         confirm = (Button) mDatePickerView.findViewById(R.id.datePicker_confirm);
         cancel = (Button) mDatePickerView.findViewById(R.id.datePicker_cancel);
 
+        // TODO: 2017/9/29
         // 设置按钮未拖动不可点击
-        confirm.setEnabled(false);
+        //confirm.setEnabled(false);
 
         confirm.setOnClickListener(this);
         cancel.setOnClickListener(this);
