@@ -1,4 +1,4 @@
-package com.izdo.UI;
+package com.izdo.Util;
 
 import android.app.Dialog;
 import android.content.Context;

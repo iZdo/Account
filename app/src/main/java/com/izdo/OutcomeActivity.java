@@ -25,7 +25,7 @@ import com.izdo.Adapter.MyPagerAdapter;
 import com.izdo.Bean.DataBean;
 import com.izdo.Bean.TypeMap;
 import com.izdo.DataBase.MyDatabaseHelper;
-import com.izdo.UI.MyDialog;
+import com.izdo.Util.MyDialog;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -195,8 +195,10 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
         transfer = (RadioButton) outcome_viewpager2.findViewById(R.id.transfer);
         outcome_other = (RadioButton) outcome_viewpager2.findViewById(R.id.outcome_other);
 
-        mDatabaseHelper = new MyDatabaseHelper(this, "Account.db", null, 1);
-        mSQLiteDatabase = mDatabaseHelper.getWritableDatabase();
+//        mDatabaseHelper = new MyDatabaseHelper(this, "Account.db", null, 1);
+//        mSQLiteDatabase = mDatabaseHelper.getWritableDatabase();
+        // TODO: 2017/10/3
+        mSQLiteDatabase = MyDatabaseHelper.getInstance(this);
 
         mCalculatorView = LayoutInflater.from(OutcomeActivity.this).inflate(R.layout.calculator, null);
         mPopupWindow = new PopupWindow(mCalculatorView,

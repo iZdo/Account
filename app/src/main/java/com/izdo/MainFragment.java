@@ -2,25 +2,28 @@ package com.izdo;
 
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.TextView;
 
-import com.izdo.Adapter.MyBaseAdapter;
+import com.izdo.Adapter.MyDataAdapter;
 import com.izdo.Bean.DataBean;
 import com.izdo.DataBase.MyDatabaseHelper;
+import com.izdo.Util.Constant;
+import com.orhanobut.logger.Logger;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
-import static com.izdo.MainActivity.behavior;
+import static com.izdo.R.id.main_toolbar;
 
 /**
  * Created by zz on 2017/4/20.
@@ -31,65 +34,98 @@ public class MainFragment extends Fragment {
     private View mView;
     private ArrayList<DataBean> mList = new ArrayList();
     private String mDate;
-    public static MyBaseAdapter mBaseAdapter;
-    private MyDatabaseHelper mDatabaseHelper;
-    private SQLiteDatabase mSQLiteDatabase;
+    //    public static MyBaseAdapter mBaseAdapter;
+
+    // TODO: 2017/10/3
+    private MyDataAdapter mDataAdapter;
+    private RecyclerView mRecyclerView;
+
     private TextView totalCostText;
     private TextView surplusBudgeText;
     private TextView totalBudgetText;
     private TextView percentText;
-    private ListView mListView;
+    //    private ListView mListView;
     private float totalCost = 0;
     private float surplus = 0;
     private int percent = 0;
     private String mBehavior = "";
     private String totalBudget = "1000";
     private String surplusBudget = "1000";
+    // 小数格式
     DecimalFormat decimalFormat = new DecimalFormat("0.00");
     private Toolbar mToolbar;
     // 当前日期
     private String mToolbarDate;
     private Cursor mCursor;
 
-    public MainFragment(String behavior) {
-        mBehavior = behavior;
-    }
-
-    public void setDate(String date) {
-        mDate = date;
-    }
-
-    public String getDate() {
-        return mDate;
-    }
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    private Calendar calendar = Calendar.getInstance();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        surplusBudgeText = (TextView) getActivity().findViewById(R.id.surplus_budget);
-        totalBudgetText = (TextView) getActivity().findViewById(R.id.total_budget);
-        percentText = (TextView) getActivity().findViewById(R.id.percent);
-        mToolbar = (Toolbar) getActivity().findViewById(R.id.main_toolbar);
+        mBehavior = MainActivity.behavior;
+        Logger.i(mBehavior);
 
         // 根据类型加载布局
-        if (mBehavior.equals("outcome"))
+        if (mBehavior.equals(Constant.OUTCOME))
             mView = inflater.inflate(R.layout.main_outcome_viewpager, container, false);
-        else if (mBehavior.equals("income"))
+        else if (mBehavior.equals(Constant.INCOME))
             mView = inflater.inflate(R.layout.main_income_viewpager, container, false);
 
         totalCostText = (TextView) mView.findViewById(R.id.total_cost);
-        mListView = (ListView) mView.findViewById(R.id.main_listView);
 
-        mDatabaseHelper = new MyDatabaseHelper(getContext(), "Account.db", null, 1);
-        mSQLiteDatabase = mDatabaseHelper.getWritableDatabase();
+        // 初始化recyclerView
+        mRecyclerView = (RecyclerView) mView.findViewById(R.id.main_recyclerView);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        mRecyclerView.setLayoutManager(layoutManager);
 
-        setListView();
+        mDataAdapter = new MyDataAdapter(getContext());
+        setRecyclerView();
 
         return mView;
     }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        surplusBudgeText = (TextView) getActivity().findViewById(R.id.surplus_budget);
+        totalBudgetText = (TextView) getActivity().findViewById(R.id.total_budget);
+        percentText = (TextView) getActivity().findViewById(R.id.percent);
+        mToolbar = (Toolbar) getActivity().findViewById(main_toolbar);
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        query();
+        budget();
+        mDataAdapter.setList(mList);
+        mRecyclerView.setAdapter(mDataAdapter);
+//        mDataAdapter.notifyDataSetChanged();
+    }
+
+    /**
+     * 设置日期
+     * @param position 当前fragment所在position
+     */
+    public void setDate(int position) {
+        calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_MONTH, position - 1073741823);
+
+        mDate = simpleDateFormat.format(calendar.getTime());
+    }
+
+    /**
+     * 查询当天所有数据
+     */
     private void query() {
-        mCursor = mSQLiteDatabase.query("Data", null, "date=? and behavior=?", new String[]{mDate, mBehavior}, null, null, null);
+
+        mList.clear();
+
+        mCursor = MyDatabaseHelper.getInstance(getContext()).query("Data", null, "date=? and behavior=?", new String[]{mDate, mBehavior}, null, null, null);
         while (mCursor.moveToNext()) {
             DataBean dataBean = new DataBean();
             dataBean.setId(mCursor.getInt(mCursor.getColumnIndex("id")));
@@ -104,23 +140,42 @@ public class MainFragment extends Fragment {
             mList.add(dataBean);
         }
 
+        Logger.i(mList.size()+"");
+
         // 显示总支出/收入金额
-        String totalCostStr = decimalFormat.format(totalCost);
-        if(totalCostStr.endsWith("0"))
-            totalCostStr = totalCostStr.substring(0, totalCostStr.length() - 1);
-        if (totalCostStr.endsWith(".0"))
-            totalCostStr = totalCostStr.substring(0, totalCostStr.length() - 2);
+        String totalCostStr = formatNumber(decimalFormat.format(totalCost));
         totalCostText.setText(totalCostStr);
         totalCost = 0;
 
         mCursor.close();
     }
 
+    /**
+     * 设置recyclerView
+     */
+    private void setRecyclerView() {
+        mDataAdapter.setOnItemClickListener(new MyDataAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Intent intent = null;
+                if (mBehavior.equals(Constant.OUTCOME))
+                    intent = new Intent(getContext(), OutcomeDetailsActivity.class);
+                else if (mBehavior.equals(Constant.INCOME))
+                    intent = new Intent(getContext(), IncomeDetailsActivity.class);
+                intent.putExtra("dataBean", mList.get(position));
+                startActivity(intent);
+            }
+        });
+    }
+
+    /**
+     * 预算的查询、计算和显示
+     */
     private void budget() {
         mToolbarDate = mToolbar.getTitle().toString();
         mToolbarDate = mToolbarDate.substring(0, mToolbarDate.length() - 3);
 
-        mCursor = mSQLiteDatabase.query("Budget", null, "date = ?", new String[]{mToolbarDate}, null, null, null);
+        mCursor = MyDatabaseHelper.getInstance(getContext()).query("Budget", null, "date = ?", new String[]{mToolbarDate}, null, null, null);
         while (mCursor.moveToNext()) {
             totalBudget = mCursor.getString(mCursor.getColumnIndex("total"));
             totalBudgetText.setText(totalBudget);
@@ -130,29 +185,21 @@ public class MainFragment extends Fragment {
         mCursor.close();
 
         // 查找这个月所有收入或支出
-        mCursor = mSQLiteDatabase.query("Data", null, "date like ? ", new String[]{mToolbarDate + "%"}, null, null, null);
+        mCursor = MyDatabaseHelper.getInstance(getContext()).query("Data", null, "date like ? ", new String[]{mToolbarDate + "%"}, null, null, null);
 
         while (mCursor.moveToNext()) {
             DataBean dataBean = new DataBean();
             dataBean.setMoney(mCursor.getString(mCursor.getColumnIndex("money")));
             dataBean.setBehavior(mCursor.getString(mCursor.getColumnIndex("behavior")));
             // 计算剩余预算
-            if (dataBean.getBehavior().equals("outcome"))
+            if (dataBean.getBehavior().equals(Constant.OUTCOME))
                 surplus -= Float.parseFloat(dataBean.getMoney());
-            else if (dataBean.getBehavior().equals("income"))
+            else if (dataBean.getBehavior().equals(Constant.INCOME))
                 surplus += Float.parseFloat(dataBean.getMoney());
         }
 
         // 舍弃小数点后为0的数字
-        String surplusBudgetStr = decimalFormat.format(surplus);
-        if(surplusBudgetStr.endsWith("0"))
-            surplusBudgetStr = surplusBudgetStr.substring(0, surplusBudgetStr.length() - 1);
-        if (surplusBudgetStr.endsWith(".0"))
-            surplusBudgetStr = surplusBudgetStr.substring(0, surplusBudgetStr.length() - 2);
-//        String surplusBudgetStr = surplus + "";
-//        if (surplusBudgetStr.endsWith(".0"))
-//            surplusBudgetStr = surplusBudgetStr.substring(0, surplusBudgetStr.length() - 2);
-
+        String surplusBudgetStr = formatNumber(decimalFormat.format(surplus));
         surplusBudgeText.setText("¥ " + surplusBudgetStr);
 
         // 计算百分比
@@ -164,38 +211,17 @@ public class MainFragment extends Fragment {
         mCursor.close();
     }
 
-    private void setListView() {
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = null;
-                if (mBehavior.equals("outcome"))
-                    intent = new Intent(getContext(), OutcomeDetailsActivity.class);
-                else if (mBehavior.equals("income"))
-                    intent = new Intent(getContext(), IncomeDetailsActivity.class);
-                intent.putExtra("dataBean", mList.get(position));
-                startActivity(intent);
-            }
-        });
-    }
+    /**
+     * 格式化数字 舍弃小数点后为0的数字
+     * @param str 需要格式化的字符串
+     * @return
+     */
+    private String formatNumber(String str) {
+        if (str.endsWith("0"))
+            str = str.substring(0, str.length() - 1);
+        if (str.endsWith(".0"))
+            str = str.substring(0, str.length() - 2);
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        // 清空集合
-        mList.clear();
-        // 查询数据库并显示
-        query();
-        budget();
-
-        mBaseAdapter = new MyBaseAdapter(getContext(), mList);
-//         mBaseAdapter.notifyDataSetChanged();
-        mListView.setAdapter(mBaseAdapter);
+        return str;
     }
 }

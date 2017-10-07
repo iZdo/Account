@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.izdo.Bean.DataBean;
 import com.izdo.Bean.TypeMap;
 import com.izdo.DataBase.MyDatabaseHelper;
-import com.izdo.UI.MyDialog;
+import com.izdo.Util.MyDialog;
 
 import static com.izdo.R.id.outcome_details;
 
@@ -90,8 +90,10 @@ public class OutcomeDetailsActivity extends AppCompatActivity implements View.On
 
     // 删除记录
     private void deleteData() {
-        mDatabaseHelper = new MyDatabaseHelper(OutcomeDetailsActivity.this, "Account.db", null, 1);
-        mSQLiteDatabase = mDatabaseHelper.getWritableDatabase();
+//        mDatabaseHelper = new MyDatabaseHelper(OutcomeDetailsActivity.this, "Account.db", null, 1);
+//        mSQLiteDatabase = mDatabaseHelper.getWritableDatabase();
+        // TODO: 2017/10/3
+        mSQLiteDatabase = MyDatabaseHelper.getInstance(this);
         mSQLiteDatabase.delete("Data", "id=?", new String[]{mDataBean.getId() + ""});
     }
 

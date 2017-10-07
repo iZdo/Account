@@ -24,7 +24,7 @@ import com.izdo.Adapter.MyPagerAdapter;
 import com.izdo.Bean.DataBean;
 import com.izdo.Bean.TypeMap;
 import com.izdo.DataBase.MyDatabaseHelper;
-import com.izdo.UI.MyDialog;
+import com.izdo.Util.MyDialog;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -135,8 +135,10 @@ public class IncomeActivity extends Activity implements View.OnClickListener {
         income_investment = (RadioButton) income_viewpager.findViewById(R.id.income_investment);
         income_other = (RadioButton) income_viewpager.findViewById(R.id.income_other);
 
-        mDatabaseHelper = new MyDatabaseHelper(this, "Account.db", null, 1);
-        mSQLiteDatabase = mDatabaseHelper.getWritableDatabase();
+//        mDatabaseHelper = new MyDatabaseHelper(this, "Account.db", null, 1);
+//        mSQLiteDatabase = mDatabaseHelper.getWritableDatabase();
+        // TODO: 2017/10/3
+        mSQLiteDatabase = MyDatabaseHelper.getInstance(this);
 
         mCalculatorView = LayoutInflater.from(IncomeActivity.this).inflate(R.layout.calculator, null);
         mPopupWindow = new PopupWindow(mCalculatorView,

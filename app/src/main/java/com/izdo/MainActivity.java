@@ -3,8 +3,8 @@ package com.izdo;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
@@ -27,6 +27,7 @@ import android.widget.TextView;
 
 import com.izdo.Adapter.MyFragmentPagerAdapter;
 import com.izdo.DataBase.MyDatabaseHelper;
+import com.izdo.Util.Constant;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -60,32 +61,37 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int newYear = calendar.get(Calendar.YEAR);
     private int newMonth = calendar.get(Calendar.MONTH);
     private int newDay = calendar.get(Calendar.DAY_OF_MONTH);
-    private String date = simpleDateFormat.format(calendar.getTime());
+    //    private String date = simpleDateFormat.format(calendar.getTime());
 
     private ViewPager mViewPager;
     private ArrayList<MainFragment> mViewList;
     private MyFragmentPagerAdapter myFragmentPagerAdapter;
+    // 记录最后一次的position
+    private int lastPosition;
 
     // 记录当前日期
-    private String nowDate = date;
+    //    private String nowDate = date;
     private DatePicker mDatePicker;
 
     // 预算控件
     private RelativeLayout budgetSetting;
     private TextView totalBudget;
-    private MyDatabaseHelper mDatabaseHelper;
-    private SQLiteDatabase mSQLiteDatabase;
 
     // 当前滑动菜单item
-    public static String behavior = "outcome";
+    public static String behavior = Constant.OUTCOME;
+
+//    private final int SWITCH = 1;
+    private Handler mHandler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         init();
     }
 
+    // 初始化控件
     private void init() {
         main_toolbar = (Toolbar) findViewById(R.id.main_toolbar);
 
@@ -95,31 +101,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         budgetSetting = (RelativeLayout) findViewById(R.id.main_budget_setting);
         totalBudget = (TextView) findViewById(R.id.total_budget);
 
-        mDatabaseHelper = new MyDatabaseHelper(this, "Account.db", null, 1);
-        mSQLiteDatabase = mDatabaseHelper.getWritableDatabase();
-
         // 初始化toolbar
-        main_toolbar.setTitle(date);
+        main_toolbar.setTitle(getFormatDate(calendar));
         setSupportActionBar(main_toolbar);
         budgetSetting.setOnClickListener(this);
         drawerMenu();
 
+        // 初始化月预算
+        initBudget();
+
+        mViewPager = (ViewPager) findViewById(R.id.main_viewpager);
+        mViewList = new ArrayList<>();
+
+        // 加载数据
+        setViewPager();
+
+        //        showBudget();
+    }
+
+    // 初始化月预算
+    private void initBudget() {
         String mMonth = main_toolbar.getTitle().toString().substring(0, main_toolbar.getTitle().toString().length() - 3);
-        Cursor cursor = mSQLiteDatabase.query("Budget", null, "date = ? ", new String[]{mMonth}, null, null, null);
+        Cursor cursor = MyDatabaseHelper.getInstance(this).query("Budget", null, "date = ? ", new String[]{mMonth}, null, null, null);
+
         if (cursor.getCount() == 0) {
             ContentValues values = new ContentValues();
             // 添加数据
             values.put("total", "1000");
             values.put("date", mMonth);
-            mSQLiteDatabase.insert("Budget", null, values);
+            MyDatabaseHelper.getInstance(this).insert("Budget", null, values);
         }
+        cursor.close();
+    }
 
-        mViewPager = (ViewPager) findViewById(R.id.main_viewpager);
-        mViewList = new ArrayList<>();
-
-        setViewPager();
-
-        //        showBudget();
+    // 获取当前日期 yyyy-MM-hh
+    private String getFormatDate(Calendar calendar) {
+        // 将calendar的时间转换为yyyy-MM-hh格式
+        return simpleDateFormat.format(calendar.getTime());
     }
 
     // TODO
@@ -134,26 +152,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //        }
     //    }
 
-    // 为ViewPager添加数据并设置适配器和监听器
+    /**
+     * 为ViewPager添加数据并设置适配器和监听器
+     */
     private void setViewPager() {
-        date = simpleDateFormat.format(calendar.getTime());
-
-        calendar.add(Calendar.DAY_OF_MONTH, -100);
 
         mViewList.clear();
 
-        for (int i = 0; i < 200; i++) {
-            final MainFragment mainFragment = new MainFragment(behavior);
-            calendar.add(Calendar.DAY_OF_MONTH, 1);
-            date = simpleDateFormat.format(calendar.getTime());
-            mainFragment.setDate(date);
+        // 加载4个fragment 实现无限循环
+        for (int i = 0; i < 4; i++) {
+            MainFragment mainFragment = new MainFragment();
             mViewList.add(mainFragment);
         }
 
         myFragmentPagerAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager(), mViewList);
         mViewPager.setAdapter(myFragmentPagerAdapter);
+        mViewPager.setCurrentItem(Integer.MAX_VALUE / 2);
+        //        mViewPager.setCurrentItem(Integer.MAX_VALUE / 2 / 4 * 4);
 
-        mViewPager.setCurrentItem(99);
+        lastPosition = mViewPager.getCurrentItem();
 
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -162,8 +179,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void onPageSelected(int position) {
-                nowDate = mViewList.get(position).getDate();
-                main_toolbar.setTitle(nowDate);
+
+                if (position > lastPosition) {
+                    calendar.add(Calendar.DAY_OF_MONTH, 1);
+                    main_toolbar.setTitle(getFormatDate(calendar));
+                } else if (position < lastPosition) {
+                    calendar.add(Calendar.DAY_OF_MONTH, -1);
+                    main_toolbar.setTitle(getFormatDate(calendar));
+                }
+
+                lastPosition = position;
             }
 
             @Override
@@ -172,20 +197,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
-
-    // 滑动菜单逻辑处理
+    /**
+     * 滑动菜单逻辑处理
+     */
     private void drawerMenu() {
         // 设置drawerLayout图标
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout, main_toolbar, R.string.open, R.string.close) {
             @Override
             public void onDrawerClosed(View drawerView) {
-                main_toolbar.setTitle(nowDate);
+                main_toolbar.setTitle(getFormatDate(calendar));
                 invalidateOptionsMenu();
             }
 
             @Override
             public void onDrawerOpened(View drawerView) {
-                main_toolbar.setTitle("Account");
+                main_toolbar.setTitle(Constant.TOOLBAR_TITLE);
                 invalidateOptionsMenu();
             }
         };
@@ -205,15 +231,44 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     // 支出item
                     case R.id.outcome_item:
                         calendar = Calendar.getInstance();
-                        behavior = "outcome";
-                        setViewPager();
+                        behavior = Constant.OUTCOME;
+//                        setViewPager();
                         break;
+
                     // 收入item
                     case R.id.income_item:
+
                         calendar = Calendar.getInstance();
-                        behavior = "income";
-                        setViewPager();
+                        behavior = Constant.INCOME;
+
+                        // TODO: 2017/10/5
+
+                        for(MainFragment mainFragment:mViewList){
+                            mainFragment.onResume();
+                        }
+//                        setViewPager();
+//                        mViewPager.setCurrentItem(lastPosition);
+//                        runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//
+//                            }
+//                        });
+//                        mHandler.post(new Runnable() {
+//                            @Override
+//                            public void run() {
+                                // 加载4个fragment 实现无限循环
+//                                for (int i = 0; i < 4; i++) {
+//                                    MainFragment mainFragment = new MainFragment();
+//                                    mViewList.add(mainFragment);
+//                                }
+//                                myFragmentPagerAdapter.setFragmentList(mViewList);
+//                                myFragmentPagerAdapter.notifyDataSetChanged();
+//                            }
+//                        });
+
                         break;
+
                     // 统计item
                     case R.id.total_item:
                         //TODO
@@ -221,7 +276,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     // 设置item
                     case R.id.setting_item:
                         Intent intent = new Intent(getApplicationContext(), SettingActivity.class);
-                        intent.putExtra("date", nowDate.substring(0, nowDate.length() - 3));
+                        intent.putExtra("date", getFormatDate(calendar).substring(0, getFormatDate(calendar).length() - 3));
                         startActivity(intent);
                         break;
                     default:
@@ -234,11 +289,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
-    // 显示datePicker
+    /**
+     * 显示datePicker
+     */
     private void showDatePicker() {
-        newYear = Integer.parseInt(nowDate.substring(0, 4));
-        newMonth = Integer.parseInt(nowDate.substring(5, 7)) - 1;
-        newDay = Integer.parseInt(nowDate.substring(8, 10));
+        newYear = Integer.parseInt(main_toolbar.getTitle().toString().substring(0, 4));
+        newMonth = Integer.parseInt(main_toolbar.getTitle().toString().substring(5, 7)) - 1;
+        newDay = Integer.parseInt(main_toolbar.getTitle().toString().substring(8, 10));
 
         // 初始化popupWindow
         mDatePickerView = LayoutInflater.from(MainActivity.this).inflate(R.layout.datepicker, null);
@@ -256,6 +313,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
+        // 确认取消按钮
         confirm = (Button) mDatePickerView.findViewById(R.id.datePicker_confirm);
         cancel = (Button) mDatePickerView.findViewById(R.id.datePicker_cancel);
 
@@ -278,31 +336,45 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mPopupWindow.showAsDropDown(mDatePickerView);
     }
 
-    // 设置新选择的日期
+    /**
+     * 设置新选择的日期
+     *
+     * @param newYear
+     * @param newMonth
+     * @param newDay
+     */
     private void setSelectDay(int newYear, int newMonth, int newDay) {
         this.newYear = newYear;
         this.newMonth = newMonth;
         this.newDay = newDay;
     }
 
-    // 为了使popupWindow不获取焦点、外部区域不能点击且后方控件不能被相应，需重写此方法
+    /**
+     * 为了使popupWindow不获取焦点、外部区域不能点击且后方控件不能被相应，需重写此方法
+     *
+     * @param ev
+     * @return
+     */
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        if (mPopupWindow != null && mPopupWindow.isShowing()) return false;
+        if (mPopupWindow != null && mPopupWindow.isShowing())
+            return false;
         return super.dispatchTouchEvent(ev);
     }
 
+    // 菜单
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         mCalendarItem = menu.findItem(R.id.calendar);
         mAdd = menu.findItem(R.id.add);
-        if(mDrawerLayout.isDrawerOpen(mNavigationView)){
+        if (mDrawerLayout.isDrawerOpen(mNavigationView)) {
             mCalendarItem.setVisible(false);
             mAdd.setVisible(false);
         }
         return super.onPrepareOptionsMenu(menu);
     }
 
+    // 加载菜单文件
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // 加载toolbar menu
@@ -310,7 +382,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return true;
     }
 
-    // 点击菜单按钮
+    // 菜单按钮点击事件
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -322,9 +394,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.add:
                 Intent intent = null;
-                if (behavior.equals("outcome"))
+                if (behavior.equals(Constant.OUTCOME))
                     intent = new Intent(this, OutcomeActivity.class);
-                else if (behavior.equals("income"))
+                else if (behavior.equals(Constant.INCOME))
                     intent = new Intent(this, IncomeActivity.class);
                 intent.putExtra("date", main_toolbar.getTitle());
                 startActivity(intent);
@@ -357,9 +429,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onResume() {
         super.onResume();
 
-        if (behavior.equals("outcome"))
+        if (behavior.equals(Constant.OUTCOME))
             mNavigationView.setCheckedItem(R.id.outcome_item);
-        if (behavior.equals("income"))
+        if (behavior.equals(Constant.INCOME))
             mNavigationView.setCheckedItem(R.id.income_item);
 
     }
@@ -370,7 +442,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.datePicker_confirm:
                 calendar.set(newYear, newMonth, newDay);
                 // 重新加载数据
-                setViewPager();
+                mViewPager.setAdapter(myFragmentPagerAdapter);
+                mViewPager.setCurrentItem(lastPosition,false);
                 // datePicker更新数据
                 mDatePicker.updateDate(newYear, newMonth, newDay);
                 mPopupWindow.dismiss();
@@ -381,7 +454,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.main_budget_setting:
                 Intent intent = new Intent(this, BudgetSettingActivity.class);
                 //                intent.putExtra("total_budget", totalBudget.getText().toString());
-                intent.putExtra("date", nowDate.substring(0, nowDate.length() - 3));
+                intent.putExtra("date", getFormatDate(calendar).substring(0, getFormatDate(calendar).length() - 3));
                 startActivityForResult(intent, 1);
                 break;
         }

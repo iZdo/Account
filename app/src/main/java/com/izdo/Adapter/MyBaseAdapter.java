@@ -17,6 +17,7 @@ import java.util.List;
 
 /**
  * Created by iZdo on 2017/4/22.
+ * listView 适配器 (已弃用)
  */
 
 public class MyBaseAdapter extends BaseAdapter {
