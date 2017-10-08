@@ -104,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // 初始化toolbar
         main_toolbar.setTitle(getFormatDate(calendar));
         setSupportActionBar(main_toolbar);
+        main_toolbar.setOnClickListener(this);
         budgetSetting.setOnClickListener(this);
         drawerMenu();
 
@@ -230,45 +231,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 switch (item.getItemId()) {
                     // 支出item
                     case R.id.outcome_item:
-                        calendar = Calendar.getInstance();
                         behavior = Constant.OUTCOME;
-//                        setViewPager();
+                        myFragmentPagerAdapter.notifyDataSetChanged();
                         break;
-
                     // 收入item
                     case R.id.income_item:
-
-                        calendar = Calendar.getInstance();
                         behavior = Constant.INCOME;
-
-                        // TODO: 2017/10/5
-
-                        for(MainFragment mainFragment:mViewList){
-                            mainFragment.onResume();
-                        }
-//                        setViewPager();
-//                        mViewPager.setCurrentItem(lastPosition);
-//                        runOnUiThread(new Runnable() {
-//                            @Override
-//                            public void run() {
-//
-//                            }
-//                        });
-//                        mHandler.post(new Runnable() {
-//                            @Override
-//                            public void run() {
-                                // 加载4个fragment 实现无限循环
-//                                for (int i = 0; i < 4; i++) {
-//                                    MainFragment mainFragment = new MainFragment();
-//                                    mViewList.add(mainFragment);
-//                                }
-//                                myFragmentPagerAdapter.setFragmentList(mViewList);
-//                                myFragmentPagerAdapter.notifyDataSetChanged();
-//                            }
-//                        });
-
+                        myFragmentPagerAdapter.notifyDataSetChanged();
                         break;
-
                     // 统计item
                     case R.id.total_item:
                         //TODO
@@ -308,7 +278,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mDatePicker.init(newYear, newMonth, newDay, new DatePicker.OnDateChangedListener() {
             @Override
             public void onDateChanged(DatePicker datePicker, int year, int month, int day) {
-                confirm.setEnabled(true);
                 setSelectDay(year, month, day);
             }
         });
@@ -316,10 +285,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // 确认取消按钮
         confirm = (Button) mDatePickerView.findViewById(R.id.datePicker_confirm);
         cancel = (Button) mDatePickerView.findViewById(R.id.datePicker_cancel);
-
-        // TODO: 2017/9/29
-        // 设置按钮未拖动不可点击
-        //confirm.setEnabled(false);
 
         confirm.setOnClickListener(this);
         cancel.setOnClickListener(this);
@@ -437,16 +402,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
+    public void onBackPressed() {
+        if(mDrawerLayout.isDrawerOpen(GravityCompat.START)){
+            mDrawerLayout.closeDrawers();
+            return;
+        }
+        super.onBackPressed();
+    }
+
+    @Override
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.main_toolbar:
+                calendar = Calendar.getInstance();
+
+                MainFragment.phaseDay=lastPosition;
+                main_toolbar.setTitle(getFormatDate(calendar));
+                myFragmentPagerAdapter.notifyDataSetChanged();
+                break;
             case R.id.datePicker_confirm:
                 calendar.set(newYear, newMonth, newDay);
-                // 重新加载数据
-                mViewPager.setAdapter(myFragmentPagerAdapter);
-                mViewPager.setCurrentItem(lastPosition,false);
                 // datePicker更新数据
                 mDatePicker.updateDate(newYear, newMonth, newDay);
                 mPopupWindow.dismiss();
+                // 重新加载数据
+                // 计算出选择日期与当前系统日期的相差值
+                int phaseDay = (int) (lastPosition + ((System.currentTimeMillis() - calendar.getTime().getTime()) / (1000 * 3600 * 24)));
+                MainFragment.phaseDay=phaseDay;
+                main_toolbar.setTitle(getFormatDate(calendar));
+                myFragmentPagerAdapter.notifyDataSetChanged();
                 break;
             case R.id.datePicker_cancel:
                 mPopupWindow.dismiss();

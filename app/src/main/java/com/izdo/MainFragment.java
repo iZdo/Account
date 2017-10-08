@@ -16,7 +16,6 @@ import com.izdo.Adapter.MyDataAdapter;
 import com.izdo.Bean.DataBean;
 import com.izdo.DataBase.MyDatabaseHelper;
 import com.izdo.Util.Constant;
-import com.orhanobut.logger.Logger;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -32,11 +31,11 @@ import static com.izdo.R.id.main_toolbar;
 public class MainFragment extends Fragment {
 
     private View mView;
+
     private ArrayList<DataBean> mList = new ArrayList();
     private String mDate;
-    //    public static MyBaseAdapter mBaseAdapter;
-
-    // TODO: 2017/10/3
+    // 相差天数
+    public static int phaseDay = Integer.MAX_VALUE / 2;
     private MyDataAdapter mDataAdapter;
     private RecyclerView mRecyclerView;
 
@@ -44,7 +43,6 @@ public class MainFragment extends Fragment {
     private TextView surplusBudgeText;
     private TextView totalBudgetText;
     private TextView percentText;
-    //    private ListView mListView;
     private float totalCost = 0;
     private float surplus = 0;
     private int percent = 0;
@@ -65,7 +63,6 @@ public class MainFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         mBehavior = MainActivity.behavior;
-        Logger.i(mBehavior);
 
         // 根据类型加载布局
         if (mBehavior.equals(Constant.OUTCOME))
@@ -104,16 +101,18 @@ public class MainFragment extends Fragment {
         budget();
         mDataAdapter.setList(mList);
         mRecyclerView.setAdapter(mDataAdapter);
-//        mDataAdapter.notifyDataSetChanged();
+        //        mDataAdapter.notifyDataSetChanged();
     }
 
     /**
      * 设置日期
+     *
      * @param position 当前fragment所在position
      */
     public void setDate(int position) {
         calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_MONTH, position - 1073741823);
+        // 当前 - 相差天数
+        calendar.add(Calendar.DAY_OF_MONTH, position - phaseDay)    ;
 
         mDate = simpleDateFormat.format(calendar.getTime());
     }
@@ -139,8 +138,6 @@ public class MainFragment extends Fragment {
             totalCost += Float.parseFloat(dataBean.getMoney());
             mList.add(dataBean);
         }
-
-        Logger.i(mList.size()+"");
 
         // 显示总支出/收入金额
         String totalCostStr = formatNumber(decimalFormat.format(totalCost));
@@ -213,6 +210,7 @@ public class MainFragment extends Fragment {
 
     /**
      * 格式化数字 舍弃小数点后为0的数字
+     *
      * @param str 需要格式化的字符串
      * @return
      */

@@ -22,10 +22,6 @@ public class MyFragmentPagerAdapter extends FragmentPagerAdapter {
         mFragmentList = fragmentList;
     }
 
-    public void setFragmentList(List<MainFragment> fragmentList) {
-        mFragmentList = fragmentList;
-    }
-
     @Override
     public Fragment getItem(int position) {
 
@@ -41,15 +37,15 @@ public class MyFragmentPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getItemPosition(Object object) {
-        return super.getItemPosition(object);
-        //        return POSITION_NONE;
+        //  return super.getItemPosition(object);
+        return POSITION_NONE;
     }
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
         MainFragment mainFragment = mFragmentList.get(position % mFragmentList.size());
         mainFragment.setDate(position);
-        position = position % mFragmentList.size();
+        position %= mFragmentList.size();
         return super.instantiateItem(container, position);
     }
 }

@@ -55,7 +55,7 @@ public class BudgetSettingActivity extends AppCompatActivity implements View.OnC
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.budget_setting);
+        setContentView(R.layout.activity_budget_setting);
 
         init();
     }

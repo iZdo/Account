@@ -411,7 +411,7 @@ public class IncomeActivity extends Activity implements View.OnClickListener {
         // 添加数据
         values.put("money", money);
         values.put("type", type);
-        values.put("describe", describe);
+        values.put("activity_describe", describe);
         values.put("account", account);
         values.put("fixed_charge", fixed_charge);
         values.put("date", date);
@@ -437,7 +437,7 @@ public class IncomeActivity extends Activity implements View.OnClickListener {
         switch (requestCode) {
             case 1:
                 if (resultCode == RESULT_OK) {
-                    String returnedData = data.getStringExtra("describe");
+                    String returnedData = data.getStringExtra("activity_describe");
                     describeText.setText(returnedData);
                 }
                 break;
@@ -507,7 +507,7 @@ public class IncomeActivity extends Activity implements View.OnClickListener {
                 break;
             case R.id.income_describeLayout:
                 Intent intent = new Intent(this, DescribeActivity.class);
-                intent.putExtra("describe", describeText.getText().toString());
+                intent.putExtra("activity_describe", describeText.getText().toString());
                 startActivityForResult(intent, 1);
                 break;
             case R.id.income_accountLayout:

@@ -16,7 +16,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
      * id 自增的唯一标识
      * money 金额
      * type 类型
-     * describe 描述
+     * activity_describe 描述
      * account 账户
      * fixed_charge 固定支出
      * date 日期
@@ -26,7 +26,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
             "id integer primary key autoincrement," +
             "money text," +
             "type text," +
-            "describe text," +
+            "activity_describe text," +
             "account text," +
             "fixed_charge text," +
             "date text," +
