@@ -59,7 +59,7 @@ public class TypeMap {
             typeMap.put(R.id.gifts, "礼物");
             typeMap.put(R.id.cash_gift, "礼金");
             typeMap.put(R.id.medical, "医疗");
-            typeMap.put(R.id.mobile_bill, "花费");
+            typeMap.put(R.id.mobile_bill, "话费");
             typeMap.put(R.id.outcome_investment, "投资支出");
             typeMap.put(R.id.credit_card, "信用卡");
             typeMap.put(R.id.transfer, "转账");
@@ -88,7 +88,7 @@ public class TypeMap {
             typeImgMap.put("礼物", R.drawable.gift_white);
             typeImgMap.put("礼金", R.drawable.cash_white);
             typeImgMap.put("医疗", R.drawable.medical_white);
-            typeImgMap.put("花费", R.drawable.phone_white);
+            typeImgMap.put("话费", R.drawable.phone_white);
             typeImgMap.put("投资支出", R.drawable.invest_white);
             typeImgMap.put("投资收入", R.drawable.invest_white);
             typeImgMap.put("信用卡", R.drawable.credit_white);

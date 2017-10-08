@@ -22,7 +22,7 @@ public class DescribeActivity extends AppCompatActivity {
         newDescribe = (LinearLayout) findViewById(R.id.new_describe);
         describeSave = (Button) findViewById(R.id.describe_save);
         describeEdit = (EditText) findViewById(R.id.describe_edit);
-        String text = getIntent().getStringExtra("activity_describe");
+        String text = getIntent().getStringExtra("describe");
         describeEdit.setText(text);
         describeEdit.setSelection(text.length());
 
@@ -36,7 +36,7 @@ public class DescribeActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent();
-                intent.putExtra("activity_describe", describeEdit.getText().toString());
+                intent.putExtra("describe", describeEdit.getText().toString());
                 setResult(RESULT_OK, intent);
                 finish();
             }

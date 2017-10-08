@@ -112,7 +112,7 @@ public class MainFragment extends Fragment {
     public void setDate(int position) {
         calendar = Calendar.getInstance();
         // 当前 - 相差天数
-        calendar.add(Calendar.DAY_OF_MONTH, position - phaseDay)    ;
+        calendar.add(Calendar.DAY_OF_MONTH, position - phaseDay);
 
         mDate = simpleDateFormat.format(calendar.getTime());
     }
@@ -169,10 +169,11 @@ public class MainFragment extends Fragment {
      * 预算的查询、计算和显示
      */
     private void budget() {
-        mToolbarDate = mToolbar.getTitle().toString();
-        mToolbarDate = mToolbarDate.substring(0, mToolbarDate.length() - 3);
 
-        mCursor = MyDatabaseHelper.getInstance(getContext()).query("Budget", null, "date = ?", new String[]{mToolbarDate}, null, null, null);
+        mDate = mDate.substring(0, mDate.length() - 3);
+
+        // 查询预算总额
+        mCursor = MyDatabaseHelper.getInstance(getContext()).query("Budget", null, "date = ?", new String[]{mDate}, null, null, null);
         while (mCursor.moveToNext()) {
             totalBudget = mCursor.getString(mCursor.getColumnIndex("total"));
             totalBudgetText.setText(totalBudget);
@@ -182,7 +183,7 @@ public class MainFragment extends Fragment {
         mCursor.close();
 
         // 查找这个月所有收入或支出
-        mCursor = MyDatabaseHelper.getInstance(getContext()).query("Data", null, "date like ? ", new String[]{mToolbarDate + "%"}, null, null, null);
+        mCursor = MyDatabaseHelper.getInstance(getContext()).query("Data", null, "date like ? ", new String[]{mDate + "%"}, null, null, null);
 
         while (mCursor.moveToNext()) {
             DataBean dataBean = new DataBean();
@@ -197,6 +198,7 @@ public class MainFragment extends Fragment {
 
         // 舍弃小数点后为0的数字
         String surplusBudgetStr = formatNumber(decimalFormat.format(surplus));
+
         surplusBudgeText.setText("¥ " + surplusBudgetStr);
 
         // 计算百分比

@@ -144,11 +144,11 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
                 //int id = cursor.getInt(cursor.getColumnIndex("id"));
                 Float money = cursor.getFloat(cursor.getColumnIndex("money"));
                 String type = cursor.getString(cursor.getColumnIndex("type"));
-                String activity_describe = cursor.getString(cursor.getColumnIndex("activity_describe"));
+                String describe = cursor.getString(cursor.getColumnIndex("describe"));
                 String account = cursor.getString(cursor.getColumnIndex("account"));
                 String fixed_charge = cursor.getString(cursor.getColumnIndex("fixed_charge"));
                 String date = cursor.getString(cursor.getColumnIndex("date"));
-                String all = money + type + activity_describe + account + fixed_charge + date;
+                String all = money + type + describe + account + fixed_charge + date;
                 bbb.setText(all);
 
             }
@@ -555,7 +555,7 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
         switch (requestCode) {
             case 1:
                 if (resultCode == RESULT_OK) {
-                    String returnedData = data.getStringExtra("activity_describe");
+                    String returnedData = data.getStringExtra("describe");
                     describeText.setText(returnedData);
                 }
                 break;
@@ -625,7 +625,7 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
                 break;
             case R.id.outcome_describeLayout:
                 Intent intent = new Intent(this, DescribeActivity.class);
-                intent.putExtra("activity_describe", describeText.getText().toString());
+                intent.putExtra("describe", describeText.getText().toString());
                 startActivityForResult(intent, 1);
                 break;
             case R.id.outcome_accountLayout:
