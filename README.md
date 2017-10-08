@@ -5,8 +5,8 @@
 * 2017年4月16日
 > 调整show_outcome控件的高度  
 > 调整show_outcome显示字体的大小  
-> 调整viewpager控件所在布局的高度
-> 添加viewpager底部导航点(addOnPageChangeListener)
+调整viewpager控件所在布局的高度  
+添加viewpager底部导航点(addOnPageChangeListener)  
 > 抽取PagerAdapter为MyPagerAdapter类
 > 添加describe页面，从outcome页面的describe按钮点击进入
 > 设置describe页面返回按钮响应事件，储存按钮响应事件(onBackPressed)
