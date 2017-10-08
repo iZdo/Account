@@ -61,7 +61,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int newYear = calendar.get(Calendar.YEAR);
     private int newMonth = calendar.get(Calendar.MONTH);
     private int newDay = calendar.get(Calendar.DAY_OF_MONTH);
-    //    private String date = simpleDateFormat.format(calendar.getTime());
 
     private ViewPager mViewPager;
     private ArrayList<MainFragment> mViewList;
@@ -69,8 +68,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     // 记录最后一次的position
     private int lastPosition;
 
-    // 记录当前日期
-    //    private String nowDate = date;
     private DatePicker mDatePicker;
 
     // 预算控件

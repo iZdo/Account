@@ -100,7 +100,6 @@ public class IncomeActivity extends Activity implements View.OnClickListener {
     // 弹出窗口是否存在
     private boolean isPop = false;
     private DataBean mDataBean;
-    private MyDatabaseHelper mDatabaseHelper;
     private SQLiteDatabase mSQLiteDatabase;
 
     @Override
@@ -135,9 +134,6 @@ public class IncomeActivity extends Activity implements View.OnClickListener {
         income_investment = (RadioButton) income_viewpager.findViewById(R.id.income_investment);
         income_other = (RadioButton) income_viewpager.findViewById(R.id.income_other);
 
-//        mDatabaseHelper = new MyDatabaseHelper(this, "Account.db", null, 1);
-//        mSQLiteDatabase = mDatabaseHelper.getWritableDatabase();
-        // TODO: 2017/10/3
         mSQLiteDatabase = MyDatabaseHelper.getInstance(this);
 
         mCalculatorView = LayoutInflater.from(IncomeActivity.this).inflate(R.layout.calculator, null);

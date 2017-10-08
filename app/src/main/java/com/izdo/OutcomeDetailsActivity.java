@@ -40,7 +40,6 @@ public class OutcomeDetailsActivity extends AppCompatActivity implements View.On
 
     // 是否是从OutcomeActivity返回的
     private boolean back = false;
-    private MyDatabaseHelper mDatabaseHelper;
     private SQLiteDatabase mSQLiteDatabase;
 
 
@@ -90,9 +89,6 @@ public class OutcomeDetailsActivity extends AppCompatActivity implements View.On
 
     // 删除记录
     private void deleteData() {
-//        mDatabaseHelper = new MyDatabaseHelper(OutcomeDetailsActivity.this, "Account.db", null, 1);
-//        mSQLiteDatabase = mDatabaseHelper.getWritableDatabase();
-        // TODO: 2017/10/3
         mSQLiteDatabase = MyDatabaseHelper.getInstance(this);
         mSQLiteDatabase.delete("Data", "id=?", new String[]{mDataBean.getId() + ""});
     }

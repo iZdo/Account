@@ -121,7 +121,6 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
     // 弹出窗口是否存在
     private boolean isPop = false;
     private DataBean mDataBean;
-    private MyDatabaseHelper mDatabaseHelper;
     private SQLiteDatabase mSQLiteDatabase;
 
 
@@ -195,9 +194,6 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
         transfer = (RadioButton) outcome_viewpager2.findViewById(R.id.transfer);
         outcome_other = (RadioButton) outcome_viewpager2.findViewById(R.id.outcome_other);
 
-//        mDatabaseHelper = new MyDatabaseHelper(this, "Account.db", null, 1);
-//        mSQLiteDatabase = mDatabaseHelper.getWritableDatabase();
-        // TODO: 2017/10/3
         mSQLiteDatabase = MyDatabaseHelper.getInstance(this);
 
         mCalculatorView = LayoutInflater.from(OutcomeActivity.this).inflate(R.layout.calculator, null);

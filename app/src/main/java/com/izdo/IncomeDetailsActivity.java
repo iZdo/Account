@@ -37,7 +37,6 @@ public class IncomeDetailsActivity extends AppCompatActivity implements View.OnC
     private TypeMap mTypeMap;
 
     private boolean back = false;
-    private MyDatabaseHelper mDatabaseHelper;
     private SQLiteDatabase mSQLiteDatabase;
 
 
@@ -87,9 +86,6 @@ public class IncomeDetailsActivity extends AppCompatActivity implements View.OnC
 
     // 删除记录
     private void deleteData() {
-//        mDatabaseHelper = new MyDatabaseHelper(IncomeDetailsActivity.this, "Account.db", null, 1);
-//        mSQLiteDatabase = mDatabaseHelper.getWritableDatabase();
-        // TODO: 2017/10/3
         mSQLiteDatabase = MyDatabaseHelper.getInstance(this);
         mSQLiteDatabase.delete("Data", "id=? ", new String[]{mDataBean.getId() + ""});
     }

@@ -30,7 +30,6 @@ public class BudgetSettingActivity extends AppCompatActivity implements View.OnC
     private TextView showBudget;
     private LinearLayout budgetSetting;
     private Button budgetSettingSave;
-    private MyDatabaseHelper mDatabaseHelper;
     private SQLiteDatabase mSQLiteDatabase;
 
     /**
@@ -70,11 +69,8 @@ public class BudgetSettingActivity extends AppCompatActivity implements View.OnC
         mPopupWindow = new PopupWindow(mCalculatorView,
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
 
-//        mDatabaseHelper = new MyDatabaseHelper(this, "Account.db", null, 1);
-//        mSQLiteDatabase = mDatabaseHelper.getWritableDatabase();
-        // TODO: 2017/10/3
         mSQLiteDatabase = MyDatabaseHelper.getInstance(this);
-        
+
         Cursor cursor = mSQLiteDatabase.query("Budget", new String[]{"total"}, "date=?",
                 new String[]{getIntent().getStringExtra("date")}, null, null, null);
         cursor.moveToNext();
