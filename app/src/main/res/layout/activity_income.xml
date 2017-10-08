@@ -69,6 +69,7 @@
             android:background="@drawable/income_calclayout_selector"
             android:clickable="true"
             android:gravity="center|end"
+            android:maxLength="20"
             android:maxLines="1"
             android:paddingRight="10dp"
             android:text="¥0"
@@ -193,11 +194,6 @@
 
         </RelativeLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:background="#B8B8B8"/>
-
         <RelativeLayout
             android:id="@+id/income_fixed_chargeLayout"
             android:layout_width="match_parent"
@@ -238,6 +234,11 @@
             </LinearLayout>
 
         </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="#B8B8B8"/>
 
         <View
             android:layout_width="match_parent"

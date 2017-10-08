@@ -24,7 +24,7 @@ import com.izdo.Adapter.MyPagerAdapter;
 import com.izdo.Bean.DataBean;
 import com.izdo.Bean.TypeMap;
 import com.izdo.DataBase.MyDatabaseHelper;
-import com.izdo.UI.MyDialog;
+import com.izdo.Util.MyDialog;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -100,7 +100,6 @@ public class IncomeActivity extends Activity implements View.OnClickListener {
     // 弹出窗口是否存在
     private boolean isPop = false;
     private DataBean mDataBean;
-    private MyDatabaseHelper mDatabaseHelper;
     private SQLiteDatabase mSQLiteDatabase;
 
     @Override
@@ -135,8 +134,7 @@ public class IncomeActivity extends Activity implements View.OnClickListener {
         income_investment = (RadioButton) income_viewpager.findViewById(R.id.income_investment);
         income_other = (RadioButton) income_viewpager.findViewById(R.id.income_other);
 
-        mDatabaseHelper = new MyDatabaseHelper(this, "Account.db", null, 1);
-        mSQLiteDatabase = mDatabaseHelper.getWritableDatabase();
+        mSQLiteDatabase = MyDatabaseHelper.getInstance(this);
 
         mCalculatorView = LayoutInflater.from(IncomeActivity.this).inflate(R.layout.calculator, null);
         mPopupWindow = new PopupWindow(mCalculatorView,
@@ -244,7 +242,7 @@ public class IncomeActivity extends Activity implements View.OnClickListener {
         // 是否获取焦点
         mPopupWindow.setFocusable(false);
         // 设置动画
-        mPopupWindow.setAnimationStyle(R.style.mypopupwindow_anim_style);
+        mPopupWindow.setAnimationStyle(R.style.date_popupWindow_anim_style);
         // 设置显示位置
         mPopupWindow.showAtLocation(IncomeActivity.this.findViewById(R.id.activity_income), Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 0);
         // 显示弹出窗口
@@ -409,7 +407,7 @@ public class IncomeActivity extends Activity implements View.OnClickListener {
         // 添加数据
         values.put("money", money);
         values.put("type", type);
-        values.put("describe", describe);
+        values.put("activity_describe", describe);
         values.put("account", account);
         values.put("fixed_charge", fixed_charge);
         values.put("date", date);
@@ -435,7 +433,7 @@ public class IncomeActivity extends Activity implements View.OnClickListener {
         switch (requestCode) {
             case 1:
                 if (resultCode == RESULT_OK) {
-                    String returnedData = data.getStringExtra("describe");
+                    String returnedData = data.getStringExtra("activity_describe");
                     describeText.setText(returnedData);
                 }
                 break;
@@ -505,7 +503,7 @@ public class IncomeActivity extends Activity implements View.OnClickListener {
                 break;
             case R.id.income_describeLayout:
                 Intent intent = new Intent(this, DescribeActivity.class);
-                intent.putExtra("describe", describeText.getText().toString());
+                intent.putExtra("activity_describe", describeText.getText().toString());
                 startActivityForResult(intent, 1);
                 break;
             case R.id.income_accountLayout:

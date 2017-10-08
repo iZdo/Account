@@ -25,7 +25,7 @@ import com.izdo.Adapter.MyPagerAdapter;
 import com.izdo.Bean.DataBean;
 import com.izdo.Bean.TypeMap;
 import com.izdo.DataBase.MyDatabaseHelper;
-import com.izdo.UI.MyDialog;
+import com.izdo.Util.MyDialog;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -121,7 +121,6 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
     // 弹出窗口是否存在
     private boolean isPop = false;
     private DataBean mDataBean;
-    private MyDatabaseHelper mDatabaseHelper;
     private SQLiteDatabase mSQLiteDatabase;
 
 
@@ -145,11 +144,11 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
                 //int id = cursor.getInt(cursor.getColumnIndex("id"));
                 Float money = cursor.getFloat(cursor.getColumnIndex("money"));
                 String type = cursor.getString(cursor.getColumnIndex("type"));
-                String describe = cursor.getString(cursor.getColumnIndex("describe"));
+                String activity_describe = cursor.getString(cursor.getColumnIndex("activity_describe"));
                 String account = cursor.getString(cursor.getColumnIndex("account"));
                 String fixed_charge = cursor.getString(cursor.getColumnIndex("fixed_charge"));
                 String date = cursor.getString(cursor.getColumnIndex("date"));
-                String all = money + type + describe + account + fixed_charge + date;
+                String all = money + type + activity_describe + account + fixed_charge + date;
                 bbb.setText(all);
 
             }
@@ -195,8 +194,7 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
         transfer = (RadioButton) outcome_viewpager2.findViewById(R.id.transfer);
         outcome_other = (RadioButton) outcome_viewpager2.findViewById(R.id.outcome_other);
 
-        mDatabaseHelper = new MyDatabaseHelper(this, "Account.db", null, 1);
-        mSQLiteDatabase = mDatabaseHelper.getWritableDatabase();
+        mSQLiteDatabase = MyDatabaseHelper.getInstance(this);
 
         mCalculatorView = LayoutInflater.from(OutcomeActivity.this).inflate(R.layout.calculator, null);
         mPopupWindow = new PopupWindow(mCalculatorView,
@@ -357,7 +355,7 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
         // 是否获取焦点
         mPopupWindow.setFocusable(false);
         // 设置动画
-        mPopupWindow.setAnimationStyle(R.style.mypopupwindow_anim_style);
+        mPopupWindow.setAnimationStyle(R.style.calc_popupWindow_anim_style);
         // 设置显示位置
         mPopupWindow.showAtLocation(OutcomeActivity.this.findViewById(R.id.activity_outcome), Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 0);
         // 显示弹出窗口
@@ -557,7 +555,7 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
         switch (requestCode) {
             case 1:
                 if (resultCode == RESULT_OK) {
-                    String returnedData = data.getStringExtra("describe");
+                    String returnedData = data.getStringExtra("activity_describe");
                     describeText.setText(returnedData);
                 }
                 break;
@@ -627,7 +625,7 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
                 break;
             case R.id.outcome_describeLayout:
                 Intent intent = new Intent(this, DescribeActivity.class);
-                intent.putExtra("describe", describeText.getText().toString());
+                intent.putExtra("activity_describe", describeText.getText().toString());
                 startActivityForResult(intent, 1);
                 break;
             case R.id.outcome_accountLayout:
@@ -636,6 +634,7 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
                 accountDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
                     public void onDismiss(DialogInterface dialogInterface) {
+                        accountDialog.setSelect(accountText.getText().toString());
                         accountText.setText(accountDialog.getSelect());
                     }
                 });
