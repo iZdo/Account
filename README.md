@@ -2,7 +2,7 @@
 2017年3月-4月15日 无记录
 
 2017年4月16日
-调整show_outcome控件的高度
+> 调整show_outcome控件的高度
 调整show_outcome显示字体的大小
 调整viewpager控件所在布局的高度
 添加viewpager底部导航点(addOnPageChangeListener)
