@@ -101,7 +101,7 @@ public class MainFragment extends Fragment {
         budget();
         mDataAdapter.setList(mList);
         mRecyclerView.setAdapter(mDataAdapter);
-        //        mDataAdapter.notifyDataSetChanged();
+        mDataAdapter.notifyDataSetChanged();
     }
 
     /**
@@ -170,10 +170,10 @@ public class MainFragment extends Fragment {
      */
     private void budget() {
 
-        mDate = mDate.substring(0, mDate.length() - 3);
+        String nowMonth = mDate.substring(0, mDate.length() - 3);
 
         // 查询预算总额
-        mCursor = MyDatabaseHelper.getInstance(getContext()).query("Budget", null, "date = ?", new String[]{mDate}, null, null, null);
+        mCursor = MyDatabaseHelper.getInstance(getContext()).query("Budget", null, "date = ?", new String[]{nowMonth}, null, null, null);
         while (mCursor.moveToNext()) {
             totalBudget = mCursor.getString(mCursor.getColumnIndex("total"));
             totalBudgetText.setText(totalBudget);
@@ -183,7 +183,7 @@ public class MainFragment extends Fragment {
         mCursor.close();
 
         // 查找这个月所有收入或支出
-        mCursor = MyDatabaseHelper.getInstance(getContext()).query("Data", null, "date like ? ", new String[]{mDate + "%"}, null, null, null);
+        mCursor = MyDatabaseHelper.getInstance(getContext()).query("Data", null, "date like ? ", new String[]{nowMonth + "%"}, null, null, null);
 
         while (mCursor.moveToNext()) {
             DataBean dataBean = new DataBean();

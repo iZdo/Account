@@ -220,7 +220,6 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
         OK = (Button) mCalculatorView.findViewById(R.id.OK);
         back = (ImageButton) mCalculatorView.findViewById(R.id.back);
 
-
         // 设置点击事件
         /**
          *  主页面
@@ -252,7 +251,6 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
         credit_card.setOnClickListener(this);
         transfer.setOnClickListener(this);
         outcome_other.setOnClickListener(this);
-
 
         /**
          *  弹出窗口页面
@@ -677,7 +675,6 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
                 showPopupWindow();
                 setViewpagerBackground(view.getId());
                 break;
-
 
             /**
              *  弹出窗口页面
