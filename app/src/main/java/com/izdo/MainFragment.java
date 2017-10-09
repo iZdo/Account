@@ -170,6 +170,7 @@ public class MainFragment extends Fragment {
      */
     private void budget() {
 
+        String nowToolbarDate = mToolbar.getTitle().toString();
         String nowMonth = mDate.substring(0, mDate.length() - 3);
 
         // 查询预算总额
@@ -199,7 +200,8 @@ public class MainFragment extends Fragment {
         // 舍弃小数点后为0的数字
         String surplusBudgetStr = formatNumber(decimalFormat.format(surplus));
 
-        surplusBudgeText.setText("¥ " + surplusBudgetStr);
+        if (nowToolbarDate.substring(0, nowToolbarDate.length() - 3).equals(nowMonth))
+            surplusBudgeText.setText("¥ " + surplusBudgetStr);
 
         // 计算百分比
         percent = (int) ((surplus / Integer.parseInt(totalBudget.trim())) * 100);
