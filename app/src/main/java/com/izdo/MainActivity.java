@@ -412,6 +412,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 MainFragment.phaseDay=lastPosition;
                 main_toolbar.setTitle(getFormatDate(calendar));
                 myFragmentPagerAdapter.notifyDataSetChanged();
+
                 break;
             case R.id.datePicker_confirm:
                 calendar.set(newYear, newMonth, newDay);

@@ -242,7 +242,7 @@ public class IncomeActivity extends Activity implements View.OnClickListener {
         // 是否获取焦点
         mPopupWindow.setFocusable(false);
         // 设置动画
-        mPopupWindow.setAnimationStyle(R.style.date_popupWindow_anim_style);
+        mPopupWindow.setAnimationStyle(R.style.calc_popupWindow_anim_style);
         // 设置显示位置
         mPopupWindow.showAtLocation(IncomeActivity.this.findViewById(R.id.activity_income), Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 0);
         // 显示弹出窗口
@@ -508,6 +508,7 @@ public class IncomeActivity extends Activity implements View.OnClickListener {
                 break;
             case R.id.income_accountLayout:
                 final MyDialog accountDialog = new MyDialog(this, R.style.dialog_style, "account");
+                accountDialog.setSelect(accountText.getText().toString());
                 accountDialog.show();
                 accountDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
@@ -519,6 +520,7 @@ public class IncomeActivity extends Activity implements View.OnClickListener {
                 break;
             case R.id.income_fixed_chargeLayout:
                 final MyDialog fixedChargeDialog = new MyDialog(this, R.style.dialog_style, "fixed_charge");
+                fixedChargeDialog.setSelect(fixedChargeText.getText().toString());
                 fixedChargeDialog.show();
                 fixedChargeDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override

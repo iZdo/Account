@@ -409,11 +409,7 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
         // 若计算结果是以".X0"结尾
         if (resultStr.contains(".") && resultStr.endsWith("0"))
             resultStr = resultStr.substring(0, resultStr.length() - 1);
-        //        if (resultStr.length() > 12) {
-        //            Toast.makeText(this, "你真的有这么多钱？？？", Toast.LENGTH_SHORT).show();
-        //            showOutcome.setText(showOutcome.getText().toString().substring(0, 1) + "0");
-        //            return;
-        //        }
+
         showOutcome.setText(showOutcome.getText().toString().substring(0, 1) + resultStr);
         isCount = true;
         OK.setText("OK");
@@ -458,11 +454,7 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
                 if (newString.length() == 1)
                     newString += "0";
             }
-            //            // 不带小数点的金额最大长度为8
-            //            if (!newString.contains(".") && newString.length() >= 9) {
-            //                if (!string.equals("."))
-            //                    return;
-            //            }
+
             // 维持小数点后两位
             if (newString.contains(".") && newString.substring(newString.indexOf("."), newString.length()).length() > 2)
                 return;
@@ -628,11 +620,11 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
                 break;
             case R.id.outcome_accountLayout:
                 final MyDialog accountDialog = new MyDialog(this, R.style.dialog_style, "account");
+                accountDialog.setSelect(accountText.getText().toString());
                 accountDialog.show();
                 accountDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
                     public void onDismiss(DialogInterface dialogInterface) {
-                        accountDialog.setSelect(accountText.getText().toString());
                         accountText.setText(accountDialog.getSelect());
                     }
                 });
@@ -640,6 +632,7 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
                 break;
             case R.id.outcome_fixed_chargeLayout:
                 final MyDialog fixedChargeDialog = new MyDialog(this, R.style.dialog_style, "fixed_charge");
+                fixedChargeDialog.setSelect(fixedChargeText.getText().toString());
                 fixedChargeDialog.show();
                 fixedChargeDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override

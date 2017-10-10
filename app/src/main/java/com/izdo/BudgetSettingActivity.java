@@ -116,7 +116,6 @@ public class BudgetSettingActivity extends AppCompatActivity implements View.OnC
         OK.setOnClickListener(this);
         back.setOnClickListener(this);
 
-
     }
 
     // 弹出窗口

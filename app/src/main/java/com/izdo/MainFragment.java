@@ -102,6 +102,12 @@ public class MainFragment extends Fragment {
         mDataAdapter.setList(mList);
         mRecyclerView.setAdapter(mDataAdapter);
         mDataAdapter.notifyDataSetChanged();
+
+        if(mBehavior.equals(Constant.INCOME))
+            getActivity().findViewById(R.id.main_budget_setting).setVisibility(View.GONE);
+        else
+            getActivity().findViewById(R.id.main_budget_setting).setVisibility(View.VISIBLE);
+
     }
 
     /**
