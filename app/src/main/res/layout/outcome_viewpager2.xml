@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <RadioButton
+            <!--<RadioButton
                 android:id="@+id/shopping"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -27,6 +27,19 @@
                 android:drawableTop="@drawable/shopping_black"
                 android:gravity="center"
                 android:text="购物"
+                android:textColor="#2d3037"/>-->
+
+            <RadioButton
+                android:id="@+id/water_and_electricity"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/viewpager_radiobutton_selector"
+                android:button="@null"
+                android:drawablePadding="5dp"
+                android:drawableTop="@drawable/water_and_electricity_black"
+                android:gravity="center"
+                android:text="水电费"
                 android:textColor="#2d3037"/>
 
             <RadioButton
@@ -55,7 +68,7 @@
                 android:text="礼物"
                 android:textColor="#2d3037"/>
 
-            <RadioButton
+            <!--<RadioButton
                 android:id="@+id/cash_gift"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -66,6 +79,19 @@
                 android:drawableTop="@drawable/cash_black"
                 android:gravity="center"
                 android:text="礼金"
+                android:textColor="#2d3037"/>-->
+
+            <RadioButton
+                android:id="@+id/transfer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/viewpager_radiobutton_selector"
+                android:button="@null"
+                android:drawablePadding="5dp"
+                android:drawableTop="@drawable/trasfer_black"
+                android:gravity="center"
+                android:text="转账"
                 android:textColor="#2d3037"/>
 
             <RadioButton
@@ -102,6 +128,32 @@
                 android:textColor="#2d3037"/>
 
             <RadioButton
+                android:id="@+id/loan"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/viewpager_radiobutton_selector"
+                android:button="@null"
+                android:drawablePadding="5dp"
+                android:drawableTop="@drawable/loan_black"
+                android:gravity="center"
+                android:text="借出"
+                android:textColor="#2d3037"/>
+
+            <RadioButton
+                android:id="@+id/repayment"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/viewpager_radiobutton_selector"
+                android:button="@null"
+                android:drawablePadding="5dp"
+                android:drawableTop="@drawable/repayment_black"
+                android:gravity="center"
+                android:text="还款"
+                android:textColor="#2d3037"/>
+
+            <RadioButton
                 android:id="@+id/outcome_investment"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -114,7 +166,7 @@
                 android:text="投资"
                 android:textColor="#2d3037"/>
 
-            <RadioButton
+            <!--<RadioButton
                 android:id="@+id/credit_card"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -125,9 +177,9 @@
                 android:drawableTop="@drawable/credit_black"
                 android:gravity="center"
                 android:text="信用卡"
-                android:textColor="#2d3037"/>
+                android:textColor="#2d3037"/>-->
 
-            <RadioButton
+            <!--<RadioButton
                 android:id="@+id/transfer"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -138,7 +190,7 @@
                 android:drawableTop="@drawable/trasfer_black"
                 android:gravity="center"
                 android:text="转账"
-                android:textColor="#2d3037"/>
+                android:textColor="#2d3037"/>-->
 
             <RadioButton
                 android:id="@+id/outcome_other"

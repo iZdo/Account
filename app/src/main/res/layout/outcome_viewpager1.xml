@@ -101,7 +101,7 @@
                 android:text="交通"
                 android:textColor="#2d3037"/>
 
-            <RadioButton
+           <!-- <RadioButton
                 android:id="@+id/grocery"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -112,6 +112,19 @@
                 android:drawableTop="@drawable/grocery_black"
                 android:gravity="center"
                 android:text="日常用品"
+                android:textColor="#2d3037"/>-->
+
+            <RadioButton
+                android:id="@+id/shopping"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/viewpager_radiobutton_selector"
+                android:button="@null"
+                android:drawablePadding="5dp"
+                android:drawableTop="@drawable/shopping_black"
+                android:gravity="center"
+                android:text="购物"
                 android:textColor="#2d3037"/>
 
             <RadioButton
@@ -140,7 +153,7 @@
                 android:text="社交"
                 android:textColor="#2d3037"/>
 
-            <RadioButton
+            <!--<RadioButton
                 android:id="@+id/clothes"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -151,7 +164,21 @@
                 android:drawableTop="@drawable/clothes_black"
                 android:gravity="center"
                 android:text="衣物 "
+                android:textColor="#2d3037"/>-->
+
+            <RadioButton
+                android:id="@+id/ticket"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/viewpager_radiobutton_selector"
+                android:button="@null"
+                android:drawablePadding="5dp"
+                android:drawableTop="@drawable/ticket_black"
+                android:gravity="center"
+                android:text="车/机票 "
                 android:textColor="#2d3037"/>
+
 
         </LinearLayout>
 

@@ -53,19 +53,23 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
     private RadioButton beverage;
     private RadioButton snacks;
     private RadioButton traffic;
-    private RadioButton grocery;
+    private RadioButton shopping;
+    //    private RadioButton grocery;
     private RadioButton entertainment;
     private RadioButton social;
-    private RadioButton clothes;
-    private RadioButton shopping;
+    //    private RadioButton clothes;
+    private RadioButton ticket;
+    private RadioButton water_and_electricity;
     private RadioButton rent;
     private RadioButton gifts;
-    private RadioButton cash_gift;
+    //    private RadioButton cash_gift;
+    private RadioButton transfer;
     private RadioButton medical;
     private RadioButton mobile_bill;
+    private RadioButton loan;
+    private RadioButton repayment;
     private RadioButton outcome_investment;
-    private RadioButton credit_card;
-    private RadioButton transfer;
+    //    private RadioButton credit_card;
     private RadioButton outcome_other;
 
     // 记录当前选中的类型
@@ -178,20 +182,27 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
         dinner = (RadioButton) outcome_viewpager1.findViewById(R.id.dinner);
         beverage = (RadioButton) outcome_viewpager1.findViewById(R.id.beverage);
         snacks = (RadioButton) outcome_viewpager1.findViewById(R.id.snacks);
+
         traffic = (RadioButton) outcome_viewpager1.findViewById(R.id.traffic);
-        grocery = (RadioButton) outcome_viewpager1.findViewById(R.id.grocery);
+        shopping = (RadioButton) outcome_viewpager1.findViewById(R.id.shopping);
+        //        grocery = (RadioButton) outcome_viewpager1.findViewById(R.id.grocery);
         entertainment = (RadioButton) outcome_viewpager1.findViewById(R.id.entertainment);
         social = (RadioButton) outcome_viewpager1.findViewById(R.id.social);
-        clothes = (RadioButton) outcome_viewpager1.findViewById(R.id.clothes);
-        shopping = (RadioButton) outcome_viewpager2.findViewById(R.id.shopping);
+        ticket = (RadioButton) outcome_viewpager1.findViewById(R.id.ticket);
+        //        clothes = (RadioButton) outcome_viewpager1.findViewById(R.id.clothes);
+
+        water_and_electricity = (RadioButton) outcome_viewpager2.findViewById(R.id.water_and_electricity);
         rent = (RadioButton) outcome_viewpager2.findViewById(R.id.rent);
         gifts = (RadioButton) outcome_viewpager2.findViewById(R.id.gifts);
-        cash_gift = (RadioButton) outcome_viewpager2.findViewById(R.id.cash_gift);
-        medical = (RadioButton) outcome_viewpager2.findViewById(R.id.medical);
-        mobile_bill = (RadioButton) outcome_viewpager2.findViewById(R.id.mobile_bill);
-        outcome_investment = (RadioButton) outcome_viewpager2.findViewById(R.id.outcome_investment);
-        credit_card = (RadioButton) outcome_viewpager2.findViewById(R.id.credit_card);
+        //        cash_gift = (RadioButton) outcome_viewpager2.findViewById(R.id.cash_gift);
         transfer = (RadioButton) outcome_viewpager2.findViewById(R.id.transfer);
+        medical = (RadioButton) outcome_viewpager2.findViewById(R.id.medical);
+
+        mobile_bill = (RadioButton) outcome_viewpager2.findViewById(R.id.mobile_bill);
+        loan = (RadioButton) outcome_viewpager2.findViewById(R.id.loan);
+        repayment = (RadioButton) outcome_viewpager2.findViewById(R.id.repayment);
+        outcome_investment = (RadioButton) outcome_viewpager2.findViewById(R.id.outcome_investment);
+        //        credit_card = (RadioButton) outcome_viewpager2.findViewById(R.id.credit_card);
         outcome_other = (RadioButton) outcome_viewpager2.findViewById(R.id.outcome_other);
 
         mSQLiteDatabase = MyDatabaseHelper.getInstance(this);
@@ -237,19 +248,23 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
         beverage.setOnClickListener(this);
         snacks.setOnClickListener(this);
         traffic.setOnClickListener(this);
-        grocery.setOnClickListener(this);
+        shopping.setOnClickListener(this);
+        //        grocery.setOnClickListener(this);
         entertainment.setOnClickListener(this);
         social.setOnClickListener(this);
-        clothes.setOnClickListener(this);
-        shopping.setOnClickListener(this);
+        //        clothes.setOnClickListener(this);
+        ticket.setOnClickListener(this);
+        water_and_electricity.setOnClickListener(this);
         rent.setOnClickListener(this);
         gifts.setOnClickListener(this);
-        cash_gift.setOnClickListener(this);
+        //        cash_gift.setOnClickListener(this);
+        transfer.setOnClickListener(this);
         medical.setOnClickListener(this);
         mobile_bill.setOnClickListener(this);
+        loan.setOnClickListener(this);
+        repayment.setOnClickListener(this);
         outcome_investment.setOnClickListener(this);
-        credit_card.setOnClickListener(this);
-        transfer.setOnClickListener(this);
+        //        credit_card.setOnClickListener(this);
         outcome_other.setOnClickListener(this);
 
         /**
@@ -290,8 +305,10 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
             RadioButton radioButton;
 
             // 判断RadioButton属于哪个ViewPager
+            //            if (typeId == R.id.breakfast || typeId == R.id.lunch || typeId == R.id.dinner || typeId == R.id.beverage || typeId == R.id.snacks
+            //                    || typeId == R.id.traffic || typeId == R.id.grocery || typeId == R.id.entertainment || typeId == R.id.social || typeId == R.id.clothes)
             if (typeId == R.id.breakfast || typeId == R.id.lunch || typeId == R.id.dinner || typeId == R.id.beverage || typeId == R.id.snacks
-                    || typeId == R.id.traffic || typeId == R.id.grocery || typeId == R.id.entertainment || typeId == R.id.social || typeId == R.id.clothes)
+                    || typeId == R.id.traffic || typeId == R.id.shopping || typeId == R.id.entertainment || typeId == R.id.social || typeId == R.id.ticket)
                 radioButton = (RadioButton) outcome_viewpager1.findViewById(typeId);
             else
                 radioButton = (RadioButton) outcome_viewpager2.findViewById(typeId);
@@ -531,7 +548,7 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
             mDataBean.setDescribe(describe);
             mDataBean.setAccount(account);
 
-            mSQLiteDatabase.update("Data", values, "id=?", new String[]{mDataBean.getId()+""});
+            mSQLiteDatabase.update("Data", values, "id=?", new String[]{mDataBean.getId() + ""});
             return;
         }
 
@@ -651,19 +668,23 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.beverage:
             case R.id.snacks:
             case R.id.traffic:
-            case R.id.grocery:
+            case R.id.shopping:
+                //            case R.id.grocery:
             case R.id.entertainment:
             case R.id.social:
-            case R.id.clothes:
-            case R.id.shopping:
+                //            case R.id.clothes:
+            case R.id.ticket:
+            case R.id.water_and_electricity:
             case R.id.rent:
             case R.id.gifts:
-            case R.id.cash_gift:
+                //            case R.id.cash_gift:
+            case R.id.transfer:
             case R.id.medical:
             case R.id.mobile_bill:
+            case R.id.loan:
+            case R.id.repayment:
             case R.id.outcome_investment:
-            case R.id.credit_card:
-            case R.id.transfer:
+                //            case R.id.credit_card:
             case R.id.outcome_other:
                 showPopupWindow();
                 setViewpagerBackground(view.getId());
