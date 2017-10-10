@@ -242,7 +242,7 @@ public class IncomeActivity extends Activity implements View.OnClickListener {
         // 是否获取焦点
         mPopupWindow.setFocusable(false);
         // 设置动画
-        mPopupWindow.setAnimationStyle(R.style.date_popupWindow_anim_style);
+        mPopupWindow.setAnimationStyle(R.style.calc_popupWindow_anim_style);
         // 设置显示位置
         mPopupWindow.showAtLocation(IncomeActivity.this.findViewById(R.id.activity_income), Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 0);
         // 显示弹出窗口
@@ -407,7 +407,7 @@ public class IncomeActivity extends Activity implements View.OnClickListener {
         // 添加数据
         values.put("money", money);
         values.put("type", type);
-        values.put("activity_describe", describe);
+        values.put("describe", describe);
         values.put("account", account);
         values.put("fixed_charge", fixed_charge);
         values.put("date", date);
@@ -433,7 +433,7 @@ public class IncomeActivity extends Activity implements View.OnClickListener {
         switch (requestCode) {
             case 1:
                 if (resultCode == RESULT_OK) {
-                    String returnedData = data.getStringExtra("activity_describe");
+                    String returnedData = data.getStringExtra("describe");
                     describeText.setText(returnedData);
                 }
                 break;
@@ -503,11 +503,12 @@ public class IncomeActivity extends Activity implements View.OnClickListener {
                 break;
             case R.id.income_describeLayout:
                 Intent intent = new Intent(this, DescribeActivity.class);
-                intent.putExtra("activity_describe", describeText.getText().toString());
+                intent.putExtra("describe", describeText.getText().toString());
                 startActivityForResult(intent, 1);
                 break;
             case R.id.income_accountLayout:
                 final MyDialog accountDialog = new MyDialog(this, R.style.dialog_style, "account");
+                accountDialog.setSelect(accountText.getText().toString());
                 accountDialog.show();
                 accountDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
@@ -519,6 +520,7 @@ public class IncomeActivity extends Activity implements View.OnClickListener {
                 break;
             case R.id.income_fixed_chargeLayout:
                 final MyDialog fixedChargeDialog = new MyDialog(this, R.style.dialog_style, "fixed_charge");
+                fixedChargeDialog.setSelect(fixedChargeText.getText().toString());
                 fixedChargeDialog.show();
                 fixedChargeDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override

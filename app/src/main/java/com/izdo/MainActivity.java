@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
@@ -76,9 +75,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     // 当前滑动菜单item
     public static String behavior = Constant.OUTCOME;
-
-//    private final int SWITCH = 1;
-    private Handler mHandler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -416,6 +412,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 MainFragment.phaseDay=lastPosition;
                 main_toolbar.setTitle(getFormatDate(calendar));
                 myFragmentPagerAdapter.notifyDataSetChanged();
+
                 break;
             case R.id.datePicker_confirm:
                 calendar.set(newYear, newMonth, newDay);

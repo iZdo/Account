@@ -53,19 +53,23 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
     private RadioButton beverage;
     private RadioButton snacks;
     private RadioButton traffic;
-    private RadioButton grocery;
+    private RadioButton shopping;
+    //    private RadioButton grocery;
     private RadioButton entertainment;
     private RadioButton social;
-    private RadioButton clothes;
-    private RadioButton shopping;
+    //    private RadioButton clothes;
+    private RadioButton ticket;
+    private RadioButton water_and_electricity;
     private RadioButton rent;
     private RadioButton gifts;
-    private RadioButton cash_gift;
+    //    private RadioButton cash_gift;
+    private RadioButton transfer;
     private RadioButton medical;
     private RadioButton mobile_bill;
+    private RadioButton loan;
+    private RadioButton repayment;
     private RadioButton outcome_investment;
-    private RadioButton credit_card;
-    private RadioButton transfer;
+    //    private RadioButton credit_card;
     private RadioButton outcome_other;
 
     // 记录当前选中的类型
@@ -144,11 +148,11 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
                 //int id = cursor.getInt(cursor.getColumnIndex("id"));
                 Float money = cursor.getFloat(cursor.getColumnIndex("money"));
                 String type = cursor.getString(cursor.getColumnIndex("type"));
-                String activity_describe = cursor.getString(cursor.getColumnIndex("activity_describe"));
+                String describe = cursor.getString(cursor.getColumnIndex("describe"));
                 String account = cursor.getString(cursor.getColumnIndex("account"));
                 String fixed_charge = cursor.getString(cursor.getColumnIndex("fixed_charge"));
                 String date = cursor.getString(cursor.getColumnIndex("date"));
-                String all = money + type + activity_describe + account + fixed_charge + date;
+                String all = money + type + describe + account + fixed_charge + date;
                 bbb.setText(all);
 
             }
@@ -178,20 +182,27 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
         dinner = (RadioButton) outcome_viewpager1.findViewById(R.id.dinner);
         beverage = (RadioButton) outcome_viewpager1.findViewById(R.id.beverage);
         snacks = (RadioButton) outcome_viewpager1.findViewById(R.id.snacks);
+
         traffic = (RadioButton) outcome_viewpager1.findViewById(R.id.traffic);
-        grocery = (RadioButton) outcome_viewpager1.findViewById(R.id.grocery);
+        shopping = (RadioButton) outcome_viewpager1.findViewById(R.id.shopping);
+        //        grocery = (RadioButton) outcome_viewpager1.findViewById(R.id.grocery);
         entertainment = (RadioButton) outcome_viewpager1.findViewById(R.id.entertainment);
         social = (RadioButton) outcome_viewpager1.findViewById(R.id.social);
-        clothes = (RadioButton) outcome_viewpager1.findViewById(R.id.clothes);
-        shopping = (RadioButton) outcome_viewpager2.findViewById(R.id.shopping);
+        ticket = (RadioButton) outcome_viewpager1.findViewById(R.id.ticket);
+        //        clothes = (RadioButton) outcome_viewpager1.findViewById(R.id.clothes);
+
+        water_and_electricity = (RadioButton) outcome_viewpager2.findViewById(R.id.water_and_electricity);
         rent = (RadioButton) outcome_viewpager2.findViewById(R.id.rent);
         gifts = (RadioButton) outcome_viewpager2.findViewById(R.id.gifts);
-        cash_gift = (RadioButton) outcome_viewpager2.findViewById(R.id.cash_gift);
-        medical = (RadioButton) outcome_viewpager2.findViewById(R.id.medical);
-        mobile_bill = (RadioButton) outcome_viewpager2.findViewById(R.id.mobile_bill);
-        outcome_investment = (RadioButton) outcome_viewpager2.findViewById(R.id.outcome_investment);
-        credit_card = (RadioButton) outcome_viewpager2.findViewById(R.id.credit_card);
+        //        cash_gift = (RadioButton) outcome_viewpager2.findViewById(R.id.cash_gift);
         transfer = (RadioButton) outcome_viewpager2.findViewById(R.id.transfer);
+        medical = (RadioButton) outcome_viewpager2.findViewById(R.id.medical);
+
+        mobile_bill = (RadioButton) outcome_viewpager2.findViewById(R.id.mobile_bill);
+        loan = (RadioButton) outcome_viewpager2.findViewById(R.id.loan);
+        repayment = (RadioButton) outcome_viewpager2.findViewById(R.id.repayment);
+        outcome_investment = (RadioButton) outcome_viewpager2.findViewById(R.id.outcome_investment);
+        //        credit_card = (RadioButton) outcome_viewpager2.findViewById(R.id.credit_card);
         outcome_other = (RadioButton) outcome_viewpager2.findViewById(R.id.outcome_other);
 
         mSQLiteDatabase = MyDatabaseHelper.getInstance(this);
@@ -220,7 +231,6 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
         OK = (Button) mCalculatorView.findViewById(R.id.OK);
         back = (ImageButton) mCalculatorView.findViewById(R.id.back);
 
-
         // 设置点击事件
         /**
          *  主页面
@@ -238,21 +248,24 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
         beverage.setOnClickListener(this);
         snacks.setOnClickListener(this);
         traffic.setOnClickListener(this);
-        grocery.setOnClickListener(this);
+        shopping.setOnClickListener(this);
+        //        grocery.setOnClickListener(this);
         entertainment.setOnClickListener(this);
         social.setOnClickListener(this);
-        clothes.setOnClickListener(this);
-        shopping.setOnClickListener(this);
+        //        clothes.setOnClickListener(this);
+        ticket.setOnClickListener(this);
+        water_and_electricity.setOnClickListener(this);
         rent.setOnClickListener(this);
         gifts.setOnClickListener(this);
-        cash_gift.setOnClickListener(this);
+        //        cash_gift.setOnClickListener(this);
+        transfer.setOnClickListener(this);
         medical.setOnClickListener(this);
         mobile_bill.setOnClickListener(this);
+        loan.setOnClickListener(this);
+        repayment.setOnClickListener(this);
         outcome_investment.setOnClickListener(this);
-        credit_card.setOnClickListener(this);
-        transfer.setOnClickListener(this);
+        //        credit_card.setOnClickListener(this);
         outcome_other.setOnClickListener(this);
-
 
         /**
          *  弹出窗口页面
@@ -292,8 +305,10 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
             RadioButton radioButton;
 
             // 判断RadioButton属于哪个ViewPager
+            //            if (typeId == R.id.breakfast || typeId == R.id.lunch || typeId == R.id.dinner || typeId == R.id.beverage || typeId == R.id.snacks
+            //                    || typeId == R.id.traffic || typeId == R.id.grocery || typeId == R.id.entertainment || typeId == R.id.social || typeId == R.id.clothes)
             if (typeId == R.id.breakfast || typeId == R.id.lunch || typeId == R.id.dinner || typeId == R.id.beverage || typeId == R.id.snacks
-                    || typeId == R.id.traffic || typeId == R.id.grocery || typeId == R.id.entertainment || typeId == R.id.social || typeId == R.id.clothes)
+                    || typeId == R.id.traffic || typeId == R.id.shopping || typeId == R.id.entertainment || typeId == R.id.social || typeId == R.id.ticket)
                 radioButton = (RadioButton) outcome_viewpager1.findViewById(typeId);
             else
                 radioButton = (RadioButton) outcome_viewpager2.findViewById(typeId);
@@ -411,11 +426,7 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
         // 若计算结果是以".X0"结尾
         if (resultStr.contains(".") && resultStr.endsWith("0"))
             resultStr = resultStr.substring(0, resultStr.length() - 1);
-        //        if (resultStr.length() > 12) {
-        //            Toast.makeText(this, "你真的有这么多钱？？？", Toast.LENGTH_SHORT).show();
-        //            showOutcome.setText(showOutcome.getText().toString().substring(0, 1) + "0");
-        //            return;
-        //        }
+
         showOutcome.setText(showOutcome.getText().toString().substring(0, 1) + resultStr);
         isCount = true;
         OK.setText("OK");
@@ -460,11 +471,7 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
                 if (newString.length() == 1)
                     newString += "0";
             }
-            //            // 不带小数点的金额最大长度为8
-            //            if (!newString.contains(".") && newString.length() >= 9) {
-            //                if (!string.equals("."))
-            //                    return;
-            //            }
+
             // 维持小数点后两位
             if (newString.contains(".") && newString.substring(newString.indexOf("."), newString.length()).length() > 2)
                 return;
@@ -541,7 +548,7 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
             mDataBean.setDescribe(describe);
             mDataBean.setAccount(account);
 
-            mSQLiteDatabase.update("Data", values, "id=?", new String[]{mDataBean.getId()+""});
+            mSQLiteDatabase.update("Data", values, "id=?", new String[]{mDataBean.getId() + ""});
             return;
         }
 
@@ -555,7 +562,7 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
         switch (requestCode) {
             case 1:
                 if (resultCode == RESULT_OK) {
-                    String returnedData = data.getStringExtra("activity_describe");
+                    String returnedData = data.getStringExtra("describe");
                     describeText.setText(returnedData);
                 }
                 break;
@@ -625,16 +632,16 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
                 break;
             case R.id.outcome_describeLayout:
                 Intent intent = new Intent(this, DescribeActivity.class);
-                intent.putExtra("activity_describe", describeText.getText().toString());
+                intent.putExtra("describe", describeText.getText().toString());
                 startActivityForResult(intent, 1);
                 break;
             case R.id.outcome_accountLayout:
                 final MyDialog accountDialog = new MyDialog(this, R.style.dialog_style, "account");
+                accountDialog.setSelect(accountText.getText().toString());
                 accountDialog.show();
                 accountDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
                     public void onDismiss(DialogInterface dialogInterface) {
-                        accountDialog.setSelect(accountText.getText().toString());
                         accountText.setText(accountDialog.getSelect());
                     }
                 });
@@ -642,6 +649,7 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
                 break;
             case R.id.outcome_fixed_chargeLayout:
                 final MyDialog fixedChargeDialog = new MyDialog(this, R.style.dialog_style, "fixed_charge");
+                fixedChargeDialog.setSelect(fixedChargeText.getText().toString());
                 fixedChargeDialog.show();
                 fixedChargeDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
@@ -660,24 +668,27 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.beverage:
             case R.id.snacks:
             case R.id.traffic:
-            case R.id.grocery:
+            case R.id.shopping:
+                //            case R.id.grocery:
             case R.id.entertainment:
             case R.id.social:
-            case R.id.clothes:
-            case R.id.shopping:
+                //            case R.id.clothes:
+            case R.id.ticket:
+            case R.id.water_and_electricity:
             case R.id.rent:
             case R.id.gifts:
-            case R.id.cash_gift:
+                //            case R.id.cash_gift:
+            case R.id.transfer:
             case R.id.medical:
             case R.id.mobile_bill:
+            case R.id.loan:
+            case R.id.repayment:
             case R.id.outcome_investment:
-            case R.id.credit_card:
-            case R.id.transfer:
+                //            case R.id.credit_card:
             case R.id.outcome_other:
                 showPopupWindow();
                 setViewpagerBackground(view.getId());
                 break;
-
 
             /**
              *  弹出窗口页面
