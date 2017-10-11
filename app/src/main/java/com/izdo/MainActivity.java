@@ -109,8 +109,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         // 加载数据
         setViewPager();
-
-        //        showBudget();
     }
 
     // 初始化月预算
@@ -133,18 +131,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // 将calendar的时间转换为yyyy-MM-hh格式
         return simpleDateFormat.format(calendar.getTime());
     }
-
-    // TODO
-    // 显示预算
-    //    private void showBudget() {
-    //        String query = main_toolbar.getTitle().toString();
-    //        query = query.substring(0, query.length() - 3);
-    //        Cursor cursor = mSQLiteDatabase.query("Budget", null, "date = ? ", new String[]{query}, null, null, null);
-    //        while (cursor.moveToNext()) {
-    //            totalBudget.setText(cursor.getString(cursor.getColumnIndex("total")));
-    //            surplusBudget.setText(cursor.getString(cursor.getColumnIndex("surplus")));
-    //        }
-    //    }
 
     /**
      * 为ViewPager添加数据并设置适配器和监听器

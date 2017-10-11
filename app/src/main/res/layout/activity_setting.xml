@@ -75,7 +75,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:paddingLeft="10dp"
-                android:text="预算编列"
+                android:text="预算设置"
                 android:textColor="#000000"
                 android:textSize="20sp"/>
         </LinearLayout>

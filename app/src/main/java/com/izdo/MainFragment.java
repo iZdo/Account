@@ -103,16 +103,21 @@ public class MainFragment extends Fragment {
         mRecyclerView.setAdapter(mDataAdapter);
         mDataAdapter.notifyDataSetChanged();
 
-        if(mBehavior.equals(Constant.INCOME))
-            getActivity().findViewById(R.id.main_budget_setting).setVisibility(View.GONE);
-        else
+        // 是否显示预算
+        if (BudgetSettingActivity.isShowBudget) {
             getActivity().findViewById(R.id.main_budget_setting).setVisibility(View.VISIBLE);
-
+            // 是否收入算入剩余预算
+            if(!BudgetSettingActivity.isAddIncome){
+                if(mBehavior.equals(Constant.INCOME))
+                    getActivity().findViewById(R.id.main_budget_setting).setVisibility(View.GONE);
+            }
+        } else {
+            getActivity().findViewById(R.id.main_budget_setting).setVisibility(View.GONE);
+        }
     }
 
     /**
      * 设置日期
-     *
      * @param position 当前fragment所在position
      */
     public void setDate(int position) {
@@ -199,8 +204,12 @@ public class MainFragment extends Fragment {
             // 计算剩余预算
             if (dataBean.getBehavior().equals(Constant.OUTCOME))
                 surplus -= Float.parseFloat(dataBean.getMoney());
-            else if (dataBean.getBehavior().equals(Constant.INCOME))
-                surplus += Float.parseFloat(dataBean.getMoney());
+            if (dataBean.getBehavior().equals(Constant.INCOME)) {
+                // 如果设置了将收入算入剩余预算
+                // TODO: 2017/10/11  
+                if (BudgetSettingActivity.isAddIncome)
+                    surplus += Float.parseFloat(dataBean.getMoney());
+            }
         }
 
         // 舍弃小数点后为0的数字
