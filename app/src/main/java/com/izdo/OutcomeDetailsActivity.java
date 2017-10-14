@@ -11,7 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.izdo.Bean.DataBean;
-import com.izdo.Bean.TypeMap;
+import com.izdo.Util.TypeMap;
 import com.izdo.DataBase.MyDatabaseHelper;
 import com.izdo.Util.MyDialog;
 
@@ -124,6 +124,7 @@ public class OutcomeDetailsActivity extends AppCompatActivity implements View.On
                     @Override
                     public void onClick(View view) {
                         deleteData();
+                        accountDialog.dismiss();
                         finish();
                     }
                 });

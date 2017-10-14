@@ -6,10 +6,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.izdo.Util.Constant;
+import com.izdo.Util.MyDialog;
+
 public class SettingActivity extends AppCompatActivity implements View.OnClickListener {
 
-    LinearLayout setting;
-    LinearLayout budgetSetting;
+    private LinearLayout setting;
+    private LinearLayout budgetSetting;
+    private LinearLayout updateAnnouncement;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,8 +27,12 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         setting = (LinearLayout) findViewById(R.id.setting);
         budgetSetting = (LinearLayout) findViewById(R.id.setting_budget_setting);
 
+        updateAnnouncement = (LinearLayout) findViewById(R.id.update_announcement);
+
         setting.setOnClickListener(this);
         budgetSetting.setOnClickListener(this);
+
+        updateAnnouncement.setOnClickListener(this);
     }
 
     @Override
@@ -37,6 +45,12 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                 Intent intent = new Intent(this, BudgetSettingActivity.class);
                 intent.putExtra("date", getIntent().getStringExtra("date"));
                 startActivity(intent);
+                break;
+            case R.id.update_announcement:
+                MyDialog updateAnnouncementDialog = new MyDialog(this, R.style.dialog_style, "updateAnnouncement");
+                updateAnnouncementDialog.setUpdate(Constant.UPDATE);
+                updateAnnouncementDialog.setCancelable(false);
+                updateAnnouncementDialog.show();
                 break;
             default:
                 break;

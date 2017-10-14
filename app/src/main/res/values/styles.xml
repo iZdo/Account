@@ -26,6 +26,7 @@
         <item name="android:windowExitAnimation">@anim/push_bottom_out</item>
     </style>
 
+    <!-- dialog style -->
     <style name="dialog_style" parent="@android:style/Theme.Dialog">
         <item name="android:windowFrame">@null</item>
         <item name="android:windowIsFloating">true</item>
@@ -33,6 +34,10 @@
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowBackground">@color/colorFullTransparent</item>
         <item name="android:backgroundDimEnabled">true</item>
+    </style>
+
+    <style name="checkbox_style" parent="@android:style/Widget.CompoundButton.CheckBox">
+        <item name="android:button">@drawable/checkbox_selector</item>
     </style>
 
 </resources>

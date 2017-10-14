@@ -22,21 +22,23 @@
         android:paddingRight="20dp">
 
         <Button
+            android:id="@+id/datePicker_cancel"
+            android:layout_width="110dp"
+            android:layout_height="30dp"
+            android:background="@drawable/date_popup_canbutton_selector"
+            android:text="取消"
+            android:textColor="#ffffff"/>
+
+        <Button
             android:id="@+id/datePicker_confirm"
             android:layout_width="110dp"
             android:layout_height="30dp"
+            android:layout_alignParentEnd="true"
             android:background="@drawable/date_popup_conbutton_selector"
             android:text="确定"
             android:textColor="#ffffff"/>
 
-        <Button
-            android:id="@+id/datePicker_cancel"
-            android:layout_width="110dp"
-            android:layout_height="30dp"
-            android:layout_alignParentEnd="true"
-            android:background="@drawable/date_popup_canbutton_selector"
-            android:text="取消"
-            android:textColor="#ffffff"/>
+
     </RelativeLayout>
 
 </LinearLayout>

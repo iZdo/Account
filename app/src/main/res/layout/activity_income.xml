@@ -152,7 +152,6 @@
             android:layout_height="0.5dp"
             android:background="#B8B8B8"/>
 
-
         <RelativeLayout
             android:id="@+id/income_accountLayout"
             android:layout_width="match_parent"
@@ -180,6 +179,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="right"
                     android:text="账户"
                     android:textColor="#2d3037"/>
 
@@ -193,6 +193,11 @@
             </LinearLayout>
 
         </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="#B8B8B8"/>
 
         <RelativeLayout
             android:id="@+id/income_fixed_chargeLayout"
@@ -221,6 +226,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="right"
                     android:text="固定支出"
                     android:textColor="#2d3037"/>
 

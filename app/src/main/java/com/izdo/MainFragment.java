@@ -2,6 +2,7 @@ package com.izdo;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,10 +13,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.gelitenight.waveview.library.WaveView;
 import com.izdo.Adapter.MyDataAdapter;
 import com.izdo.Bean.DataBean;
 import com.izdo.DataBase.MyDatabaseHelper;
 import com.izdo.Util.Constant;
+import com.izdo.Util.SPInit;
+import com.izdo.Util.WaveHelper;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -53,11 +57,24 @@ public class MainFragment extends Fragment {
     DecimalFormat decimalFormat = new DecimalFormat("0.00");
     private Toolbar mToolbar;
     // 当前日期
-    private String mToolbarDate;
     private Cursor mCursor;
 
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
     private Calendar calendar = Calendar.getInstance();
+
+    // 流量球效果控件
+    private WaveView waveView;
+    private WaveHelper mWaveHelper;
+    // 设置边框颜色
+    private int mBorderColor = Color.parseColor("#ef8750");
+    // 设置边框宽度
+    private int mBorderWidth = 0;
+    // 设置背景波浪颜色 将背景波浪设为透明效果更佳
+    private int behindWaveColor = Color.parseColor("#00000000");
+    // 设置前景波浪颜色
+    private int frontWaveColor = Color.parseColor("#696969");
+    // 选择的波浪颜色
+    private String selectedColor;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -91,6 +108,12 @@ public class MainFragment extends Fragment {
         totalBudgetText = (TextView) getActivity().findViewById(R.id.total_budget);
         percentText = (TextView) getActivity().findViewById(R.id.percent);
         mToolbar = (Toolbar) getActivity().findViewById(main_toolbar);
+
+        waveView = (WaveView) getActivity().findViewById(R.id.waveview);
+        waveView.setBorder(mBorderWidth, mBorderColor);
+        waveView.setWaveColor(behindWaveColor, frontWaveColor);
+
+        mWaveHelper = new WaveHelper(waveView);
     }
 
 
@@ -103,12 +126,16 @@ public class MainFragment extends Fragment {
         mRecyclerView.setAdapter(mDataAdapter);
         mDataAdapter.notifyDataSetChanged();
 
+        selectedColor = SPInit.ballColor;
+        frontWaveColor = Color.parseColor(selectedColor);
+        waveView.setWaveColor(behindWaveColor, frontWaveColor);
+
         // 是否显示预算
         if (BudgetSettingActivity.isShowBudget) {
             getActivity().findViewById(R.id.main_budget_setting).setVisibility(View.VISIBLE);
             // 是否收入算入剩余预算
-            if(!BudgetSettingActivity.isAddIncome){
-                if(mBehavior.equals(Constant.INCOME))
+            if (!BudgetSettingActivity.isAddIncome) {
+                if (mBehavior.equals(Constant.INCOME))
                     getActivity().findViewById(R.id.main_budget_setting).setVisibility(View.GONE);
             }
         } else {
@@ -116,8 +143,15 @@ public class MainFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        mWaveHelper.cancel();
+    }
+
     /**
      * 设置日期
+     *
      * @param position 当前fragment所在position
      */
     public void setDate(int position) {
@@ -206,7 +240,6 @@ public class MainFragment extends Fragment {
                 surplus -= Float.parseFloat(dataBean.getMoney());
             if (dataBean.getBehavior().equals(Constant.INCOME)) {
                 // 如果设置了将收入算入剩余预算
-                // TODO: 2017/10/11  
                 if (BudgetSettingActivity.isAddIncome)
                     surplus += Float.parseFloat(dataBean.getMoney());
             }
@@ -223,6 +256,11 @@ public class MainFragment extends Fragment {
         if (percent < 0)
             percent = 0;
         percentText.setText(percent + "%");
+
+
+        // 设置流量球百分比
+        mWaveHelper.setPercent(percent / 100f);
+        mWaveHelper.start();
 
         mCursor.close();
     }

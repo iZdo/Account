@@ -15,7 +15,7 @@
         android:textSize="20sp"/>
 
     <Button
-        android:id="@+id/dialog_save_button"
+        android:id="@+id/dialog_confirm_button"
         android:background="@drawable/save_outcome_selector"
         android:textColor="#ffffff"
         android:text="确定"

@@ -1,6 +1,7 @@
 package com.izdo;
 
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -16,10 +17,13 @@ import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
 import com.izdo.DataBase.MyDatabaseHelper;
+import com.izdo.Util.MyDialog;
+import com.izdo.Util.SPInit;
 
 /**
  * Created by iZdo on 2017/5/2.
@@ -37,14 +41,17 @@ public class BudgetSettingActivity extends AppCompatActivity implements View.OnC
 
     private Switch switchAddIncome;
     private Switch switchShowBudget;
+    private RelativeLayout ball_color_layout;
 
-    private SharedPreferences mSharedPreferences;
     private SharedPreferences.Editor mEditor;
 
     // 是否check收入算入剩余预算
-    public static boolean isAddIncome = false;
+    public static boolean isAddIncome;
     // 是否check显示预算
-    public static boolean isShowBudget = true;
+    public static boolean isShowBudget;
+
+    // 存储选中的余量球颜色
+    String selectedColor;
 
     /**
      * 弹出窗口页面
@@ -79,13 +86,14 @@ public class BudgetSettingActivity extends AppCompatActivity implements View.OnC
      */
     private void loadData() {
         mEditor = getSharedPreferences("data", MODE_PRIVATE).edit();
-        mSharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
 
-        isAddIncome = mSharedPreferences.getBoolean("isAddIncome", false);
-        isShowBudget = mSharedPreferences.getBoolean("isShowBudget", true);
+        isAddIncome = SPInit.isAddIncome;
+        isShowBudget = SPInit.isShowBudget;
 
         switchAddIncome.setChecked(isAddIncome);
         switchShowBudget.setChecked(isShowBudget);
+
+        selectedColor = SPInit.ballColor;
     }
 
 
@@ -107,6 +115,7 @@ public class BudgetSettingActivity extends AppCompatActivity implements View.OnC
 
         switchAddIncome = (Switch) findViewById(R.id.switch_addIncome);
         switchShowBudget = (Switch) findViewById(R.id.switch_showBudget);
+        ball_color_layout = (RelativeLayout) findViewById(R.id.ball_color_layout);
 
         // 与弹出窗口有关的控件需要在初始化弹出窗口后再初始化
         one = (Button) mCalculatorView.findViewById(R.id.budget_one);
@@ -133,6 +142,7 @@ public class BudgetSettingActivity extends AppCompatActivity implements View.OnC
 
         switchAddIncome.setOnCheckedChangeListener(this);
         switchShowBudget.setOnCheckedChangeListener(this);
+        ball_color_layout.setOnClickListener(this);
 
         /**
          *  弹出窗口页面
@@ -214,6 +224,20 @@ public class BudgetSettingActivity extends AppCompatActivity implements View.OnC
                     mPopupWindow.dismiss();
                 finish();
                 break;
+            case R.id.ball_color_layout:
+                final MyDialog accountDialog = new MyDialog(this, R.style.dialog_style, "ball_color");
+
+                accountDialog.setSelectedColor(selectedColor);
+                accountDialog.show();
+
+                accountDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialogInterface) {
+                        selectedColor = accountDialog.getSelectedColor();
+                    }
+                });
+
+                break;
             case R.id.budget_setting_save:
                 String total = showBudget.getText().toString().substring(1, showBudget.getText().length()).trim();
                 ContentValues values = new ContentValues();
@@ -226,9 +250,12 @@ public class BudgetSettingActivity extends AppCompatActivity implements View.OnC
                     mPopupWindow.dismiss();
 
                 // 点击储存按钮才写入文件
+                mEditor.putString("selectedColor", selectedColor);
                 mEditor.apply();
-                isAddIncome = mSharedPreferences.getBoolean("isAddIncome", false);
-                isShowBudget = mSharedPreferences.getBoolean("isShowBudget", true);
+
+                SPInit.ballColor = selectedColor;
+                SPInit.isAddIncome = isAddIncome;
+                SPInit.isShowBudget = isShowBudget;
 
                 finish();
                 break;
@@ -284,9 +311,11 @@ public class BudgetSettingActivity extends AppCompatActivity implements View.OnC
         switch (compoundButton.getId()) {
             case R.id.switch_addIncome:
                 mEditor.putBoolean("isAddIncome", b);
+                isAddIncome = b;
                 break;
             case R.id.switch_showBudget:
                 mEditor.putBoolean("isShowBudget", b);
+                isShowBudget = b;
                 break;
             default:
                 break;

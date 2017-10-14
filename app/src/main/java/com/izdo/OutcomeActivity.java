@@ -23,7 +23,7 @@ import android.widget.TextView;
 
 import com.izdo.Adapter.MyPagerAdapter;
 import com.izdo.Bean.DataBean;
-import com.izdo.Bean.TypeMap;
+import com.izdo.Util.TypeMap;
 import com.izdo.DataBase.MyDatabaseHelper;
 import com.izdo.Util.MyDialog;
 

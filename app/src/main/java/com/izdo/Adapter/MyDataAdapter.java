@@ -10,7 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.izdo.Bean.DataBean;
-import com.izdo.Bean.TypeMap;
+import com.izdo.Util.TypeMap;
 import com.izdo.MainActivity;
 import com.izdo.R;
 import com.izdo.Util.Constant;

@@ -2,6 +2,7 @@ package com.izdo;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -27,6 +28,7 @@ import android.widget.TextView;
 import com.izdo.Adapter.MyFragmentPagerAdapter;
 import com.izdo.DataBase.MyDatabaseHelper;
 import com.izdo.Util.Constant;
+import com.izdo.Util.MyDialog;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -81,8 +83,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        showUpdateAnnouncement();
+
         init();
     }
+
+    private void showUpdateAnnouncement() {
+
+        SharedPreferences mSharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
+
+        if (!mSharedPreferences.getBoolean("isNoLongerPrompt", false)) {
+            MyDialog updateAnnouncementDialog = new MyDialog(this, R.style.dialog_style, "updateAnnouncement");
+            updateAnnouncementDialog.setUpdate(Constant.UPDATE);
+            updateAnnouncementDialog.setCancelable(false);
+            updateAnnouncementDialog.show();
+        }
+    }
+
 
     // 初始化控件
     private void init() {
@@ -94,6 +111,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         budgetSetting = (RelativeLayout) findViewById(R.id.main_budget_setting);
         totalBudget = (TextView) findViewById(R.id.total_budget);
 
+
+
         // 初始化toolbar
         main_toolbar.setTitle(getFormatDate(calendar));
         setSupportActionBar(main_toolbar);
@@ -103,12 +122,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         // 初始化月预算
         initBudget();
+        setBudgetData();
 
         mViewPager = (ViewPager) findViewById(R.id.main_viewpager);
         mViewList = new ArrayList<>();
 
         // 加载数据
         setViewPager();
+    }
+
+    private void setBudgetData() {
+
+        SharedPreferences mSharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
+        BudgetSettingActivity.isAddIncome = mSharedPreferences.getBoolean("isAddIncome", false);
+        BudgetSettingActivity.isShowBudget = mSharedPreferences.getBoolean("isShowBudget", true);
+
     }
 
     // 初始化月预算
@@ -203,6 +231,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         // 选中设置默认选中的item
         mNavigationView.setCheckedItem(R.id.outcome_item);
+
         // item监听
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -323,6 +352,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onCreateOptionsMenu(Menu menu) {
         // 加载toolbar menu
         getMenuInflater().inflate(R.menu.toolbar_menu, menu);
+
         return true;
     }
 
@@ -382,7 +412,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onBackPressed() {
-        if(mDrawerLayout.isDrawerOpen(GravityCompat.START)){
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             mDrawerLayout.closeDrawers();
             return;
         }
@@ -395,7 +425,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.main_toolbar:
                 calendar = Calendar.getInstance();
 
-                MainFragment.phaseDay=lastPosition;
+                MainFragment.phaseDay = lastPosition;
                 main_toolbar.setTitle(getFormatDate(calendar));
                 myFragmentPagerAdapter.notifyDataSetChanged();
 
@@ -408,7 +438,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 // 重新加载数据
                 // 计算出选择日期与当前系统日期的相差值
                 int phaseDay = (int) (lastPosition + ((System.currentTimeMillis() - calendar.getTime().getTime()) / (1000 * 3600 * 24)));
-                MainFragment.phaseDay=phaseDay;
+                MainFragment.phaseDay = phaseDay;
                 main_toolbar.setTitle(getFormatDate(calendar));
                 myFragmentPagerAdapter.notifyDataSetChanged();
                 break;
