@@ -23,7 +23,7 @@ import android.widget.TextView;
 
 import com.izdo.DataBase.MyDatabaseHelper;
 import com.izdo.Util.MyDialog;
-import com.izdo.Util.SPInit;
+import com.izdo.Util.InitData;
 
 /**
  * Created by iZdo on 2017/5/2.
@@ -87,13 +87,13 @@ public class BudgetSettingActivity extends AppCompatActivity implements View.OnC
     private void loadData() {
         mEditor = getSharedPreferences("data", MODE_PRIVATE).edit();
 
-        isAddIncome = SPInit.isAddIncome;
-        isShowBudget = SPInit.isShowBudget;
+        isAddIncome = InitData.isAddIncome;
+        isShowBudget = InitData.isShowBudget;
 
         switchAddIncome.setChecked(isAddIncome);
         switchShowBudget.setChecked(isShowBudget);
 
-        selectedColor = SPInit.ballColor;
+        selectedColor = InitData.ballColor;
     }
 
 
@@ -225,15 +225,15 @@ public class BudgetSettingActivity extends AppCompatActivity implements View.OnC
                 finish();
                 break;
             case R.id.ball_color_layout:
-                final MyDialog accountDialog = new MyDialog(this, R.style.dialog_style, "ball_color");
+                final MyDialog myDialog = new MyDialog(this, R.style.dialog_style);
+                myDialog.initBallColorDialog();
+                myDialog.setSelectedColor(selectedColor);
+                myDialog.show();
 
-                accountDialog.setSelectedColor(selectedColor);
-                accountDialog.show();
-
-                accountDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                myDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
                     public void onDismiss(DialogInterface dialogInterface) {
-                        selectedColor = accountDialog.getSelectedColor();
+                        selectedColor = myDialog.getSelectedColor();
                     }
                 });
 
@@ -253,9 +253,9 @@ public class BudgetSettingActivity extends AppCompatActivity implements View.OnC
                 mEditor.putString("selectedColor", selectedColor);
                 mEditor.apply();
 
-                SPInit.ballColor = selectedColor;
-                SPInit.isAddIncome = isAddIncome;
-                SPInit.isShowBudget = isShowBudget;
+                InitData.ballColor = selectedColor;
+                InitData.isAddIncome = isAddIncome;
+                InitData.isShowBudget = isShowBudget;
 
                 finish();
                 break;

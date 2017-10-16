@@ -22,9 +22,10 @@ import android.widget.TextView;
 
 import com.izdo.Adapter.MyPagerAdapter;
 import com.izdo.Bean.DataBean;
-import com.izdo.Util.TypeMap;
 import com.izdo.DataBase.MyDatabaseHelper;
+import com.izdo.Util.InitData;
 import com.izdo.Util.MyDialog;
+import com.izdo.Util.TypeMap;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -65,6 +66,8 @@ public class IncomeActivity extends Activity implements View.OnClickListener {
 
     // 是否从收入详情页面跳转的标识
     private boolean ifDetails = false;
+
+    private MyDialog myDialog;
 
     /**
      * 弹出窗口页面
@@ -139,6 +142,8 @@ public class IncomeActivity extends Activity implements View.OnClickListener {
         mCalculatorView = LayoutInflater.from(IncomeActivity.this).inflate(R.layout.calculator, null);
         mPopupWindow = new PopupWindow(mCalculatorView,
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
+
+        myDialog = new MyDialog(this, R.style.dialog_style);
 
         // 与弹出窗口有关的控件需要在初始化弹出窗口后再初始化
         one = (Button) mCalculatorView.findViewById(R.id.one);
@@ -419,7 +424,7 @@ public class IncomeActivity extends Activity implements View.OnClickListener {
             mDataBean.setDescribe(describe);
             mDataBean.setAccount(account);
 
-            mSQLiteDatabase.update("Data", values, "id=?",new String[]{mDataBean.getId()+""});
+            mSQLiteDatabase.update("Data", values, "id=?", new String[]{mDataBean.getId() + ""});
 
             return;
         }
@@ -471,21 +476,22 @@ public class IncomeActivity extends Activity implements View.OnClickListener {
                 break;
             case R.id.income_save:
                 if (showIncome.getText().toString().substring(1, 2).equals("0") && typeId == 0) {
-                    MyDialog dialog = new MyDialog(this, R.style.dialog_style, "金额和类别");
-                    dialog.setCancelable(false);
-                    dialog.show();
+                    myDialog.initSaveButtonDialog("金额和类别");
+                    myDialog.setCancelable(false);
+                    myDialog.show();
                     break;
                 }
                 if (showIncome.getText().toString().substring(1, 2).equals("0")) {
-                    MyDialog dialog2 = new MyDialog(this, R.style.dialog_style, "金额");
-                    dialog2.setCancelable(false);
-                    dialog2.show();
+                    myDialog.initSaveButtonDialog("金额");
+                    myDialog.setCancelable(false);
+                    myDialog.show();
                     break;
                 }
                 if (typeId == 0) {
-                    MyDialog dialog3 = new MyDialog(this, R.style.dialog_style, "类别");
-                    dialog3.setCancelable(false);
-                    dialog3.show();
+
+                    myDialog.initSaveButtonDialog("类别");
+                    myDialog.setCancelable(false);
+                    myDialog.show();
                     break;
                 }
                 data();
@@ -507,25 +513,25 @@ public class IncomeActivity extends Activity implements View.OnClickListener {
                 startActivityForResult(intent, 1);
                 break;
             case R.id.income_accountLayout:
-                final MyDialog accountDialog = new MyDialog(this, R.style.dialog_style, "account");
-                accountDialog.setSelect(accountText.getText().toString());
-                accountDialog.show();
-                accountDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                myDialog.initAccountOrFixedChargeDialog("请选择帐号",InitData.accountOption(this));
+                myDialog.setSelect(accountText.getText().toString());
+                myDialog.show();
+                myDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
                     public void onDismiss(DialogInterface dialogInterface) {
-                        accountText.setText(accountDialog.getSelect());
+                        accountText.setText(myDialog.getSelect());
                     }
                 });
 
                 break;
             case R.id.income_fixed_chargeLayout:
-                final MyDialog fixedChargeDialog = new MyDialog(this, R.style.dialog_style, "fixed_charge");
-                fixedChargeDialog.setSelect(fixedChargeText.getText().toString());
-                fixedChargeDialog.show();
-                fixedChargeDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                myDialog.initAccountOrFixedChargeDialog("请选择自动输入的周期",InitData.fixedChargeOption());
+                myDialog.setSelect(fixedChargeText.getText().toString());
+                myDialog.show();
+                myDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
                     public void onDismiss(DialogInterface dialogInterface) {
-                        fixedChargeText.setText(fixedChargeDialog.getSelect());
+                        fixedChargeText.setText(myDialog.getSelect());
                     }
                 });
                 break;

@@ -25,7 +25,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
      * date 日期
      * behavior 收入/支出
      */
-    public static final String CREATE_DATA = "create table Data(" +
+    public static final String CREATE_DATA = "create table if not exists Data(" +
             "id integer primary key autoincrement," +
             "money text," +
             "type text," +
@@ -35,9 +35,13 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
             "date text," +
             "behavior text)";
 
-    public static final String CREATE_BUDGET = "create table Budget(" +
+    public static final String CREATE_BUDGET = "create table if not exists Budget(" +
             "total text," +
             "date text)";
+
+    public static final String CREATE_ACCOUNT = "create table if not exists Account(" +
+            "account_id integer primary key autoincrement," +
+            "account text)";
 
     private MyDatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
@@ -47,7 +51,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         mContext = context;
 
         if (mDatabaseHelper == null)
-            mDatabaseHelper = new MyDatabaseHelper(context, "Account.db", null, 2);
+            mDatabaseHelper = new MyDatabaseHelper(context, "Account.db", null, 3);
 
         return mDatabaseHelper.getWritableDatabase();
     }
@@ -59,14 +63,35 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-        String sql = "update Data set type = '话费' where type = '花费'";
-        sqLiteDatabase.execSQL(sql);
+    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
+        String sql;
 
-        sql = "update Data set type = '其它支出' where type = '日常用品' or type = '衣物' or type = '礼金' or type = '信用卡' and behavior = 'outcome'";
-        sqLiteDatabase.execSQL(sql);
-        sql = "update Data set type = '其它收入' where type = '日常用品' or type = '衣物' or type = '礼金' or type = '信用卡' and behavior = 'income'";
-        sqLiteDatabase.execSQL(sql);
+        /**
+         * 2.0
+         */
+        if (oldVersion < 2) {
+            sql = "update Data set type = '话费' where type = '花费'";
+            sqLiteDatabase.execSQL(sql);
+
+            sql = "update Data set type = '其它支出' where type = '日常用品' or type = '衣物' or type = '礼金' or type = '信用卡' and behavior = 'outcome'";
+            sqLiteDatabase.execSQL(sql);
+            sql = "update Data set type = '其它收入' where type = '日常用品' or type = '衣物' or type = '礼金' or type = '信用卡' and behavior = 'income'";
+            sqLiteDatabase.execSQL(sql);
+        }
+
+        /**
+         * 3.0
+         */
+        if (oldVersion < 3) {
+            sqLiteDatabase.execSQL(CREATE_ACCOUNT);
+
+            sql = "insert into account(account) values" +
+                    "('微信')," +
+                    "('支付宝')," +
+                    "('现金')," +
+                    "('其他')";
+            sqLiteDatabase.execSQL(sql);
+        }
 
         Toast.makeText(mContext, "数据库升级成功!", Toast.LENGTH_SHORT).show();
     }

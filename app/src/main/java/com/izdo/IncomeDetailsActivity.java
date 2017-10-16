@@ -11,9 +11,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.izdo.Bean.DataBean;
-import com.izdo.Util.TypeMap;
 import com.izdo.DataBase.MyDatabaseHelper;
 import com.izdo.Util.MyDialog;
+import com.izdo.Util.TypeMap;
 
 /**
  * Created by zz on 2017/4/27.
@@ -113,21 +113,22 @@ public class IncomeDetailsActivity extends AppCompatActivity implements View.OnC
                 startActivityForResult(intent, 1);
                 break;
             case R.id.income_details_delete:
-                final MyDialog accountDialog = new MyDialog(this, R.style.dialog_style, "delete");
-                accountDialog.show();
-                Button confirm = (Button) accountDialog.findViewById(R.id.dialog_delete_confirm);
-                Button cancel = (Button) accountDialog.findViewById(R.id.dialog_delete_cancel);
-                confirm.setOnClickListener(new View.OnClickListener() {
+                final MyDialog myDialog = new MyDialog(this, R.style.dialog_style);
+                myDialog.setCancelable(false);
+                myDialog.initSelectDialog("确定删除记录？");
+                myDialog.show();
+                myDialog.findViewById(R.id.dialog_select_confirm).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         deleteData();
                         finish();
                     }
                 });
-                cancel.setOnClickListener(new View.OnClickListener() {
+                ;
+                myDialog.findViewById(R.id.dialog_select_cancel).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        accountDialog.dismiss();
+                        myDialog.dismiss();
                     }
                 });
                 break;

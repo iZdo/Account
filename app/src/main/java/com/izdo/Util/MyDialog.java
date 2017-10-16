@@ -9,16 +9,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.izdo.Adapter.MyBaseAdapter;
 import com.izdo.Bean.Ball;
 import com.izdo.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -30,64 +31,40 @@ public class MyDialog extends Dialog {
 
     private ImageView dialogClose;
     private ListView mListView;
-    private String mType;
     private TextView title;
     private TextView update_content;
     private String select;
-    private String[] account = {"微信", "支付宝", "现金", "其他"};
-    private String[] fixed_charge = {"无", "每日", "每周", "每月"};
+    //    private String[] account = {"微信", "支付宝", "现金", "其他"};
+    //    private String[] fixed_charge = {"无", "每日", "每周", "每月"};
+    //
+    //    private String[] items;
+    private List<String> mList;
 
-    private String[] items;
-    private String update;
-
-    BallListUtil ballListUtil;
-    ArrayList<Ball> ballList;
-    String selectedColor;
+    private List<Ball> ballList;
+    private String selectedColor;
 
     private SharedPreferences.Editor mEditor;
 
-    public MyDialog(Context context, int themeResId, String type) {
+    public MyDialog(Context context, int themeResId) {
         super(context, themeResId);
-        mType = type;
-//        ballListUtil = new BallListUtil();
-        ballList = BallListUtil.getBallList();
-
-
+        mList = new ArrayList<>();
         mEditor = getContext().getSharedPreferences("data", MODE_PRIVATE).edit();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (mType.equals("account") || mType.equals("fixed_charge"))
-            initAccountOrFixedChargeDialog();
-        else if (mType.equals("delete"))
-            initDeleteDialog();
-        else if (mType.equals("updateAnnouncement"))
-            initUpdateDialog();
-        else if (mType.equals("ball_color"))
-            initBallColorDialog();
-        else
-            initSaveButtonDialog();
     }
 
     // account，fixed_charge对话框
-    private void initAccountOrFixedChargeDialog() {
+    public void initAccountOrFixedChargeDialog(String text, List<String> list) {
         setContentView(R.layout.dialog);
+        mList = list;
         dialogClose = (ImageView) findViewById(R.id.dialog_close);
         mListView = (ListView) findViewById(R.id.dialogListView);
-        //        mListView.setDivider(new ColorDrawable(Color.parseColor("#B8B8B8")));
-        //        mListView.setDividerHeight(1);
         title = (TextView) findViewById(R.id.title);
 
-        if (mType.equals("account")) {
-            items = account;
-            title.setText("请选择帐号");
-        } else if (mType.equals("fixed_charge")) {
-            items = fixed_charge;
-            title.setText("请选择自动输入的周期");
-        }
+        title.setText(text);
 
         dialogClose.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,27 +73,12 @@ public class MyDialog extends Dialog {
             }
         });
 
-        mListView.setAdapter(new BaseAdapter() {
-            @Override
-            public int getCount() {
-                return items.length;
-            }
-
-            @Override
-            public Object getItem(int position) {
-                return items[position];
-            }
-
-            @Override
-            public long getItemId(int position) {
-                return position;
-            }
-
+        mListView.setAdapter(new MyBaseAdapter<String>(getContext(), mList) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_listview_item, null);
                 TextView text = (TextView) view.findViewById(R.id.dialog_listView_text);
-                text.setText(items[position]);
+                text.setText(mList.get(position));
                 return view;
             }
         });
@@ -124,21 +86,17 @@ public class MyDialog extends Dialog {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if (mType.equals("account")) {
-                    setSelect(account[i]);
-                } else if (mType.equals("fixed_charge")) {
-                    setSelect(fixed_charge[i]);
-                }
+                setSelect(mList.get(i));
                 dismiss();
             }
         });
     }
 
     // 未输入金额或类型对话框
-    private void initSaveButtonDialog() {
+    public void initSaveButtonDialog(String text) {
         setContentView(R.layout.dialog_save);
         TextView title = (TextView) findViewById(R.id.dialog_save_text);
-        title.setText("请输入" + mType);
+        title.setText("请输入" + text);
 
         findViewById(R.id.dialog_confirm_button).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -148,29 +106,30 @@ public class MyDialog extends Dialog {
         });
     }
 
-    // delete对话框
-    private void initDeleteDialog() {
-        setContentView(R.layout.dialog_delete);
+    // 自定义title选择对话框
+    public void initSelectDialog(String text) {
+        setContentView(R.layout.dialog_select);
+        ((TextView) findViewById(R.id.dialog_select_text)).setText(text);
     }
 
     // 更新公告updateAnnouncement对话框
-    private void initUpdateDialog() {
+    public void initUpdateDialog() {
         setContentView(R.layout.dialog_update);
         title = (TextView) findViewById(R.id.title);
         final CheckBox updateCheck = (CheckBox) findViewById(R.id.update_check);
         TextView confirm = (TextView) findViewById(R.id.dialog_confirm);
 
-        updateCheck.setChecked(SPInit.isNoLongerPrompt);
+        updateCheck.setChecked(InitData.isNoLongerPrompt);
 
         update_content = (TextView) findViewById(R.id.update_content);
-        update_content.setText(getUpdate());
+        update_content.setText(Constant.UPDATE);
         title.setText("更新公告");
 
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mEditor.putBoolean("isNoLongerPrompt", updateCheck.isChecked());
-                SPInit.isNoLongerPrompt = updateCheck.isChecked();
+                InitData.isNoLongerPrompt = updateCheck.isChecked();
                 mEditor.apply();
                 dismiss();
             }
@@ -178,29 +137,14 @@ public class MyDialog extends Dialog {
 
     }
 
-
-    private void initBallColorDialog() {
+    // 余量球颜色选择对话框
+    public void initBallColorDialog() {
         setContentView(R.layout.dialog_ball_color);
         mListView = (ListView) findViewById(R.id.ball_color_listView);
-        //        mListView.setDivider(new ColorDrawable(Color.parseColor("#B8B8B8")));
-        //        mListView.setDividerHeight(1);
 
-        mListView.setAdapter(new BaseAdapter() {
-            @Override
-            public int getCount() {
-                return ballList.size();
-            }
+        ballList = BallListUtil.getBallList();
 
-            @Override
-            public Object getItem(int position) {
-                return ballList.get(position);
-            }
-
-            @Override
-            public long getItemId(int position) {
-                return position;
-            }
-
+        mListView.setAdapter(new MyBaseAdapter<Ball>(getContext(), ballList) {
             @Override
             public View getView(int position, View convertView, ViewGroup viewGroup) {
                 View view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_ball_color_listview_item, null);
@@ -220,7 +164,6 @@ public class MyDialog extends Dialog {
                     checkedImage.setImageResource(ball.getColorCheckedImage());
                     checkedImage.setVisibility(View.VISIBLE);
                 }
-
                 return view;
             }
         });
@@ -236,20 +179,18 @@ public class MyDialog extends Dialog {
 
     }
 
+    // 自定义title确认对话框
+    public void initConfirmDialog(String text){
+        setContentView(R.layout.dialog_confirmt);
+        ((TextView) findViewById(R.id.dialog_confirm_text)).setText(text);
+    }
+
     public String getSelect() {
         return select;
     }
 
     public void setSelect(String select) {
         this.select = select;
-    }
-
-    public String getUpdate() {
-        return update;
-    }
-
-    public void setUpdate(String update) {
-        this.update = update;
     }
 
     public String getSelectedColor() {

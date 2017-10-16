@@ -6,11 +6,11 @@
               android:orientation="vertical">
 
     <TextView
+        android:id="@+id/dialog_confirm_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:paddingTop="20dp"
-        android:text="确定删除记录？"
         android:textColor="#000000"
         android:textSize="20sp"/>
 
@@ -20,24 +20,13 @@
         android:gravity="center">
 
         <Button
-            android:id="@+id/dialog_delete_confirm"
+            android:id="@+id/dialog_confirm"
             android:layout_width="70dp"
             android:layout_height="30dp"
             android:background="@drawable/save_outcome_selector"
-            android:text="是"
+            android:text="朕知道了"
             android:textColor="#ffffff"/>
 
-        <View
-            android:layout_width="35dp"
-            android:layout_height="match_parent"/>
-
-        <Button
-            android:id="@+id/dialog_delete_cancel"
-            android:layout_width="70dp"
-            android:layout_height="30dp"
-            android:background="@drawable/save_outcome_selector"
-            android:text="否"
-            android:textColor="#ffffff"/>
     </LinearLayout>
 
 </LinearLayout>

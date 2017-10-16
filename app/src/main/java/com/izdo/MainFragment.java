@@ -18,7 +18,7 @@ import com.izdo.Adapter.MyDataAdapter;
 import com.izdo.Bean.DataBean;
 import com.izdo.DataBase.MyDatabaseHelper;
 import com.izdo.Util.Constant;
-import com.izdo.Util.SPInit;
+import com.izdo.Util.InitData;
 import com.izdo.Util.WaveHelper;
 
 import java.text.DecimalFormat;
@@ -109,7 +109,7 @@ public class MainFragment extends Fragment {
         percentText = (TextView) getActivity().findViewById(R.id.percent);
         mToolbar = (Toolbar) getActivity().findViewById(main_toolbar);
 
-        waveView = (WaveView) getActivity().findViewById(R.id.waveview);
+        waveView = (WaveView) getActivity().findViewById(R.id.waveView);
         waveView.setBorder(mBorderWidth, mBorderColor);
         waveView.setWaveColor(behindWaveColor, frontWaveColor);
 
@@ -126,7 +126,7 @@ public class MainFragment extends Fragment {
         mRecyclerView.setAdapter(mDataAdapter);
         mDataAdapter.notifyDataSetChanged();
 
-        selectedColor = SPInit.ballColor;
+        selectedColor = InitData.ballColor;
         frontWaveColor = Color.parseColor(selectedColor);
         waveView.setWaveColor(behindWaveColor, frontWaveColor);
 
@@ -146,7 +146,7 @@ public class MainFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        mWaveHelper.cancel();
+        //        mWaveHelper.cancel();
     }
 
     /**
@@ -248,15 +248,15 @@ public class MainFragment extends Fragment {
         // 舍弃小数点后为0的数字
         String surplusBudgetStr = formatNumber(decimalFormat.format(surplus));
 
-        if (nowToolbarDate.substring(0, nowToolbarDate.length() - 3).equals(nowMonth))
+        if (nowToolbarDate.substring(0, nowToolbarDate.length() - 3).equals(nowMonth)) {
             surplusBudgeText.setText("¥ " + surplusBudgetStr);
 
-        // 计算百分比
-        percent = (int) ((surplus / Integer.parseInt(totalBudget.trim())) * 100);
-        if (percent < 0)
-            percent = 0;
-        percentText.setText(percent + "%");
-
+            // 计算百分比
+            percent = (int) ((surplus / Integer.parseInt(totalBudget.trim())) * 100);
+            if (percent < 0)
+                percent = 0;
+            percentText.setText(percent + "%");
+        }
 
         // 设置流量球百分比
         mWaveHelper.setPercent(percent / 100f);

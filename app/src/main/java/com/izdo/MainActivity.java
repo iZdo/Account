@@ -93,10 +93,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         SharedPreferences mSharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
 
         if (!mSharedPreferences.getBoolean("isNoLongerPrompt", false)) {
-            MyDialog updateAnnouncementDialog = new MyDialog(this, R.style.dialog_style, "updateAnnouncement");
-            updateAnnouncementDialog.setUpdate(Constant.UPDATE);
-            updateAnnouncementDialog.setCancelable(false);
-            updateAnnouncementDialog.show();
+            MyDialog myDialog = new MyDialog(this, R.style.dialog_style);
+            myDialog.initUpdateDialog();
+            myDialog.setCancelable(false);
+            myDialog.show();
         }
     }
 
@@ -110,8 +110,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         budgetSetting = (RelativeLayout) findViewById(R.id.main_budget_setting);
         totalBudget = (TextView) findViewById(R.id.total_budget);
-
-
 
         // 初始化toolbar
         main_toolbar.setTitle(getFormatDate(calendar));

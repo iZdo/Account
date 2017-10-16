@@ -24,16 +24,17 @@
 
             <ImageView
                 android:layout_width="30dp"
-                android:layout_height="match_parent"
+                android:layout_height="30dp"
                 android:src="@drawable/icon"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingEnd="5dp"
+                android:paddingLeft="10dp"
                 android:text="预算设置"
                 android:textColor="#FFFFFF"
-                android:textSize="25sp"/>
+                android:textSize="20sp"/>
         </LinearLayout>
 
         <Button

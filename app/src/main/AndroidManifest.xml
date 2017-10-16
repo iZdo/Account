@@ -22,6 +22,9 @@
         <activity android:name=".OutcomeDetailsActivity"/>
         <activity android:name=".IncomeDetailsActivity"/>
         <activity android:name=".BudgetSettingActivity"/>
+        <activity android:name=".AccountManageActivity"/>
+        <activity android:name=".EditAccountActivity"/>
+        <activity android:name=".AddAccountActivity"/>
     </application>
 
 </manifest>

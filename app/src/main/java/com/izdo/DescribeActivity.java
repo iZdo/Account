@@ -24,6 +24,7 @@ public class DescribeActivity extends AppCompatActivity {
         describeEdit = (EditText) findViewById(R.id.describe_edit);
         String text = getIntent().getStringExtra("describe");
         describeEdit.setText(text);
+        // 设置光标位置
         describeEdit.setSelection(text.length());
 
         newDescribe.setOnClickListener(new View.OnClickListener() {

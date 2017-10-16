@@ -11,9 +11,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.izdo.Bean.DataBean;
-import com.izdo.Util.TypeMap;
 import com.izdo.DataBase.MyDatabaseHelper;
 import com.izdo.Util.MyDialog;
+import com.izdo.Util.TypeMap;
 
 import static com.izdo.R.id.outcome_details;
 
@@ -89,8 +89,7 @@ public class OutcomeDetailsActivity extends AppCompatActivity implements View.On
 
     // 删除记录
     private void deleteData() {
-        mSQLiteDatabase = MyDatabaseHelper.getInstance(this);
-        mSQLiteDatabase.delete("Data", "id=?", new String[]{mDataBean.getId() + ""});
+        MyDatabaseHelper.getInstance(this).delete("Data", "id=?", new String[]{mDataBean.getId() + ""});
     }
 
     @Override
@@ -116,22 +115,23 @@ public class OutcomeDetailsActivity extends AppCompatActivity implements View.On
                 startActivityForResult(intent, 1);
                 break;
             case R.id.outcome_details_delete:
-                final MyDialog accountDialog = new MyDialog(this, R.style.dialog_style, "delete");
-                accountDialog.show();
-                Button confirm = (Button) accountDialog.findViewById(R.id.dialog_delete_confirm);
-                Button cancel = (Button) accountDialog.findViewById(R.id.dialog_delete_cancel);
-                confirm.setOnClickListener(new View.OnClickListener() {
+                final MyDialog myDialog = new MyDialog(this, R.style.dialog_style);
+                myDialog.setCancelable(false);
+                myDialog.initSelectDialog("确定删除记录？");
+                myDialog.show();
+                myDialog.findViewById(R.id.dialog_select_confirm).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         deleteData();
-                        accountDialog.dismiss();
+                        myDialog.dismiss();
                         finish();
                     }
                 });
-                cancel.setOnClickListener(new View.OnClickListener() {
+                ;
+                myDialog.findViewById(R.id.dialog_select_cancel).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        accountDialog.dismiss();
+                        myDialog.dismiss();
                     }
                 });
                 break;

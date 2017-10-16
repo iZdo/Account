@@ -11,11 +11,12 @@ import java.util.ArrayList;
 
 public class BallListUtil {
 
-    //    private String[] colors = {"默认灰", "浅蓝色", "浅红色", "浅绿色", "什么黄", "基佬紫"};
-    private static String[] colors = {"#696969", "#d7433a", "#8dbe2e", "#ef8750", "#00aaff"};
-    private static int[] colorImages = {R.drawable.ball_696969, R.drawable.ball_d7433a, R.drawable.ball_8dbe2e, R.drawable.ball_ef8750, R.drawable.ball_00aaff};
-    private static String[] colorsText = {"默认灰", "浅红色", "浅绿色", "黄色", "蓝"};
-    private static int[] colorCheckedImages = {R.drawable.ball_checked_696969, R.drawable.ball_checked_d7433a, R.drawable.ball_checked_8dbe2e, R.drawable.ball_checked_ef8750, R.drawable.ball_checked_00aaff};
+    private static String[] colors = {"#696969", "#d7433a", "#ef8750", "#f9f154","#8dbe2e", "#00aaff","#285afb","#b44dee"};
+    private static int[] colorImages = {R.drawable.ball_696969, R.drawable.ball_d7433a, R.drawable.ball_ef8750, R.drawable.ball_f9f154,
+            R.drawable.ball_8dbe2e,R.drawable.ball_00aaff,R.drawable.ball_285afb,R.drawable.ball_b44dee};
+    private static String[] colorsText = {"默认灰", "大娃", "二娃","三娃", "四娃", "五娃","六娃","七娃"};
+    private static int[] colorCheckedImages = {R.drawable.ball_checked_696969, R.drawable.ball_checked_d7433a, R.drawable.ball_checked_ef8750, R.drawable.ball_checked_f9f154,
+            R.drawable.ball_checked_8dbe2e,R.drawable.ball_checked_00aaff,R.drawable.ball_checked_285afb,R.drawable.ball_checked_b44dee};
 
     private static ArrayList<Ball> ballList;
 
