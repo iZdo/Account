@@ -10,10 +10,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.izdo.Bean.DataBean;
-import com.izdo.Util.TypeMap;
 import com.izdo.MainActivity;
 import com.izdo.R;
 import com.izdo.Util.Constant;
+import com.izdo.Util.TypeMap;
+import com.orhanobut.logger.Logger;
 
 import java.util.List;
 
@@ -21,7 +22,7 @@ import java.util.List;
  * Created by iZdo on 2017/10/3.
  */
 
-public class MyDataAdapter extends RecyclerView.Adapter<MyDataAdapter.ViewHolder> implements View.OnClickListener {
+public class MyDataAdapter extends RecyclerView.Adapter<MyDataAdapter.ViewHolder> implements View.OnClickListener, View.OnLongClickListener {
 
     private Context mContext;
 
@@ -29,6 +30,7 @@ public class MyDataAdapter extends RecyclerView.Adapter<MyDataAdapter.ViewHolder
     private TypeMap mTypeMap;
 
     private OnItemClickListener mOnItemClickListener = null;
+    private OnItemLongClickListener mOnItemLongClickListener = null;
 
     public MyDataAdapter(Context mContext) {
         this.mContext = mContext;
@@ -48,7 +50,7 @@ public class MyDataAdapter extends RecyclerView.Adapter<MyDataAdapter.ViewHolder
 
         public ViewHolder(View itemView) {
             super(itemView);
-            mainItem= (LinearLayout) itemView.findViewById(R.id.main_listView_item);
+            mainItem = (LinearLayout) itemView.findViewById(R.id.main_listView_item);
             mainImg = (ImageView) itemView.findViewById(R.id.main_listView_type_img);
             mainTypeText = (TextView) itemView.findViewById(R.id.main_listView_type_text);
             mainMoneyText = (TextView) itemView.findViewById(R.id.main_listView_money_text);
@@ -66,6 +68,7 @@ public class MyDataAdapter extends RecyclerView.Adapter<MyDataAdapter.ViewHolder
         ViewHolder holder = new ViewHolder(view);
 
         view.setOnClickListener(this);
+        view.setOnLongClickListener(this);
 
         return holder;
     }
@@ -86,9 +89,19 @@ public class MyDataAdapter extends RecyclerView.Adapter<MyDataAdapter.ViewHolder
 
     @Override
     public void onClick(View view) {
-        if(mOnItemClickListener!=null){
+        if (mOnItemClickListener != null) {
             mOnItemClickListener.onItemClick(view, (int) view.getTag());
         }
+    }
+
+    @Override
+    public boolean onLongClick(View view) {
+        if (mOnItemLongClickListener != null) {
+            Logger.i("长按");
+            mOnItemLongClickListener.onItemLongClick(view, (int) view.getTag());
+        }
+        // 返回true 不再执行单击事件
+        return true;
     }
 
     public void setOnItemClickListener(OnItemClickListener listener) {
@@ -96,7 +109,15 @@ public class MyDataAdapter extends RecyclerView.Adapter<MyDataAdapter.ViewHolder
     }
 
     public interface OnItemClickListener {
-        void onItemClick(View view , int position);
+        void onItemClick(View view, int position);
+    }
+
+    public void setOnItemLongClickListener(OnItemLongClickListener listener) {
+        this.mOnItemLongClickListener = listener;
+    }
+
+    public interface OnItemLongClickListener {
+        void onItemLongClick(View view, int position);
     }
 }
 

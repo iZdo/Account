@@ -48,7 +48,7 @@ public class AddAccountActivity extends AppCompatActivity {
                 ContentValues values = new ContentValues();
                 String account_name = addAccountEdit.getText().toString();
 
-                if (TextUtils.isEmpty(account_name)) {
+                if (TextUtils.isEmpty(account_name)||account_name.equals("\n")||account_name.equals(" ")) {
                     myDialog.initConfirmDialog("账户名不能为空!");
                     setDialogOnClickListener();
                     myDialog.show();

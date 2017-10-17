@@ -6,6 +6,8 @@ import android.database.Cursor;
 
 import com.izdo.DataBase.MyDatabaseHelper;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +27,7 @@ public class InitData {
     public static boolean isShowBudget;
     public static boolean isNoLongerPrompt;
 
-    public static List<String> dataList=new ArrayList<>();
+    public static List<String> dataList = new ArrayList<>();
 
     public static void init(Context context) {
         mSharedPreferences = context.getSharedPreferences("data", MODE_PRIVATE);
@@ -63,5 +65,24 @@ public class InitData {
         }
 
         return dataList;
+    }
+
+    /**
+     * 读取更新日志文件
+     */
+    public static String readAsset(Context context) {
+        try {
+            InputStream is = context.getAssets().open("update.txt");
+            int size = is.available();
+
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+
+            return new String(buffer, "UTF-8");
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -75,7 +75,6 @@ public class AccountManageActivity extends AppCompatActivity implements View.OnC
         super.onResume();
         queryAccount();
         mAccountAdapter.notifyDataSetChanged();
-
     }
 
     @Override

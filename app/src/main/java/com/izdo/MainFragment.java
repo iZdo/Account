@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.gelitenight.waveview.library.WaveView;
 import com.izdo.Adapter.MyDataAdapter;
@@ -208,6 +209,14 @@ public class MainFragment extends Fragment {
                 startActivity(intent);
             }
         });
+
+        mDataAdapter.setOnItemLongClickListener(new MyDataAdapter.OnItemLongClickListener() {
+            @Override
+            public void onItemLongClick(View view, int position) {
+                Toast.makeText(getActivity(), "长按", Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
     /**

@@ -72,7 +72,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_gravity="center"
                 android:clickable="true"
-                android:text="确定"
+                android:text="朕知道了"
                 android:textColor="#707070"
                 android:textSize="20sp"/>
 
