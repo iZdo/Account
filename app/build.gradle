@@ -8,7 +8,7 @@ android {
         minSdkVersion 18
         targetSdkVersion 25
         versionCode 1
-        versionName "1.2.6"
+        versionName "1.2.8"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -30,5 +30,4 @@ dependencies {
     compile 'com.orhanobut:logger:1.15'
     compile 'me.grantland:autofittextview:0.2.1'
     compile 'com.gelitenight.waveview:waveview:1.0.0'
-
 }

@@ -3,6 +3,7 @@ package com.izdo;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -24,12 +25,16 @@ import android.widget.TextView;
 import com.izdo.Adapter.MyPagerAdapter;
 import com.izdo.Bean.DataBean;
 import com.izdo.DataBase.MyDatabaseHelper;
+import com.izdo.Util.Constant;
 import com.izdo.Util.InitData;
 import com.izdo.Util.MyDialog;
 import com.izdo.Util.TypeMap;
 
 import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 
@@ -129,6 +134,8 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
     private boolean isPop = false;
     private DataBean mDataBean;
     private SQLiteDatabase mSQLiteDatabase;
+
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
 
     @Override
@@ -339,7 +346,7 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
         mViewList.add(outcome_viewpager2);
 
         // 初始化点
-        mDots = new ArrayList<ImageView>();
+        mDots = new ArrayList<>();
         ImageView dotFirst = (ImageView) findViewById(R.id.dotFirst);
         ImageView dotSecond = (ImageView) findViewById(R.id.dotSecond);
         mDots.add(dotFirst);
@@ -536,6 +543,7 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
         String account = accountText.getText().toString();
         String fixed_charge = fixedChargeText.getText().toString();
         String date;
+        // 判断是否从详情页面跳转
         if (ifDetails) date = mDataBean.getDate();
         else date = getIntent().getStringExtra("date");
 
@@ -547,6 +555,51 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
         values.put("fixed_charge", fixed_charge);
         values.put("date", date);
         values.put("behavior", "outcome");
+        values.put("fixedRecord_id", 0);
+
+        // 如果固定记录不为"无"
+        if (!fixed_charge.equals("无")) {
+            ContentValues fixed_values = new ContentValues();
+
+            String already_date = date;
+
+            if (fixed_charge.equals("每周")) {
+                try {
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(simpleDateFormat.parse(already_date));
+                    calendar.set(Calendar.DAY_OF_WEEK, 2);
+                    already_date = simpleDateFormat.format(calendar.getTime());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (fixed_charge.equals("每月")) {
+                try {
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(simpleDateFormat.parse(already_date));
+                    calendar.set(Calendar.DAY_OF_MONTH, 1);
+                    already_date = simpleDateFormat.format(calendar.getTime());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            fixed_values.put("money", money);
+            fixed_values.put("type", type);
+            fixed_values.put("describe", describe);
+            fixed_values.put("account", account);
+            fixed_values.put("fixed_charge", fixed_charge);
+            fixed_values.put("start_date", date);
+            fixed_values.put("already_date", already_date);
+            fixed_values.put("behavior", "outcome");
+            mSQLiteDatabase.insert("FixedRecord", null, fixed_values);
+
+            Cursor cursor = mSQLiteDatabase.query("FixedRecord", null, Constant.QUERY_SQL,
+                    new String[]{money, type, describe, account, fixed_charge, date, "outcome"}, null, null, null);
+            cursor.moveToNext();
+            values.put("fixedRecord_id", cursor.getInt(cursor.getColumnIndex("fixedRecord_id")));
+        }
 
         if (ifDetails) {
             mDataBean.setMoney(money);
@@ -559,7 +612,6 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
         }
 
         mSQLiteDatabase.insert("Data", null, values);
-
     }
 
 

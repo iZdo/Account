@@ -1,7 +1,6 @@
 package com.izdo;
 
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -40,8 +39,6 @@ public class OutcomeDetailsActivity extends AppCompatActivity implements View.On
 
     // 是否是从OutcomeActivity返回的
     private boolean back = false;
-    private SQLiteDatabase mSQLiteDatabase;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

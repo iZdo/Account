@@ -5,6 +5,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.widget.Toast;
 
+import com.orhanobut.logger.Logger;
+
 /**
  * Created by iZdo on 2017/4/14.
  */
@@ -43,6 +45,17 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
             "account_id integer primary key autoincrement," +
             "account text)";
 
+    public static final String CREATE_FIXED_RECORD = "create table if not exists FixedRecord(" +
+            "fixedRecord_id integer primary key autoincrement," +
+            "money text," +
+            "type text," +
+            "describe text," +
+            "account text," +
+            "fixed_charge text," +
+            "start_date text," +
+            "already_date text," +
+            "behavior text)";
+
     private MyDatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
     }
@@ -51,7 +64,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         mContext = context;
 
         if (mDatabaseHelper == null)
-            mDatabaseHelper = new MyDatabaseHelper(context, "Account.db", null, 3);
+            mDatabaseHelper = new MyDatabaseHelper(context, "Account.db", null, 4);
 
         return mDatabaseHelper.getWritableDatabase();
     }
@@ -60,14 +73,22 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(CREATE_DATA);
         sqLiteDatabase.execSQL(CREATE_BUDGET);
+
+        onUpgrade(sqLiteDatabase, sqLiteDatabase.getVersion(), 4);
+
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
         String sql;
 
+        Logger.i(oldVersion + "");
+        Logger.i(newVersion + "newVersion");
+
         /**
          * 2.0
+         * 修复文字bug
+         * 更改选项
          */
         if (oldVersion < 2) {
             sql = "update Data set type = '话费' where type = '花费'";
@@ -81,6 +102,8 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 
         /**
          * 3.0
+         * 创建账户表
+         * 插入默认列
          */
         if (oldVersion < 3) {
             sqLiteDatabase.execSQL(CREATE_ACCOUNT);
@@ -91,6 +114,24 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
                     "('现金')," +
                     "('其他')";
             sqLiteDatabase.execSQL(sql);
+        }
+
+        /**
+         * 4.0
+         * 为Data插入fixedRecord_id字段
+         * 新建FixedRecord表
+         */
+        if (oldVersion < 4) {
+            // 插入新字段
+            sql = "alter table Data add column fixedRecord_id integer";
+            sqLiteDatabase.execSQL(sql);
+
+            // 将字段设置为0
+            sql = "update Data set fixedRecord_id = 0";
+            sqLiteDatabase.execSQL(sql);
+
+            // 插入新表
+            sqLiteDatabase.execSQL(CREATE_FIXED_RECORD);
         }
 
         Toast.makeText(mContext, "数据库升级成功!", Toast.LENGTH_SHORT).show();

@@ -22,8 +22,14 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.izdo.DataBase.MyDatabaseHelper;
-import com.izdo.Util.MyDialog;
 import com.izdo.Util.InitData;
+import com.izdo.Util.MyDialog;
+import com.orhanobut.logger.Logger;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by iZdo on 2017/5/2.
@@ -108,10 +114,7 @@ public class BudgetSettingActivity extends AppCompatActivity implements View.OnC
 
         mSQLiteDatabase = MyDatabaseHelper.getInstance(this);
 
-        Cursor cursor = mSQLiteDatabase.query("Budget", new String[]{"total"}, "date=?",
-                new String[]{getIntent().getStringExtra("date")}, null, null, null);
-        cursor.moveToNext();
-        showBudget.setText("¥" + cursor.getString(cursor.getColumnIndex("total")));
+        queryBudget();
 
         switchAddIncome = (Switch) findViewById(R.id.switch_addIncome);
         switchShowBudget = (Switch) findViewById(R.id.switch_showBudget);
@@ -161,6 +164,62 @@ public class BudgetSettingActivity extends AppCompatActivity implements View.OnC
         OK.setOnClickListener(this);
         back.setOnClickListener(this);
 
+    }
+
+    // 查询本月预算
+    private void queryBudget() {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
+        String dateStr = getIntent().getStringExtra("date");
+
+        boolean flag = true;
+        // 上个月的预算
+        String total = "1000";
+
+        // 查询本月是否已添加预算
+        Cursor cursor = mSQLiteDatabase.query("Budget", new String[]{"total"}, "date = ?",
+                new String[]{dateStr}, null, null, null);
+
+        // 如果本月还未添加预算,则默认设置为上个月的预算
+        if (cursor.getCount() == 0) {
+            Logger.i("进来了");
+
+            ContentValues values = new ContentValues();
+            try {
+                // 如果上个月也没有添加预算 则一直往前找
+                while (flag) {
+                    // 月份减1
+                    Date date = simpleDateFormat.parse(dateStr);
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(date);
+                    calendar.add(Calendar.MONTH, -1);
+
+                    // 查询上个月的预算
+                    cursor = mSQLiteDatabase.query("Budget", new String[]{"total"}, "date = ?",
+                            new String[]{simpleDateFormat.format(calendar.getTime())}, null, null, null);
+                    if (cursor.moveToNext()) {
+                        total = cursor.getString(cursor.getColumnIndex("total"));
+                        flag = false;
+                    }
+                }
+
+                // 添加数据
+                values.put("total", total);
+                values.put("date", dateStr);
+                MyDatabaseHelper.getInstance(this).insert("Budget", null, values);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            // 添加之后再查找一遍
+            cursor = mSQLiteDatabase.query("Budget", new String[]{"total"}, "date = ?",
+                    new String[]{dateStr}, null, null, null);
+        }
+        cursor.moveToNext();
+//        Logger.i(cursor.getString(cursor.getColumnIndex("date")));
+        showBudget.setText("¥" + cursor.getString(cursor.getColumnIndex("total")));
+
+
+        cursor.close();
     }
 
     // 弹出窗口

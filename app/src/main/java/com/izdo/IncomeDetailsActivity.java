@@ -1,7 +1,6 @@
 package com.izdo;
 
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -37,8 +36,6 @@ public class IncomeDetailsActivity extends AppCompatActivity implements View.OnC
     private TypeMap mTypeMap;
 
     private boolean back = false;
-    private SQLiteDatabase mSQLiteDatabase;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,8 +83,7 @@ public class IncomeDetailsActivity extends AppCompatActivity implements View.OnC
 
     // 删除记录
     private void deleteData() {
-        mSQLiteDatabase = MyDatabaseHelper.getInstance(this);
-        mSQLiteDatabase.delete("Data", "id=? ", new String[]{mDataBean.getId() + ""});
+        MyDatabaseHelper.getInstance(this).delete("Data", "id=? ", new String[]{mDataBean.getId() + ""});
     }
 
     @Override

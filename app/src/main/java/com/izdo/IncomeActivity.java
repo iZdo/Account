@@ -417,6 +417,7 @@ public class IncomeActivity extends Activity implements View.OnClickListener {
         values.put("fixed_charge", fixed_charge);
         values.put("date", date);
         values.put("behavior", "income");
+        values.put("fixedRecord_id", 0);
 
         if (ifDetails) {
             mDataBean.setMoney(money);

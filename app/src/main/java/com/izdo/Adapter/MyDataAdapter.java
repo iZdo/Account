@@ -14,7 +14,6 @@ import com.izdo.MainActivity;
 import com.izdo.R;
 import com.izdo.Util.Constant;
 import com.izdo.Util.TypeMap;
-import com.orhanobut.logger.Logger;
 
 import java.util.List;
 
@@ -26,7 +25,7 @@ public class MyDataAdapter extends RecyclerView.Adapter<MyDataAdapter.ViewHolder
 
     private Context mContext;
 
-    private List<DataBean> mList;
+    public List<DataBean> mList;
     private TypeMap mTypeMap;
 
     private OnItemClickListener mOnItemClickListener = null;
@@ -97,7 +96,6 @@ public class MyDataAdapter extends RecyclerView.Adapter<MyDataAdapter.ViewHolder
     @Override
     public boolean onLongClick(View view) {
         if (mOnItemLongClickListener != null) {
-            Logger.i("长按");
             mOnItemLongClickListener.onItemLongClick(view, (int) view.getTag());
         }
         // 返回true 不再执行单击事件

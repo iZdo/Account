@@ -1,5 +1,8 @@
 package com.izdo;
 
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -9,10 +12,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.gelitenight.waveview.library.WaveView;
 import com.izdo.Adapter.MyDataAdapter;
@@ -21,11 +25,14 @@ import com.izdo.DataBase.MyDatabaseHelper;
 import com.izdo.Util.Constant;
 import com.izdo.Util.InitData;
 import com.izdo.Util.WaveHelper;
+import com.orhanobut.logger.Logger;
 
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 import static com.izdo.R.id.main_toolbar;
 
@@ -76,6 +83,16 @@ public class MainFragment extends Fragment {
     private int frontWaveColor = Color.parseColor("#696969");
     // 选择的波浪颜色
     private String selectedColor;
+    private LinearLayoutManager mLayoutManager;
+
+    // 是否位移
+    private static boolean isAnimationEnd = false;
+    private ObjectAnimator animator;
+    // 存储长按的item的imageView和textView
+    private static ImageView tmpButton;
+    private static TextView tmpTextView;
+    // 上一个点击的position
+    private static int lastPosition = -1;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -90,12 +107,6 @@ public class MainFragment extends Fragment {
 
         totalCostText = (TextView) mView.findViewById(R.id.total_cost);
 
-        // 初始化recyclerView
-        mRecyclerView = (RecyclerView) mView.findViewById(R.id.main_recyclerView);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        mRecyclerView.setLayoutManager(layoutManager);
-
-        mDataAdapter = new MyDataAdapter(getContext());
         setRecyclerView();
 
         return mView;
@@ -148,11 +159,26 @@ public class MainFragment extends Fragment {
     public void onPause() {
         super.onPause();
         //        mWaveHelper.cancel();
+
+        setIsAnimationEnd();
+    }
+
+    /**
+     * 是否已执行过动画
+     */
+    private void setIsAnimationEnd() {
+        if (isAnimationEnd) {
+            ObjectAnimator.ofFloat(tmpButton, "rotationY", 90f, 0f)
+                    .setDuration(500).start();
+            tmpButton.setVisibility(View.GONE);
+            ObjectAnimator.ofFloat(tmpTextView, "translationX", tmpTextView.getTranslationX(), tmpTextView.getTranslationX() + 100f)
+                    .setDuration(500).start();
+            isAnimationEnd = false;
+        }
     }
 
     /**
      * 设置日期
-     *
      * @param position 当前fragment所在position
      */
     public void setDate(int position) {
@@ -160,43 +186,47 @@ public class MainFragment extends Fragment {
         // 当前 - 相差天数
         calendar.add(Calendar.DAY_OF_MONTH, position - phaseDay);
 
-        mDate = simpleDateFormat.format(calendar.getTime());
+        mDate = getFormatDate(calendar);
     }
 
     /**
-     * 查询当天所有数据
-     */
-    private void query() {
-
-        mList.clear();
-
-        mCursor = MyDatabaseHelper.getInstance(getContext()).query("Data", null, "date=? and behavior=?", new String[]{mDate, mBehavior}, null, null, null);
-        while (mCursor.moveToNext()) {
-            DataBean dataBean = new DataBean();
-            dataBean.setId(mCursor.getInt(mCursor.getColumnIndex("id")));
-            dataBean.setMoney(mCursor.getString(mCursor.getColumnIndex("money")));
-            dataBean.setType(mCursor.getString(mCursor.getColumnIndex("type")));
-            dataBean.setDescribe(mCursor.getString(mCursor.getColumnIndex("describe")));
-            dataBean.setAccount(mCursor.getString(mCursor.getColumnIndex("account")));
-            dataBean.setFixed_charge(mCursor.getString(mCursor.getColumnIndex("fixed_charge")));
-            dataBean.setDate(mCursor.getString(mCursor.getColumnIndex("date")));
-            dataBean.setBehavior(mCursor.getString(mCursor.getColumnIndex("behavior")));
-            totalCost += Float.parseFloat(dataBean.getMoney());
-            mList.add(dataBean);
-        }
-
-        // 显示总支出/收入金额
-        String totalCostStr = formatNumber(decimalFormat.format(totalCost));
-        totalCostText.setText(totalCostStr);
-        totalCost = 0;
-
-        mCursor.close();
-    }
-
-    /**
-     * 设置recyclerView
+     * 设置recyclerView相关事件
      */
     private void setRecyclerView() {
+        // 初始化recyclerView
+        mRecyclerView = (RecyclerView) mView.findViewById(R.id.main_recyclerView);
+        mLayoutManager = new LinearLayoutManager(getContext());
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mDataAdapter = new MyDataAdapter(getContext());
+
+        mView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        setIsAnimationEnd();
+                        break;
+                    default:
+                        break;
+                }
+                return true;
+            }
+        });
+
+        mRecyclerView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        setIsAnimationEnd();
+                        break;
+                    default:
+                        break;
+                }
+                return false;
+            }
+        });
+
         mDataAdapter.setOnItemClickListener(new MyDataAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
@@ -212,17 +242,116 @@ public class MainFragment extends Fragment {
 
         mDataAdapter.setOnItemLongClickListener(new MyDataAdapter.OnItemLongClickListener() {
             @Override
-            public void onItemLongClick(View view, int position) {
-                Toast.makeText(getActivity(), "长按", Toast.LENGTH_SHORT).show();
+            public void onItemLongClick(View view, final int position) {
+                Logger.i(position + "");
+                View positionItem = mLayoutManager.findViewByPosition(position);
+                final TextView text = (TextView) positionItem.findViewById(R.id.main_listView_money_text);
+                final ImageView deleteButton = (ImageView) positionItem.findViewById(R.id.item_delete);
+
+                if (!(position == lastPosition)) {
+                    setIsAnimationEnd();
+                }
+
+                // 判断是否已经位移
+                if (!isAnimationEnd) {
+                    animator = ObjectAnimator.ofFloat(text, "translationX", text.getTranslationX(), text.getTranslationX() - 100f);
+                } else {
+                    animator = ObjectAnimator.ofFloat(text, "translationX", text.getTranslationX(), text.getTranslationX() + 100f, text.getTranslationX());
+                }
+                animator.setDuration(500);
+                animator.start();
+                animator.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animator) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animator) {
+                        deleteButton.setVisibility(View.VISIBLE);
+                        isAnimationEnd = true;
+                        ObjectAnimator.ofFloat(deleteButton, "rotationY", 90f, 0f)
+                                .setDuration(500).start();
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animator) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animator) {
+
+                    }
+                });
+
+                deleteButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        // 防止多次点击
+                        deleteButton.setClickable(false);
+                        // 删除记录
+                        MyDatabaseHelper.getInstance(getContext()).delete("Data", "id=?", new String[]{mList.get(position).getId() + ""});
+                        mList.remove(position);
+                        mDataAdapter.notifyItemRemoved(position);
+                        mDataAdapter.notifyItemRangeChanged(0, mList.size());
+                        isAnimationEnd = false;
+
+                        // 重新计算剩余预算
+                        budget();
+                    }
+                });
+
+                // 保存上一次点击的相关控件
+                lastPosition = position;
+                tmpButton = deleteButton;
+                tmpTextView = text;
             }
         });
+    }
 
+    /**
+     * 查询当天所有数据
+     */
+    private void query() {
+
+        mList.clear();
+
+        queryFixedRecord();
+
+        mCursor = MyDatabaseHelper.getInstance(getContext()).query("Data", null, "date=? and behavior=?", new String[]{mDate, mBehavior}, null, null, null);
+        while (mCursor.moveToNext()) {
+            DataBean dataBean = new DataBean();
+            dataBean.setId(mCursor.getInt(mCursor.getColumnIndex("id")));
+            dataBean.setMoney(mCursor.getString(mCursor.getColumnIndex("money")));
+            dataBean.setType(mCursor.getString(mCursor.getColumnIndex("type")));
+            dataBean.setDescribe(mCursor.getString(mCursor.getColumnIndex("describe")));
+            dataBean.setAccount(mCursor.getString(mCursor.getColumnIndex("account")));
+            dataBean.setFixed_charge(mCursor.getString(mCursor.getColumnIndex("fixed_charge")));
+            dataBean.setDate(mCursor.getString(mCursor.getColumnIndex("date")));
+            dataBean.setBehavior(mCursor.getString(mCursor.getColumnIndex("behavior")));
+            dataBean.setFixedRecord_id(mCursor.getInt(mCursor.getColumnIndex("fixedRecord_id")));
+            mList.add(dataBean);
+        }
+
+        mCursor.close();
     }
 
     /**
      * 预算的查询、计算和显示
      */
     private void budget() {
+
+        // 计算总支出
+        mCursor = MyDatabaseHelper.getInstance(getContext()).query("Data", null, "date=? and behavior=?", new String[]{mDate, mBehavior}, null, null, null);
+        while (mCursor.moveToNext())
+            totalCost += Float.parseFloat(mCursor.getString(mCursor.getColumnIndex("money")));
+        mCursor.close();
+
+        // 显示总支出/收入金额
+        String totalCostStr = formatNumber(decimalFormat.format(totalCost));
+        totalCostText.setText(totalCostStr);
+        totalCost = 0;
 
         String nowToolbarDate = mToolbar.getTitle().toString();
         String nowMonth = mDate.substring(0, mDate.length() - 3);
@@ -274,12 +403,134 @@ public class MainFragment extends Fragment {
         mCursor.close();
     }
 
+    // 获取当前日期 yyyy-MM-hh
+    private String getFormatDate(Calendar calendar) {
+        // 将calendar的时间转换为yyyy-MM-hh格式
+        return simpleDateFormat.format(calendar.getTime());
+    }
+
+    /**
+     * 查询是否有固定记录
+     */
+    private void queryFixedRecord() {
+        // 查找当前behavior是否有固定支出项
+        mCursor = MyDatabaseHelper.getInstance(getContext()).query("FixedRecord", null, "behavior=?", new String[]{mBehavior}, null, null, null);
+        // 当有固定支出项时,判断今天是否已添加,直接获取already_date的值 用当前系统时间减去差值
+        while (mCursor.moveToNext()) {
+            try {
+                // 获取最后添加的日期
+                String already_date = mCursor.getString(mCursor.getColumnIndex("already_date"));
+
+                ContentValues values = new ContentValues();
+
+                Calendar tmp_calendar = Calendar.getInstance();
+
+                tmp_calendar.setTime(new Date(simpleDateFormat.parse(already_date).getTime()));
+
+                // 计算相差天数
+                int day = (int) ((Calendar.getInstance().getTimeInMillis() - simpleDateFormat.parse(already_date).getTime()) / (24 * 60 * 60 * 1000));
+
+                // 若day > 0 , 再判断当前是周期是每日,每周还是每月
+                if (day > 0) {
+                    switch (mCursor.getString(mCursor.getColumnIndex("fixed_charge"))) {
+                        case "每日":
+                            for (int i = 0; i < day; i++) {
+
+                                // 日期+1
+                                tmp_calendar.add(Calendar.DAY_OF_MONTH, 1);
+                                already_date = getFormatDate(tmp_calendar);
+
+                                values.put("money", mCursor.getInt(mCursor.getColumnIndex("money")));
+                                values.put("type", mCursor.getString(mCursor.getColumnIndex("type")));
+                                values.put("describe", mCursor.getString(mCursor.getColumnIndex("describe")));
+                                values.put("account", mCursor.getString(mCursor.getColumnIndex("account")));
+                                values.put("fixed_charge", mCursor.getString(mCursor.getColumnIndex("fixed_charge")));
+                                values.put("date", already_date);
+                                values.put("behavior", mCursor.getString(mCursor.getColumnIndex("behavior")));
+                                values.put("fixedRecord_id", mCursor.getInt(mCursor.getColumnIndex("fixedRecord_id")));
+
+                                // 插入新数据
+                                MyDatabaseHelper.getInstance(getContext()).insert("Data", null, values);
+                                values.clear();
+                            }
+
+                            // 更新最新已添加数据日期
+                            values.put("already_date", already_date);
+                            MyDatabaseHelper.getInstance(getContext()).update("FixedRecord", values,
+                                    "fixedRecord_id = ?", new String[]{mCursor.getInt(mCursor.getColumnIndex("fixedRecord_id")) + ""});
+                            break;
+                        case "每周":
+                            for (int i = 7; i <= day; i += 7) {
+                                // 日期+7
+                                tmp_calendar.add(Calendar.DAY_OF_MONTH, 7);
+                                already_date = getFormatDate(tmp_calendar);
+
+                                values.put("money", mCursor.getInt(mCursor.getColumnIndex("money")));
+                                values.put("type", mCursor.getString(mCursor.getColumnIndex("type")));
+                                values.put("describe", mCursor.getString(mCursor.getColumnIndex("describe")));
+                                values.put("account", mCursor.getString(mCursor.getColumnIndex("account")));
+                                values.put("fixed_charge", mCursor.getString(mCursor.getColumnIndex("fixed_charge")));
+                                values.put("date", already_date);
+                                values.put("behavior", mCursor.getString(mCursor.getColumnIndex("behavior")));
+                                values.put("fixedRecord_id", mCursor.getInt(mCursor.getColumnIndex("fixedRecord_id")));
+
+                                // 插入新数据
+                                MyDatabaseHelper.getInstance(getContext()).insert("Data", null, values);
+                                values.clear();
+                            }
+
+                            // 更新最新已添加数据日期
+                            values.put("already_date", already_date);
+                            MyDatabaseHelper.getInstance(getContext()).update("FixedRecord", values,
+                                    "fixedRecord_id = ?", new String[]{mCursor.getInt(mCursor.getColumnIndex("fixedRecord_id")) + ""});
+                            break;
+                        case "每月":
+                            //  tmp_calendar.add(Calendar.MONTH, 1);
+
+                            for (tmp_calendar.add(Calendar.MONTH, 1);
+                                 tmp_calendar.getTimeInMillis() < Calendar.getInstance().getTimeInMillis();
+                                 tmp_calendar.add(Calendar.MONTH, 1)) {
+
+                                already_date = getFormatDate(tmp_calendar);
+                                Logger.i(already_date);
+
+                                values.put("money", mCursor.getInt(mCursor.getColumnIndex("money")));
+                                values.put("type", mCursor.getString(mCursor.getColumnIndex("type")));
+                                values.put("describe", mCursor.getString(mCursor.getColumnIndex("describe")));
+                                values.put("account", mCursor.getString(mCursor.getColumnIndex("account")));
+                                values.put("fixed_charge", mCursor.getString(mCursor.getColumnIndex("fixed_charge")));
+                                values.put("date", already_date);
+                                values.put("behavior", mCursor.getString(mCursor.getColumnIndex("behavior")));
+                                values.put("fixedRecord_id", mCursor.getInt(mCursor.getColumnIndex("fixedRecord_id")));
+
+                                // 插入新数据
+                                MyDatabaseHelper.getInstance(getContext()).insert("Data", null, values);
+                                values.clear();
+                            }
+                            // 更新最新已添加数据日期
+                            values.put("already_date", already_date);
+                            MyDatabaseHelper.getInstance(getContext()).update("FixedRecord", values,
+                                    "fixedRecord_id = ?", new String[]{mCursor.getInt(mCursor.getColumnIndex("fixedRecord_id")) + ""});
+
+
+                            break;
+                    }
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+        }
+        mCursor.close();
+    }
+
     /**
      * 格式化数字 舍弃小数点后为0的数字
      *
      * @param str 需要格式化的字符串
      * @return
      */
+
     private String formatNumber(String str) {
         if (str.endsWith("0"))
             str = str.substring(0, str.length() - 1);

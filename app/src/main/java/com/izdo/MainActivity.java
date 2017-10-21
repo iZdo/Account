@@ -434,8 +434,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mDatePicker.updateDate(newYear, newMonth, newDay);
                 mPopupWindow.dismiss();
                 // 重新加载数据
+
                 // 计算出选择日期与当前系统日期的相差值
-                int phaseDay = (int) (lastPosition + ((System.currentTimeMillis() - calendar.getTime().getTime()) / (1000 * 3600 * 24)));
+                long l = (System.currentTimeMillis() / (1000 * 3600 * 24) - calendar.getTimeInMillis() / (1000 * 3600 * 24));
+                int phaseDay = (int) (lastPosition + l);
+
                 MainFragment.phaseDay = phaseDay;
                 main_toolbar.setTitle(getFormatDate(calendar));
                 myFragmentPagerAdapter.notifyDataSetChanged();
