@@ -208,6 +208,7 @@
         </RelativeLayout>
 
         <View
+            android:id="@+id/divider1"
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
             android:background="#B8B8B8"/>
@@ -255,6 +256,7 @@
         </RelativeLayout>
 
         <View
+            android:id="@+id/divider2"
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
             android:background="#B8B8B8"/>

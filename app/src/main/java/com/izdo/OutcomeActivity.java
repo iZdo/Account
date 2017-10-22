@@ -309,6 +309,11 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
         mDataBean = getIntent().getParcelableExtra("dataBean");
         if (mDataBean != null) {
             ifDetails = true;
+
+            fixed_chargeLayout.setClickable(false);
+            findViewById(R.id.divider1).setVisibility(View.GONE);
+            findViewById(R.id.divider2).setVisibility(View.GONE);
+
             TextView textView = (TextView) findViewById(R.id.addOutcome);
             textView.setText("编辑支出");
             //            fixed_chargeLayout.setClickable(false);
@@ -567,6 +572,9 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
                 try {
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(simpleDateFormat.parse(already_date));
+                    // 如果是周日 则退一 (国外一周的第一天从星期天开始)
+                    if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)
+                        calendar.add(Calendar.DAY_OF_MONTH, -1);
                     calendar.set(Calendar.DAY_OF_WEEK, 2);
                     already_date = simpleDateFormat.format(calendar.getTime());
                 } catch (ParseException e) {
@@ -585,6 +593,7 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
                 }
             }
 
+            // 添加数据
             fixed_values.put("money", money);
             fixed_values.put("type", type);
             fixed_values.put("describe", describe);

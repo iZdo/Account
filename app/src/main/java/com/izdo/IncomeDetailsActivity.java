@@ -1,5 +1,6 @@
 package com.izdo;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -86,6 +87,24 @@ public class IncomeDetailsActivity extends AppCompatActivity implements View.OnC
         MyDatabaseHelper.getInstance(this).delete("Data", "id=? ", new String[]{mDataBean.getId() + ""});
     }
 
+    // 一并删除后面的记录
+    private void deleteBehindData() {
+        MyDatabaseHelper.getInstance(this).delete("Data", "id >= ? and fixedRecord_id = ?", new String[]{mDataBean.getId() + "", mDataBean.getFixedRecord_id() + ""});
+
+        // 更新以前的记录固定支出为"无"
+        ContentValues values = new ContentValues();
+        values.put("fixed_charge", "无");
+        MyDatabaseHelper.getInstance(this).update("Data", values, "fixed_charge = ?", new String[]{mDataBean.getFixed_charge() + ""});
+
+        MyDatabaseHelper.getInstance(this).delete("FixedRecord", "fixedRecord_id = ?", new String[]{mDataBean.getFixedRecord_id() + ""});
+    }
+
+    // 删除所有记录
+    private void deleteAllData() {
+        MyDatabaseHelper.getInstance(this).delete("Data", "fixedRecord_id = ?", new String[]{mDataBean.getFixedRecord_id() + ""});
+        MyDatabaseHelper.getInstance(this).delete("FixedRecord", "fixedRecord_id = ?", new String[]{mDataBean.getFixedRecord_id() + ""});
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
@@ -111,22 +130,52 @@ public class IncomeDetailsActivity extends AppCompatActivity implements View.OnC
             case R.id.income_details_delete:
                 final MyDialog myDialog = new MyDialog(this, R.style.dialog_style);
                 myDialog.setCancelable(false);
+
+                if (mDataBean.getFixed_charge().equals("无")) {
                 myDialog.initSelectDialog("确定删除记录？");
                 myDialog.show();
-                myDialog.findViewById(R.id.dialog_select_confirm).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        deleteData();
-                        finish();
-                    }
-                });
-                ;
-                myDialog.findViewById(R.id.dialog_select_cancel).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        myDialog.dismiss();
-                    }
-                });
+                    myDialog.findViewById(R.id.dialog_select_confirm).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            deleteData();
+                            myDialog.dismiss();
+                            finish();
+                        }
+                    });
+                    myDialog.findViewById(R.id.dialog_select_cancel).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            myDialog.dismiss();
+                        }
+                    });
+                } else {
+                    myDialog.initDeleteDialog();
+                    myDialog.show();
+                    myDialog.findViewById(R.id.dialog_delete_one).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            deleteData();
+                            myDialog.dismiss();
+                            finish();
+                        }
+                    });
+                    myDialog.findViewById(R.id.dialog_delete_behind).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            deleteBehindData();
+                            myDialog.dismiss();
+                            finish();
+                        }
+                    });
+                    myDialog.findViewById(R.id.dialog_delete_all).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            deleteAllData();
+                            myDialog.dismiss();
+                            finish();
+                        }
+                    });
+                }
                 break;
 
         }

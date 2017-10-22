@@ -1,5 +1,6 @@
 package com.izdo;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -86,7 +87,25 @@ public class OutcomeDetailsActivity extends AppCompatActivity implements View.On
 
     // 删除记录
     private void deleteData() {
-        MyDatabaseHelper.getInstance(this).delete("Data", "id=?", new String[]{mDataBean.getId() + ""});
+        MyDatabaseHelper.getInstance(this).delete("Data", "id = ?", new String[]{mDataBean.getId() + ""});
+    }
+
+    // 一并删除后面的记录
+    private void deleteBehindData() {
+        MyDatabaseHelper.getInstance(this).delete("Data", "id >= ? and fixedRecord_id = ?", new String[]{mDataBean.getId() + "", mDataBean.getFixedRecord_id() + ""});
+
+        // 更新以前的记录固定支出为"无"
+        ContentValues values = new ContentValues();
+        values.put("fixed_charge", "无");
+        MyDatabaseHelper.getInstance(this).update("Data", values, "fixed_charge = ?", new String[]{mDataBean.getFixed_charge() + ""});
+
+        MyDatabaseHelper.getInstance(this).delete("FixedRecord", "fixedRecord_id = ?", new String[]{mDataBean.getFixedRecord_id() + ""});
+    }
+
+    // 删除所有记录
+    private void deleteAllData() {
+        MyDatabaseHelper.getInstance(this).delete("Data", "fixedRecord_id = ?", new String[]{mDataBean.getFixedRecord_id() + ""});
+        MyDatabaseHelper.getInstance(this).delete("FixedRecord", "fixedRecord_id = ?", new String[]{mDataBean.getFixedRecord_id() + ""});
     }
 
     @Override
@@ -114,23 +133,52 @@ public class OutcomeDetailsActivity extends AppCompatActivity implements View.On
             case R.id.outcome_details_delete:
                 final MyDialog myDialog = new MyDialog(this, R.style.dialog_style);
                 myDialog.setCancelable(false);
-                myDialog.initSelectDialog("确定删除记录？");
-                myDialog.show();
-                myDialog.findViewById(R.id.dialog_select_confirm).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        deleteData();
-                        myDialog.dismiss();
-                        finish();
-                    }
-                });
-                ;
-                myDialog.findViewById(R.id.dialog_select_cancel).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        myDialog.dismiss();
-                    }
-                });
+
+                if (mDataBean.getFixed_charge().equals("无")) {
+                    myDialog.initSelectDialog("确定删除记录？");
+                    myDialog.show();
+                    myDialog.findViewById(R.id.dialog_select_confirm).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            deleteData();
+                            myDialog.dismiss();
+                            finish();
+                        }
+                    });
+                    myDialog.findViewById(R.id.dialog_select_cancel).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            myDialog.dismiss();
+                        }
+                    });
+                } else {
+                    myDialog.initDeleteDialog();
+                    myDialog.show();
+                    myDialog.findViewById(R.id.dialog_delete_one).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            deleteData();
+                            myDialog.dismiss();
+                            finish();
+                        }
+                    });
+                    myDialog.findViewById(R.id.dialog_delete_behind).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            deleteBehindData();
+                            myDialog.dismiss();
+                            finish();
+                        }
+                    });
+                    myDialog.findViewById(R.id.dialog_delete_all).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            deleteAllData();
+                            myDialog.dismiss();
+                            finish();
+                        }
+                    });
+                }
                 break;
 
         }

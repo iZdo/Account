@@ -5,8 +5,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.widget.Toast;
 
-import com.orhanobut.logger.Logger;
-
 /**
  * Created by iZdo on 2017/4/14.
  */
@@ -81,9 +79,6 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
         String sql;
-
-        Logger.i(oldVersion + "");
-        Logger.i(newVersion + "newVersion");
 
         /**
          * 2.0

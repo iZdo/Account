@@ -34,10 +34,6 @@ public class MyDialog extends Dialog {
     private TextView title;
     private TextView update_content;
     private String select;
-    //    private String[] account = {"微信", "支付宝", "现金", "其他"};
-    //    private String[] fixed_charge = {"无", "每日", "每周", "每月"};
-    //
-    //    private String[] items;
     private List<String> mList;
 
     private List<Ball> ballList;
@@ -175,14 +171,18 @@ public class MyDialog extends Dialog {
                 dismiss();
             }
         });
-
-
     }
 
     // 自定义title确认对话框
     public void initConfirmDialog(String text){
         setContentView(R.layout.dialog_confirmt);
         ((TextView) findViewById(R.id.dialog_confirm_text)).setText(text);
+    }
+
+    // 有固定支出时的删除对话框
+    public void initDeleteDialog(){
+        setContentView(R.layout.dialog_delete);
+
     }
 
     public String getSelect() {

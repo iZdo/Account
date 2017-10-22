@@ -420,13 +420,9 @@ public class MainFragment extends Fragment {
             try {
                 // 获取最后添加的日期
                 String already_date = mCursor.getString(mCursor.getColumnIndex("already_date"));
-
                 ContentValues values = new ContentValues();
-
                 Calendar tmp_calendar = Calendar.getInstance();
-
                 tmp_calendar.setTime(new Date(simpleDateFormat.parse(already_date).getTime()));
-
                 // 计算相差天数
                 int day = (int) ((Calendar.getInstance().getTimeInMillis() - simpleDateFormat.parse(already_date).getTime()) / (24 * 60 * 60 * 1000));
 
@@ -435,84 +431,29 @@ public class MainFragment extends Fragment {
                     switch (mCursor.getString(mCursor.getColumnIndex("fixed_charge"))) {
                         case "每日":
                             for (int i = 0; i < day; i++) {
-
                                 // 日期+1
                                 tmp_calendar.add(Calendar.DAY_OF_MONTH, 1);
-                                already_date = getFormatDate(tmp_calendar);
-
-                                values.put("money", mCursor.getInt(mCursor.getColumnIndex("money")));
-                                values.put("type", mCursor.getString(mCursor.getColumnIndex("type")));
-                                values.put("describe", mCursor.getString(mCursor.getColumnIndex("describe")));
-                                values.put("account", mCursor.getString(mCursor.getColumnIndex("account")));
-                                values.put("fixed_charge", mCursor.getString(mCursor.getColumnIndex("fixed_charge")));
-                                values.put("date", already_date);
-                                values.put("behavior", mCursor.getString(mCursor.getColumnIndex("behavior")));
-                                values.put("fixedRecord_id", mCursor.getInt(mCursor.getColumnIndex("fixedRecord_id")));
-
-                                // 插入新数据
-                                MyDatabaseHelper.getInstance(getContext()).insert("Data", null, values);
-                                values.clear();
+                                already_date = insertFixedRecord(values, tmp_calendar);
                             }
-
-                            // 更新最新已添加数据日期
-                            values.put("already_date", already_date);
-                            MyDatabaseHelper.getInstance(getContext()).update("FixedRecord", values,
-                                    "fixedRecord_id = ?", new String[]{mCursor.getInt(mCursor.getColumnIndex("fixedRecord_id")) + ""});
+                            updateAlreadyDate(already_date, values);
                             break;
                         case "每周":
                             for (int i = 7; i <= day; i += 7) {
                                 // 日期+7
                                 tmp_calendar.add(Calendar.DAY_OF_MONTH, 7);
-                                already_date = getFormatDate(tmp_calendar);
-
-                                values.put("money", mCursor.getInt(mCursor.getColumnIndex("money")));
-                                values.put("type", mCursor.getString(mCursor.getColumnIndex("type")));
-                                values.put("describe", mCursor.getString(mCursor.getColumnIndex("describe")));
-                                values.put("account", mCursor.getString(mCursor.getColumnIndex("account")));
-                                values.put("fixed_charge", mCursor.getString(mCursor.getColumnIndex("fixed_charge")));
-                                values.put("date", already_date);
-                                values.put("behavior", mCursor.getString(mCursor.getColumnIndex("behavior")));
-                                values.put("fixedRecord_id", mCursor.getInt(mCursor.getColumnIndex("fixedRecord_id")));
-
-                                // 插入新数据
-                                MyDatabaseHelper.getInstance(getContext()).insert("Data", null, values);
-                                values.clear();
+                                already_date = insertFixedRecord(values, tmp_calendar);
                             }
-
                             // 更新最新已添加数据日期
-                            values.put("already_date", already_date);
-                            MyDatabaseHelper.getInstance(getContext()).update("FixedRecord", values,
-                                    "fixedRecord_id = ?", new String[]{mCursor.getInt(mCursor.getColumnIndex("fixedRecord_id")) + ""});
+                            updateAlreadyDate(already_date, values);
                             break;
                         case "每月":
-                            //  tmp_calendar.add(Calendar.MONTH, 1);
-
                             for (tmp_calendar.add(Calendar.MONTH, 1);
                                  tmp_calendar.getTimeInMillis() < Calendar.getInstance().getTimeInMillis();
                                  tmp_calendar.add(Calendar.MONTH, 1)) {
-
-                                already_date = getFormatDate(tmp_calendar);
-                                Logger.i(already_date);
-
-                                values.put("money", mCursor.getInt(mCursor.getColumnIndex("money")));
-                                values.put("type", mCursor.getString(mCursor.getColumnIndex("type")));
-                                values.put("describe", mCursor.getString(mCursor.getColumnIndex("describe")));
-                                values.put("account", mCursor.getString(mCursor.getColumnIndex("account")));
-                                values.put("fixed_charge", mCursor.getString(mCursor.getColumnIndex("fixed_charge")));
-                                values.put("date", already_date);
-                                values.put("behavior", mCursor.getString(mCursor.getColumnIndex("behavior")));
-                                values.put("fixedRecord_id", mCursor.getInt(mCursor.getColumnIndex("fixedRecord_id")));
-
-                                // 插入新数据
-                                MyDatabaseHelper.getInstance(getContext()).insert("Data", null, values);
-                                values.clear();
+                                already_date = insertFixedRecord(values, tmp_calendar);
                             }
                             // 更新最新已添加数据日期
-                            values.put("already_date", already_date);
-                            MyDatabaseHelper.getInstance(getContext()).update("FixedRecord", values,
-                                    "fixedRecord_id = ?", new String[]{mCursor.getInt(mCursor.getColumnIndex("fixedRecord_id")) + ""});
-
-
+                            updateAlreadyDate(already_date, values);
                             break;
                     }
                 }
@@ -524,9 +465,34 @@ public class MainFragment extends Fragment {
         mCursor.close();
     }
 
+    private String insertFixedRecord(ContentValues values, Calendar tmp_calendar) {
+        String already_date;
+        already_date = getFormatDate(tmp_calendar);
+
+        values.put("money", mCursor.getInt(mCursor.getColumnIndex("money")));
+        values.put("type", mCursor.getString(mCursor.getColumnIndex("type")));
+        values.put("describe", mCursor.getString(mCursor.getColumnIndex("describe")));
+        values.put("account", mCursor.getString(mCursor.getColumnIndex("account")));
+        values.put("fixed_charge", mCursor.getString(mCursor.getColumnIndex("fixed_charge")));
+        values.put("date", already_date);
+        values.put("behavior", mCursor.getString(mCursor.getColumnIndex("behavior")));
+        values.put("fixedRecord_id", mCursor.getInt(mCursor.getColumnIndex("fixedRecord_id")));
+
+        // 插入新数据
+        MyDatabaseHelper.getInstance(getContext()).insert("Data", null, values);
+        values.clear();
+        return already_date;
+    }
+
+    private void updateAlreadyDate(String already_date, ContentValues values) {
+        // 更新最新已添加数据日期
+        values.put("already_date", already_date);
+        MyDatabaseHelper.getInstance(getContext()).update("FixedRecord", values,
+                "fixedRecord_id = ?", new String[]{mCursor.getInt(mCursor.getColumnIndex("fixedRecord_id")) + ""});
+    }
+
     /**
      * 格式化数字 舍弃小数点后为0的数字
-     *
      * @param str 需要格式化的字符串
      * @return
      */
