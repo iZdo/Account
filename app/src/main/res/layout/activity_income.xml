@@ -27,7 +27,7 @@
 
             <ImageView
                 android:layout_width="30dp"
-                android:layout_height="match_parent"
+                android:layout_height="30dp"
                 android:src="@drawable/icon"/>
 
             <TextView
@@ -35,9 +35,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingEnd="5dp"
+                android:paddingLeft="10dp"
                 android:text="新增收入"
                 android:textColor="#FFFFFF"
-                android:textSize="25sp"/>
+                android:textSize="20sp"/>
         </LinearLayout>
 
         <Button
@@ -152,7 +153,6 @@
             android:layout_height="0.5dp"
             android:background="#B8B8B8"/>
 
-
         <RelativeLayout
             android:id="@+id/income_accountLayout"
             android:layout_width="match_parent"
@@ -180,6 +180,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="right"
                     android:text="账户"
                     android:textColor="#2d3037"/>
 
@@ -193,6 +194,12 @@
             </LinearLayout>
 
         </RelativeLayout>
+
+        <View
+            android:id="@+id/divider1"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="#B8B8B8"/>
 
         <RelativeLayout
             android:id="@+id/income_fixed_chargeLayout"
@@ -221,7 +228,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="固定支出"
+                    android:layout_gravity="right"
+                    android:text="固定收入"
                     android:textColor="#2d3037"/>
 
                 <TextView
@@ -236,15 +244,10 @@
         </RelativeLayout>
 
         <View
+            android:id="@+id/divider2"
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
             android:background="#B8B8B8"/>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:background="#B8B8B8"/>
-
 
         <LinearLayout
             android:layout_width="match_parent"

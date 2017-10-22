@@ -17,6 +17,7 @@ public class DataBean implements Parcelable {
     private String fixed_charge;
     private String date;
     private String behavior;
+    private int fixedRecord_id;
 
     public int getId() {
         return id;
@@ -82,6 +83,14 @@ public class DataBean implements Parcelable {
         this.behavior = behavior;
     }
 
+    public int getFixedRecord_id() {
+        return fixedRecord_id;
+    }
+
+    public void setFixedRecord_id(int fixedRecord_id) {
+        this.fixedRecord_id = fixedRecord_id;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -97,6 +106,7 @@ public class DataBean implements Parcelable {
         parcel.writeString(fixed_charge);
         parcel.writeString(date);
         parcel.writeString(behavior);
+        parcel.writeInt(fixedRecord_id);
     }
 
     public static final Parcelable.Creator<DataBean> CREATOR = new Parcelable.Creator<DataBean>() {
@@ -112,6 +122,7 @@ public class DataBean implements Parcelable {
             dataBean.fixed_charge = parcel.readString();
             dataBean.date = parcel.readString();
             dataBean.behavior = parcel.readString();
+            dataBean.fixedRecord_id = parcel.readInt();
             return dataBean;
         }
 

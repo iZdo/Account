@@ -25,7 +25,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
      * date 日期
      * behavior 收入/支出
      */
-    public static final String CREATE_DATA = "create table Data(" +
+    public static final String CREATE_DATA = "create table if not exists Data(" +
             "id integer primary key autoincrement," +
             "money text," +
             "type text," +
@@ -35,9 +35,24 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
             "date text," +
             "behavior text)";
 
-    public static final String CREATE_BUDGET = "create table Budget(" +
+    public static final String CREATE_BUDGET = "create table if not exists Budget(" +
             "total text," +
             "date text)";
+
+    public static final String CREATE_ACCOUNT = "create table if not exists Account(" +
+            "account_id integer primary key autoincrement," +
+            "account text)";
+
+    public static final String CREATE_FIXED_RECORD = "create table if not exists FixedRecord(" +
+            "fixedRecord_id integer primary key autoincrement," +
+            "money text," +
+            "type text," +
+            "describe text," +
+            "account text," +
+            "fixed_charge text," +
+            "start_date text," +
+            "already_date text," +
+            "behavior text)";
 
     private MyDatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
@@ -47,7 +62,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         mContext = context;
 
         if (mDatabaseHelper == null)
-            mDatabaseHelper = new MyDatabaseHelper(context, "Account.db", null, 2);
+            mDatabaseHelper = new MyDatabaseHelper(context, "Account.db", null, 4);
 
         return mDatabaseHelper.getWritableDatabase();
     }
@@ -56,17 +71,63 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(CREATE_DATA);
         sqLiteDatabase.execSQL(CREATE_BUDGET);
+
+        onUpgrade(sqLiteDatabase, sqLiteDatabase.getVersion(), 4);
+
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-        String sql = "update Data set type = '话费' where type = '花费'";
-        sqLiteDatabase.execSQL(sql);
+    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
+        String sql;
 
-        sql = "update Data set type = '其它支出' where type = '日常用品' or type = '衣物' or type = '礼金' or type = '信用卡' and behavior = 'outcome'";
-        sqLiteDatabase.execSQL(sql);
-        sql = "update Data set type = '其它收入' where type = '日常用品' or type = '衣物' or type = '礼金' or type = '信用卡' and behavior = 'income'";
-        sqLiteDatabase.execSQL(sql);
+        /**
+         * 2.0
+         * 修复文字bug
+         * 更改选项
+         */
+        if (oldVersion < 2) {
+            sql = "update Data set type = '话费' where type = '花费'";
+            sqLiteDatabase.execSQL(sql);
+
+            sql = "update Data set type = '其它支出' where type = '日常用品' or type = '衣物' or type = '礼金' or type = '信用卡' and behavior = 'outcome'";
+            sqLiteDatabase.execSQL(sql);
+            sql = "update Data set type = '其它收入' where type = '日常用品' or type = '衣物' or type = '礼金' or type = '信用卡' and behavior = 'income'";
+            sqLiteDatabase.execSQL(sql);
+        }
+
+        /**
+         * 3.0
+         * 创建账户表
+         * 插入默认列
+         */
+        if (oldVersion < 3) {
+            sqLiteDatabase.execSQL(CREATE_ACCOUNT);
+
+            sql = "insert into account(account) values" +
+                    "('微信')," +
+                    "('支付宝')," +
+                    "('现金')," +
+                    "('其他')";
+            sqLiteDatabase.execSQL(sql);
+        }
+
+        /**
+         * 4.0
+         * 为Data插入fixedRecord_id字段
+         * 新建FixedRecord表
+         */
+        if (oldVersion < 4) {
+            // 插入新字段
+            sql = "alter table Data add column fixedRecord_id integer";
+            sqLiteDatabase.execSQL(sql);
+
+            // 将字段设置为0
+            sql = "update Data set fixedRecord_id = 0";
+            sqLiteDatabase.execSQL(sql);
+
+            // 插入新表
+            sqLiteDatabase.execSQL(CREATE_FIXED_RECORD);
+        }
 
         Toast.makeText(mContext, "数据库升级成功!", Toast.LENGTH_SHORT).show();
     }

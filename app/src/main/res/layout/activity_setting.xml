@@ -23,7 +23,7 @@
 
             <ImageView
                 android:layout_width="30dp"
-                android:layout_height="match_parent"
+                android:layout_height="30dp"
                 android:src="@drawable/icon"/>
 
             <TextView
@@ -31,22 +31,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingEnd="5dp"
+                android:paddingLeft="10dp"
                 android:text="设定"
                 android:textColor="#FFFFFF"
-                android:textSize="25sp"/>
+                android:textSize="20sp"/>
         </LinearLayout>
-
-        <Button
-            android:id="@+id/outcome_save"
-            android:layout_width="50dp"
-            android:layout_height="30dp"
-            android:layout_alignParentEnd="true"
-            android:layout_marginRight="15dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/save_outcome_selector"
-            android:text="储存"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp"/>
 
     </RelativeLayout>
 
@@ -57,7 +46,7 @@
         android:orientation="vertical">
 
         <LinearLayout
-            android:id="@+id/setting_budget_setting"
+            android:id="@+id/budget_setting"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
@@ -66,21 +55,29 @@
             android:paddingLeft="15dp">
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/ic_launcher"/>
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center_vertical"
+                android:padding="5dp"
+                android:src="@drawable/setting_budget"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:paddingLeft="10dp"
-                android:text="预算编列"
+                android:text="预算设置"
                 android:textColor="#000000"
-                android:textSize="20sp"/>
+                android:textSize="18sp"/>
         </LinearLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="#B8B8B8"/>
+
         <LinearLayout
+            android:id="@+id/account_manage"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
@@ -89,9 +86,11 @@
             android:paddingLeft="15dp">
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/ic_launcher"/>
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center_vertical"
+                android:padding="8dp"
+                android:src="@drawable/account_black"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -100,9 +99,57 @@
                 android:paddingLeft="10dp"
                 android:text="帐户管理"
                 android:textColor="#000000"
-                android:textSize="20sp"/>
+                android:textSize="18sp"/>
 
         </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="#B8B8B8"/>
+
+        <!-- <LinearLayout
+             android:layout_width="match_parent"
+             android:layout_height="0dp"
+             android:layout_weight="1"
+             android:background="@drawable/rela_outcome_selector"
+             android:clickable="true"
+             android:paddingLeft="15dp"
+             android:paddingRight="15dp">
+
+             <LinearLayout
+                 android:layout_width="0dp"
+                 android:layout_height="match_parent"
+                 android:layout_weight="1">
+
+                 <ImageView
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:src="@mipmap/ic_launcher"/>
+
+                 <TextView
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:layout_gravity="center"
+                     android:paddingLeft="10dp"
+                     android:text="货币选择"
+                     android:textColor="#000000"
+                     android:textSize="18sp"/>
+             </LinearLayout>
+
+             <TextView
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:layout_gravity="center"
+                 android:text="CNY"
+                 android:textColor="#000000"
+                 android:textSize="18sp"/>
+         </LinearLayout>
+
+         <View
+             android:layout_width="match_parent"
+             android:layout_height="0.5dp"
+             android:background="#B8B8B8"/>-->
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -121,44 +168,7 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@mipmap/ic_launcher"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:paddingLeft="10dp"
-                    android:text="货币选择"
-                    android:textColor="#000000"
-                    android:textSize="20sp"/>
-            </LinearLayout>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="CNY"
-                android:textColor="#000000"
-                android:textSize="20sp"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:background="@drawable/rela_outcome_selector"
-            android:clickable="true"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp">
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:src="@mipmap/ic_launcher"/>
 
                 <TextView
@@ -168,7 +178,7 @@
                     android:paddingLeft="10dp"
                     android:text="密码设定"
                     android:textColor="#000000"
-                    android:textSize="20sp"/>
+                    android:textSize="18sp"/>
             </LinearLayout>
 
             <Switch
@@ -177,6 +187,39 @@
 
         </LinearLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="#B8B8B8"/>
+
+        <!-- <LinearLayout
+             android:layout_width="match_parent"
+             android:layout_height="0dp"
+             android:layout_weight="1"
+             android:background="@drawable/rela_outcome_selector"
+             android:clickable="true"
+             android:paddingLeft="15dp">
+
+             <ImageView
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:src="@mipmap/ic_launcher"/>
+
+             <TextView
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:layout_gravity="center"
+                 android:paddingLeft="10dp"
+                 android:text="类别管理"
+                 android:textColor="#000000"
+                 android:textSize="18sp"/>
+         </LinearLayout>
+
+         <View
+             android:layout_width="match_parent"
+             android:layout_height="0.5dp"
+             android:background="#B8B8B8"/>-->
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -188,29 +231,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/ic_launcher"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:paddingLeft="10dp"
-                android:text="类别管理"
-                android:textColor="#000000"
-                android:textSize="20sp"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:background="@drawable/rela_outcome_selector"
-            android:clickable="true"
-            android:paddingLeft="15dp">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:src="@mipmap/ic_launcher"/>
 
             <TextView
@@ -220,10 +241,47 @@
                 android:paddingLeft="10dp"
                 android:text="备份/还原"
                 android:textColor="#000000"
-                android:textSize="20sp"/>
+                android:textSize="18sp"/>
         </LinearLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="#B8B8B8"/>
+
         <LinearLayout
+            android:id="@+id/update_announcement"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@drawable/rela_outcome_selector"
+            android:clickable="true"
+            android:paddingLeft="15dp">
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center_vertical"
+                android:padding="5dp"
+                android:src="@drawable/setting_announcement"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:paddingLeft="10dp"
+                android:text="更新公告"
+                android:textColor="#000000"
+                android:textSize="18sp"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="#B8B8B8"/>
+
+        <LinearLayout
+            android:id="@+id/about"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
@@ -234,6 +292,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:src="@mipmap/ic_launcher"/>
 
             <TextView
@@ -244,8 +303,13 @@
                 android:paddingLeft="10dp"
                 android:text="关于"
                 android:textColor="#000000"
-                android:textSize="20sp"/>
+                android:textSize="18sp"/>
         </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="#B8B8B8"/>
 
         <LinearLayout
             android:layout_width="match_parent"

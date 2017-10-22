@@ -1,4 +1,4 @@
-package com.izdo.Bean;
+package com.izdo.Util;
 
 import com.izdo.R;
 

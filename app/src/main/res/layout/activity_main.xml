@@ -48,19 +48,16 @@
                     android:layout_height="match_parent"
                     android:gravity="center|start">
 
-                    <ImageView
-                        android:id="@+id/imageView"
+                    <com.gelitenight.waveview.library.WaveView
+                        android:id="@+id/waveView"
                         android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_alignParentStart="true"
-                        android:layout_alignParentTop="true"
-                        android:src="@drawable/budget"/>
+                        android:layout_height="40dp"/>
 
                     <TextView
                         android:id="@+id/percent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/imageView"
+                        android:layout_below="@id/waveView"
                         android:layout_centerInParent="true"/>
 
                 </RelativeLayout>
@@ -70,18 +67,18 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_alignParentEnd="true"
-                    android:layout_toRightOf="@id/budgetImgLayout"
+                    android:layout_centerVertical="true"
                     android:gravity="top|end">
 
                     <!--<TextView-->
-                        <!--android:id="@+id/currency"-->
-                        <!--android:layout_width="wrap_content"-->
-                        <!--android:layout_height="50dp"-->
-                        <!--android:gravity="center"-->
-                        <!--android:text="¥ "-->
-                        <!--android:textColor="#000000"-->
-                        <!--android:textSize="35sp"/>
-                        android:layout_toRightOf="@id/currency"-->
+                    <!--android:id="@+id/currency"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="50dp"-->
+                    <!--android:gravity="center"-->
+                    <!--android:text="¥ "-->
+                    <!--android:textColor="#000000"-->
+                    <!--android:textSize="35sp"/>
+                    android:layout_toRightOf="@id/currency"-->
 
                     <me.grantland.widget.AutofitTextView
                         android:id="@+id/surplus_budget"
@@ -142,9 +139,9 @@
             android:layout_width="245dp"
             android:layout_height="match_parent"
             android:layout_gravity="start"
-            app:itemTextColor="@color/colorMenu"
-            app:itemIconTint="@color/colorMenu"
             android:background="@color/colorMainNormal"
+            app:itemIconTint="@color/colorMenu"
+            app:itemTextColor="@color/colorMenu"
             app:menu="@menu/nav_menu"/>
 
     </android.support.v4.widget.DrawerLayout>

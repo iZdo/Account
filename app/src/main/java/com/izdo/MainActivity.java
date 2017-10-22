@@ -2,6 +2,7 @@ package com.izdo;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -27,6 +28,7 @@ import android.widget.TextView;
 import com.izdo.Adapter.MyFragmentPagerAdapter;
 import com.izdo.DataBase.MyDatabaseHelper;
 import com.izdo.Util.Constant;
+import com.izdo.Util.MyDialog;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -81,8 +83,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        showUpdateAnnouncement();
+
         init();
     }
+
+    private void showUpdateAnnouncement() {
+
+        SharedPreferences mSharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
+
+        if (!mSharedPreferences.getBoolean("isNoLongerPrompt", false)) {
+            MyDialog myDialog = new MyDialog(this, R.style.dialog_style);
+            myDialog.initUpdateDialog();
+            myDialog.setCancelable(false);
+            myDialog.show();
+        }
+    }
+
 
     // 初始化控件
     private void init() {
@@ -103,14 +120,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         // 初始化月预算
         initBudget();
+        setBudgetData();
 
         mViewPager = (ViewPager) findViewById(R.id.main_viewpager);
         mViewList = new ArrayList<>();
 
         // 加载数据
         setViewPager();
+    }
 
-        //        showBudget();
+    private void setBudgetData() {
+
+        SharedPreferences mSharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
+        BudgetSettingActivity.isAddIncome = mSharedPreferences.getBoolean("isAddIncome", false);
+        BudgetSettingActivity.isShowBudget = mSharedPreferences.getBoolean("isShowBudget", true);
+
     }
 
     // 初始化月预算
@@ -133,18 +157,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // 将calendar的时间转换为yyyy-MM-hh格式
         return simpleDateFormat.format(calendar.getTime());
     }
-
-    // TODO
-    // 显示预算
-    //    private void showBudget() {
-    //        String query = main_toolbar.getTitle().toString();
-    //        query = query.substring(0, query.length() - 3);
-    //        Cursor cursor = mSQLiteDatabase.query("Budget", null, "date = ? ", new String[]{query}, null, null, null);
-    //        while (cursor.moveToNext()) {
-    //            totalBudget.setText(cursor.getString(cursor.getColumnIndex("total")));
-    //            surplusBudget.setText(cursor.getString(cursor.getColumnIndex("surplus")));
-    //        }
-    //    }
 
     /**
      * 为ViewPager添加数据并设置适配器和监听器
@@ -217,6 +229,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         // 选中设置默认选中的item
         mNavigationView.setCheckedItem(R.id.outcome_item);
+
         // item监听
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -337,6 +350,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onCreateOptionsMenu(Menu menu) {
         // 加载toolbar menu
         getMenuInflater().inflate(R.menu.toolbar_menu, menu);
+
         return true;
     }
 
@@ -396,7 +410,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onBackPressed() {
-        if(mDrawerLayout.isDrawerOpen(GravityCompat.START)){
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             mDrawerLayout.closeDrawers();
             return;
         }
@@ -409,7 +423,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.main_toolbar:
                 calendar = Calendar.getInstance();
 
-                MainFragment.phaseDay=lastPosition;
+                MainFragment.phaseDay = lastPosition;
                 main_toolbar.setTitle(getFormatDate(calendar));
                 myFragmentPagerAdapter.notifyDataSetChanged();
 
@@ -420,9 +434,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mDatePicker.updateDate(newYear, newMonth, newDay);
                 mPopupWindow.dismiss();
                 // 重新加载数据
+
                 // 计算出选择日期与当前系统日期的相差值
-                int phaseDay = (int) (lastPosition + ((System.currentTimeMillis() - calendar.getTime().getTime()) / (1000 * 3600 * 24)));
-                MainFragment.phaseDay=phaseDay;
+                long l = (System.currentTimeMillis() / (1000 * 3600 * 24) - calendar.getTimeInMillis() / (1000 * 3600 * 24));
+                int phaseDay = (int) (lastPosition + l);
+
+                MainFragment.phaseDay = phaseDay;
                 main_toolbar.setTitle(getFormatDate(calendar));
                 myFragmentPagerAdapter.notifyDataSetChanged();
                 break;

@@ -1,7 +1,7 @@
 package com.izdo;
 
+import android.content.ContentValues;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -11,9 +11,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.izdo.Bean.DataBean;
-import com.izdo.Bean.TypeMap;
 import com.izdo.DataBase.MyDatabaseHelper;
 import com.izdo.Util.MyDialog;
+import com.izdo.Util.TypeMap;
 
 /**
  * Created by zz on 2017/4/27.
@@ -37,8 +37,6 @@ public class IncomeDetailsActivity extends AppCompatActivity implements View.OnC
     private TypeMap mTypeMap;
 
     private boolean back = false;
-    private SQLiteDatabase mSQLiteDatabase;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,8 +84,25 @@ public class IncomeDetailsActivity extends AppCompatActivity implements View.OnC
 
     // 删除记录
     private void deleteData() {
-        mSQLiteDatabase = MyDatabaseHelper.getInstance(this);
-        mSQLiteDatabase.delete("Data", "id=? ", new String[]{mDataBean.getId() + ""});
+        MyDatabaseHelper.getInstance(this).delete("Data", "id=? ", new String[]{mDataBean.getId() + ""});
+    }
+
+    // 一并删除后面的记录
+    private void deleteBehindData() {
+        MyDatabaseHelper.getInstance(this).delete("Data", "id >= ? and fixedRecord_id = ?", new String[]{mDataBean.getId() + "", mDataBean.getFixedRecord_id() + ""});
+
+        // 更新以前的记录固定支出为"无"
+        ContentValues values = new ContentValues();
+        values.put("fixed_charge", "无");
+        MyDatabaseHelper.getInstance(this).update("Data", values, "fixed_charge = ?", new String[]{mDataBean.getFixed_charge() + ""});
+
+        MyDatabaseHelper.getInstance(this).delete("FixedRecord", "fixedRecord_id = ?", new String[]{mDataBean.getFixedRecord_id() + ""});
+    }
+
+    // 删除所有记录
+    private void deleteAllData() {
+        MyDatabaseHelper.getInstance(this).delete("Data", "fixedRecord_id = ?", new String[]{mDataBean.getFixedRecord_id() + ""});
+        MyDatabaseHelper.getInstance(this).delete("FixedRecord", "fixedRecord_id = ?", new String[]{mDataBean.getFixedRecord_id() + ""});
     }
 
     @Override
@@ -113,23 +128,54 @@ public class IncomeDetailsActivity extends AppCompatActivity implements View.OnC
                 startActivityForResult(intent, 1);
                 break;
             case R.id.income_details_delete:
-                final MyDialog accountDialog = new MyDialog(this, R.style.dialog_style, "delete");
-                accountDialog.show();
-                Button confirm = (Button) accountDialog.findViewById(R.id.dialog_delete_confirm);
-                Button cancel = (Button) accountDialog.findViewById(R.id.dialog_delete_cancel);
-                confirm.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        deleteData();
-                        finish();
-                    }
-                });
-                cancel.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        accountDialog.dismiss();
-                    }
-                });
+                final MyDialog myDialog = new MyDialog(this, R.style.dialog_style);
+                myDialog.setCancelable(false);
+
+                if (mDataBean.getFixed_charge().equals("无")) {
+                myDialog.initSelectDialog("确定删除记录？");
+                myDialog.show();
+                    myDialog.findViewById(R.id.dialog_select_confirm).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            deleteData();
+                            myDialog.dismiss();
+                            finish();
+                        }
+                    });
+                    myDialog.findViewById(R.id.dialog_select_cancel).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            myDialog.dismiss();
+                        }
+                    });
+                } else {
+                    myDialog.initDeleteDialog();
+                    myDialog.show();
+                    myDialog.findViewById(R.id.dialog_delete_one).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            deleteData();
+                            myDialog.dismiss();
+                            finish();
+                        }
+                    });
+                    myDialog.findViewById(R.id.dialog_delete_behind).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            deleteBehindData();
+                            myDialog.dismiss();
+                            finish();
+                        }
+                    });
+                    myDialog.findViewById(R.id.dialog_delete_all).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            deleteAllData();
+                            myDialog.dismiss();
+                            finish();
+                        }
+                    });
+                }
                 break;
 
         }

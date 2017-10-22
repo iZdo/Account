@@ -15,10 +15,10 @@
         android:textSize="20sp"/>
 
     <Button
-        android:id="@+id/dialog_save_button"
+        android:id="@+id/dialog_confirm_button"
         android:background="@drawable/save_outcome_selector"
         android:textColor="#ffffff"
-        android:text="确定"
+        android:text="朕知道了"
         android:layout_gravity="center"
         android:layout_width="70dp"
         android:layout_height="30dp"/>

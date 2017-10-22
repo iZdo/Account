@@ -63,7 +63,7 @@
                 android:background="@drawable/viewpager_radiobutton_selector"
                 android:button="@null"
                 android:drawablePadding="5dp"
-                android:drawableTop="@drawable/gift__black"
+                android:drawableTop="@drawable/gift_black"
                 android:gravity="center"
                 android:text="礼物"
                 android:textColor="#2d3037"/>
@@ -89,7 +89,7 @@
                 android:background="@drawable/viewpager_radiobutton_selector"
                 android:button="@null"
                 android:drawablePadding="5dp"
-                android:drawableTop="@drawable/trasfer_black"
+                android:drawableTop="@drawable/transfer_black"
                 android:gravity="center"
                 android:text="转账"
                 android:textColor="#2d3037"/>
@@ -187,7 +187,7 @@
                 android:background="@drawable/viewpager_radiobutton_selector"
                 android:button="@null"
                 android:drawablePadding="5dp"
-                android:drawableTop="@drawable/trasfer_black"
+                android:drawableTop="@drawable/transfer_black"
                 android:gravity="center"
                 android:text="转账"
                 android:textColor="#2d3037"/>-->
