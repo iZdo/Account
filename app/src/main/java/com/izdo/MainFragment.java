@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.chaychan.viewlib.NumberRunningTextView;
 import com.gelitenight.waveview.library.WaveView;
 import com.izdo.Adapter.MyDataAdapter;
 import com.izdo.Bean.DataBean;
@@ -25,7 +26,6 @@ import com.izdo.DataBase.MyDatabaseHelper;
 import com.izdo.Util.Constant;
 import com.izdo.Util.InitData;
 import com.izdo.Util.WaveHelper;
-import com.orhanobut.logger.Logger;
 
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -52,7 +52,7 @@ public class MainFragment extends Fragment {
     private RecyclerView mRecyclerView;
 
     private TextView totalCostText;
-    private TextView surplusBudgeText;
+    private NumberRunningTextView surplusBudgeText;
     private TextView totalBudgetText;
     private TextView percentText;
     private float totalCost = 0;
@@ -116,7 +116,7 @@ public class MainFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        surplusBudgeText = (TextView) getActivity().findViewById(R.id.surplus_budget);
+        surplusBudgeText = (NumberRunningTextView) getActivity().findViewById(R.id.surplus_budget);
         totalBudgetText = (TextView) getActivity().findViewById(R.id.total_budget);
         percentText = (TextView) getActivity().findViewById(R.id.percent);
         mToolbar = (Toolbar) getActivity().findViewById(main_toolbar);
@@ -179,6 +179,7 @@ public class MainFragment extends Fragment {
 
     /**
      * 设置日期
+     *
      * @param position 当前fragment所在position
      */
     public void setDate(int position) {
@@ -243,7 +244,6 @@ public class MainFragment extends Fragment {
         mDataAdapter.setOnItemLongClickListener(new MyDataAdapter.OnItemLongClickListener() {
             @Override
             public void onItemLongClick(View view, final int position) {
-                Logger.i(position + "");
                 View positionItem = mLayoutManager.findViewByPosition(position);
                 final TextView text = (TextView) positionItem.findViewById(R.id.main_listView_money_text);
                 final ImageView deleteButton = (ImageView) positionItem.findViewById(R.id.item_delete);
@@ -387,7 +387,13 @@ public class MainFragment extends Fragment {
         String surplusBudgetStr = formatNumber(decimalFormat.format(surplus));
 
         if (nowToolbarDate.substring(0, nowToolbarDate.length() - 3).equals(nowMonth)) {
-            surplusBudgeText.setText("¥ " + surplusBudgetStr);
+            TextView sign = (TextView) getActivity().findViewById(R.id.sign);
+            if (surplusBudgetStr.startsWith("-")) {
+                sign.setText("¥-");
+            }else{
+                sign.setText("¥");
+            }
+            surplusBudgeText.setContent(surplusBudgetStr);
 
             // 计算百分比
             percent = (int) ((surplus / Integer.parseInt(totalBudget.trim())) * 100);
@@ -493,6 +499,7 @@ public class MainFragment extends Fragment {
 
     /**
      * 格式化数字 舍弃小数点后为0的数字
+     *
      * @param str 需要格式化的字符串
      * @return
      */

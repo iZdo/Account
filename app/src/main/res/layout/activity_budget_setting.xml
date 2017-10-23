@@ -66,7 +66,7 @@
             android:background="@drawable/budget_setting_calclayout_selector"
             android:clickable="true"
             android:gravity="center|end"
-            android:maxLength="20"
+            android:maxLength="10"
             android:maxLines="1"
             android:paddingRight="10dp"
             android:text="¥0"

@@ -70,7 +70,7 @@
             android:background="@drawable/outcome_calclayout_selector"
             android:clickable="true"
             android:gravity="center|end"
-            android:maxLength="20"
+            android:maxLength="12"
             android:maxLines="1"
             android:paddingRight="10dp"
             android:text="¥0"

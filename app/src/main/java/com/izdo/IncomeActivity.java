@@ -151,6 +151,7 @@ public class IncomeActivity extends Activity implements View.OnClickListener {
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
 
         myDialog = new MyDialog(this, R.style.dialog_style);
+        myDialog.setCancelable(false);
 
         // 与弹出窗口有关的控件需要在初始化弹出窗口后再初始化
         one = (Button) mCalculatorView.findViewById(R.id.one);
@@ -534,22 +535,18 @@ public class IncomeActivity extends Activity implements View.OnClickListener {
                 finish();
                 break;
             case R.id.income_save:
-                if (showIncome.getText().toString().substring(1, 2).equals("0") && typeId == 0) {
+                if (Float.parseFloat(showIncome.getText().toString().substring(1)) <= 0 && typeId == 0) {
                     myDialog.initSaveButtonDialog("金额和类别");
-                    myDialog.setCancelable(false);
                     myDialog.show();
                     break;
                 }
-                if (showIncome.getText().toString().substring(1, 2).equals("0")) {
-                    myDialog.initSaveButtonDialog("金额");
-                    myDialog.setCancelable(false);
+                if (Float.parseFloat(showIncome.getText().toString().substring(1)) <= 0) {
+                    myDialog.initSaveButtonDialog("正确的金额");
                     myDialog.show();
                     break;
                 }
                 if (typeId == 0) {
-
                     myDialog.initSaveButtonDialog("类别");
-                    myDialog.setCancelable(false);
                     myDialog.show();
                     break;
                 }

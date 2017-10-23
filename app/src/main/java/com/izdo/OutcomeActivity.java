@@ -666,13 +666,13 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
                 finish();
                 break;
             case R.id.outcome_save:
-                if (showOutcome.getText().toString().substring(1, 2).equals("0") && typeId == 0) {
+                if (Float.parseFloat(showOutcome.getText().toString().substring(1)) <= 0 && typeId == 0) {
                     myDialog.initSaveButtonDialog("金额和类别");
                     myDialog.show();
                     break;
                 }
-                if (showOutcome.getText().toString().substring(1, 2).equals("0")) {
-                    myDialog.initSaveButtonDialog("金额");
+                if (Float.parseFloat(showOutcome.getText().toString().substring(1)) <= 0) {
+                    myDialog.initSaveButtonDialog("正确的金额");
                     myDialog.show();
                     break;
                 }
