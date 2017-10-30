@@ -27,7 +27,12 @@ public class InitData {
     public static boolean isShowBudget;
     public static boolean isNoLongerPrompt;
 
+    public static String picPath;
+
     public static List<String> dataList = new ArrayList<>();
+
+    // 标记是否已经登录
+    public static boolean isLogin = false;
 
     public static void init(Context context) {
         mSharedPreferences = context.getSharedPreferences("data", MODE_PRIVATE);
@@ -38,6 +43,11 @@ public class InitData {
         isShowBudget = mSharedPreferences.getBoolean("isShowBudget", true);
         isNoLongerPrompt = mSharedPreferences.getBoolean("isNoLongerPrompt", false);
 
+        setPic();
+    }
+
+    public static void setPic() {
+        picPath = mSharedPreferences.getString("picPath", "");
     }
 
     /**

@@ -49,15 +49,15 @@ public class AddAccountActivity extends AppCompatActivity {
                 String account_name = addAccountEdit.getText().toString();
 
                 if (TextUtils.isEmpty(account_name)||account_name.equals("\n")||account_name.equals(" ")) {
-                    myDialog.initConfirmDialog("账户名不能为空!");
+                    myDialog.initConfirmDialog("账号名不能为空!");
                     setDialogOnClickListener();
                     myDialog.show();
                 } else {
                     values.put("account", account_name);
 
-                    // 查询账户名是否已存在
+                    // 查询账号名是否已存在
                     if (MyDatabaseHelper.getInstance(AddAccountActivity.this).query("Account", null, "account=?", new String[]{account_name}, null, null, null).getCount() > 0) {
-                        myDialog.initConfirmDialog("此账户已存在!");
+                        myDialog.initConfirmDialog("此账号已存在!");
                         setDialogOnClickListener();
                         myDialog.show();
                     } else {

@@ -64,7 +64,7 @@ public class EditAccountActivity extends AppCompatActivity implements View.OnCli
     }
 
     private void queryData() {
-        // 查询账户名是否已存在
+        // 查询账号名是否已存在
         if (MyDatabaseHelper.getInstance(EditAccountActivity.this).query("Account", null, "account=?", new String[]{accountEditText.getText().toString()}, null, null, null).getCount() > 0) {
             isExist = true;
             myDialog.initConfirmDialog("此账户已存在!");

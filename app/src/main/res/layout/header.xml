@@ -10,15 +10,17 @@
         android:id="@+id/user_header"
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:src="@mipmap/ic_launcher"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"/>
+        android:layout_marginTop="10dp"
+        android:clickable="true"
+        android:src="@mipmap/ic_launcher"/>
 
     <TextView
         android:id="@+id/username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:text="李大爷"/>
+        android:layout_centerHorizontal="true"
+        android:text="您还没有登录"/>
 
 </RelativeLayout>

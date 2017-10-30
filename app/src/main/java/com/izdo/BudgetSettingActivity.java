@@ -215,7 +215,6 @@ public class BudgetSettingActivity extends AppCompatActivity implements View.OnC
                     new String[]{dateStr}, null, null, null);
         }
         cursor.moveToNext();
-//        Logger.i(cursor.getString(cursor.getColumnIndex("date")));
         showBudget.setText("¥" + cursor.getString(cursor.getColumnIndex("total")));
 
 

@@ -281,6 +281,37 @@
             android:background="#B8B8B8"/>
 
         <LinearLayout
+            android:id="@+id/check_update"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@drawable/rela_outcome_selector"
+            android:clickable="true"
+            android:paddingLeft="15dp">
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center_vertical"
+                android:padding="5dp"
+                android:src="@drawable/setting_update"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:paddingLeft="10dp"
+                android:text="检查更新"
+                android:textColor="#000000"
+                android:textSize="18sp"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="#B8B8B8"/>
+
+        <LinearLayout
             android:id="@+id/about"
             android:layout_width="match_parent"
             android:layout_height="0dp"

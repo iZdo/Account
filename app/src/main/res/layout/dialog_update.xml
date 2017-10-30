@@ -7,11 +7,11 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="350dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
         android:background="@color/colorMainNormal"
         android:orientation="vertical"
-        android:padding="5dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true">
+        android:padding="5dp">
 
 
         <TextView
@@ -20,12 +20,12 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:padding="10dp"
-            android:textColor="#707070"
+            android:textColor="#696969"
             android:textSize="20sp"/>
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="0.5dp"
+            android:layout_height="1dp"
             android:background="#B8B8B8"/>
 
         <ScrollView
@@ -40,13 +40,13 @@
                 android:layout_height="250dp"
                 android:lineSpacingExtra="8dp"
                 android:paddingTop="5dp"
-                android:textColor="#707070"/>
+                android:textColor="#696969"/>
 
         </ScrollView>
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="0.5dp"
+            android:layout_height="1dp"
             android:background="#B8B8B8"/>
 
         <RelativeLayout
@@ -63,7 +63,7 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="5dp"
                 android:text="不再提示"
-                android:textColor="#707070"/>
+                android:textColor="#696969"/>
 
             <TextView
                 android:id="@+id/dialog_confirm"
@@ -73,7 +73,7 @@
                 android:layout_gravity="center"
                 android:clickable="true"
                 android:text="朕知道了"
-                android:textColor="#707070"
+                android:textColor="#696969"
                 android:textSize="20sp"/>
 
         </RelativeLayout>
