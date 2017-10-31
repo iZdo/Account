@@ -30,7 +30,6 @@ import android.widget.DatePicker;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.izdo.Adapter.MyFragmentPagerAdapter;
 import com.izdo.Bean.User;
@@ -207,10 +206,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             bmobFile.download(new DownloadFileListener() {
                                 @Override
                                 public void done(String path, BmobException e) {
+                                    SharedPreferences.Editor mEditor = getSharedPreferences("data", MODE_PRIVATE).edit();
+                                    mEditor.putString("picPath", path);
+                                    mEditor.commit();
                                     InitData.picPath = path;
                                     setHeader();
                                 }
-
                                 @Override
                                 public void onProgress(Integer integer, long l) {
 
@@ -588,8 +589,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.user_header:
                 if (InitData.isLogin) {
                     // 如果已经登录 跳转到个人设置页面
-                    //                    startActivity(new Intent(MainActivity.this, MineActivity.class));
-                    Toast.makeText(this, "后续开放", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(MainActivity.this, MineActivity.class));
+                    //                    Toast.makeText(this, "后续开放", Toast.LENGTH_SHORT).show();
                 } else {
                     // 如果未登录 跳转到登录注册页面
                     startActivity(new Intent(MainActivity.this, LoginActivity.class));

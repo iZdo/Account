@@ -27,14 +27,12 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
     private LinearLayout updateAnnouncement;
     private LinearLayout checkUpdate;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
 
         init();
-
     }
 
     private void init() {
@@ -49,7 +47,6 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         accountManage.setOnClickListener(this);
         updateAnnouncement.setOnClickListener(this);
         checkUpdate.setOnClickListener(this);
-
     }
 
     // android6.0动态申请权限 写入sd卡权限
@@ -67,7 +64,6 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         } else {
             // 有权限直接调用更新方法
             BmobUpdateAgent.forceUpdate(this);
-            Logger.i("有权限直接调用更新方法");
         }
     }
 
@@ -113,13 +109,12 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                 BmobUpdateAgent.setUpdateListener(new BmobUpdateListener() {
                     @Override
                     public void onUpdateReturned(int updateStatus, UpdateResponse updateResponse) {
+                        Logger.i(updateStatus + "");
                         if (updateStatus == UpdateStatus.No) {
                             Toast.makeText(SettingActivity.this, "当前已是最新版本", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
-                break;
-            default:
                 break;
         }
     }

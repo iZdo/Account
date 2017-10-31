@@ -10,18 +10,19 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.chaychan.viewlib.PowerfulEditText;
+import com.dd.CircularProgressButton;
 import com.izdo.Bean.User;
 import com.izdo.Util.InitData;
 import com.izdo.Util.MyDialog;
@@ -41,6 +42,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import rx.Subscription;
 import rx.subscriptions.CompositeSubscription;
 
+import static com.izdo.R.id.register_button;
+
 /**
  * iZdo
  * 2017/10/27
@@ -52,7 +55,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private LinearLayout register;
     private PowerfulEditText usernameEdit;
     private PowerfulEditText passwordEdit;
-    private Button registerButton;
+    private CircularProgressButton registerButton;
     private CircleImageView pic;
     private TextView setPic;
 
@@ -65,6 +68,19 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private String path;
 
     private SharedPreferences.Editor mEditor;
+
+    private CountDownTimer timer = new CountDownTimer(2000, 1000) {
+        @Override
+        public void onTick(long millisUntilFinished) {
+        }
+
+        @Override
+        public void onFinish() {
+            finish();
+            startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,13 +104,17 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         register = (LinearLayout) findViewById(R.id.register);
         usernameEdit = (PowerfulEditText) findViewById(R.id.username_edit);
         passwordEdit = (PowerfulEditText) findViewById(R.id.password_edit);
-        registerButton = (Button) findViewById(R.id.register_button);
+        registerButton = (CircularProgressButton) findViewById(register_button);
         pic = (CircleImageView) findViewById(R.id.pic);
         setPic = (TextView) findViewById(R.id.set_pic);
 
         register.setOnClickListener(this);
         registerButton.setOnClickListener(this);
+        pic.setOnClickListener(this);
         setPic.setOnClickListener(this);
+
+        // 设置不确定精度
+        registerButton.setIndeterminateProgressMode(true);
 
     }
 
@@ -131,6 +151,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             return;
         }
 
+        // 开转
+        registerButton.setProgress(50);
+
         // 查询用户名是否已经存在
         BmobQuery<User> query = new BmobQuery<>();
         query.addWhereEqualTo("username", username);
@@ -139,6 +162,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         addSubscription(query.findObjects(new FindListener<User>() {
             @Override
             public void done(List<User> object, BmobException e) {
+                registerButton.setProgress(1);
                 // 如果查询不到此用户 还未被注册
                 if (object.size() == 0) {
                     // 上传头像
@@ -167,11 +191,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                                         addSubscription(myUser.signUp(new SaveListener<User>() {
                                             @Override
                                             public void done(User user, BmobException e) {
-                                                if (user == null) {
-                                                    Toast.makeText(RegisterActivity.this, "注册成功", Toast.LENGTH_SHORT).show();
-                                                    finish();
-                                                    startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+                                                if (e == null) {
+                                                    registerButton.setProgress(100);
+                                                    timer.start();
                                                 } else {
+                                                    registerButton.setProgress(-1);
                                                     e.printStackTrace();
                                                 }
                                             }
@@ -180,15 +204,16 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
                                     @Override
                                     public void onProgress(Integer integer, long l) {
-
                                     }
                                 });
                             } else {
+                                registerButton.setProgress(-1);
                                 e.printStackTrace();
                             }
                         }
                     }));
                 } else {
+                    registerButton.setProgress(-1);
                     Toast.makeText(RegisterActivity.this, "此账户已存在", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -200,11 +225,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
      */
     private void selectImage() {
         Intent intent = new Intent();
-                /* 开启Pictures画面Type设定为image */
+        // 开启Pictures画面Type设定为image
         intent.setType("image/*");
-                /* 使用Intent.ACTION_GET_CONTENT这个Action */
+        // 使用Intent.ACTION_GET_CONTENT这个Action
         intent.setAction(Intent.ACTION_GET_CONTENT);
-                /* 取得相片后返回本画面 */
+        // 取得相片后返回本画面
         startActivityForResult(intent, 0);
     }
 
@@ -215,18 +240,14 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 finish();
                 break;
             case R.id.register_button:
+                // 恢复为默认状态
+                registerButton.setProgress(0);
+
                 if (uri == null) {
                     final MyDialog myDialog = new MyDialog(RegisterActivity.this, R.style.dialog_style);
-                    myDialog.initSelectDialog("确定使用默认头像？");
+                    myDialog.initConfirmDialog("请设置头像");
                     myDialog.show();
-                    myDialog.findViewById(R.id.dialog_select_confirm).setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            myDialog.dismiss();
-                            register();
-                        }
-                    });
-                    myDialog.findViewById(R.id.dialog_select_cancel).setOnClickListener(new View.OnClickListener() {
+                    myDialog.findViewById(R.id.dialog_confirm).setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             myDialog.dismiss();
@@ -235,6 +256,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 } else
                     register();
                 break;
+            case R.id.pic:
             case R.id.set_pic:
                 if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED) {

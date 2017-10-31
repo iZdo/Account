@@ -63,7 +63,7 @@
                 android:id="@+id/username_edit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="请输入账户名"
+                android:hint="请输入用户名"
                 android:maxLines="1"
                 android:textSize="20sp"
                 app:funcType="canClear"/>
@@ -71,9 +71,9 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_marginTop="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:orientation="horizontal">
 
             <com.chaychan.viewlib.PowerfulEditText
@@ -81,21 +81,27 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="请输入密码"
-                android:inputType="numberPassword"
+                android:inputType="textPassword"
                 android:maxLines="1"
                 android:textSize="20sp"
                 app:funcType="canWatchPwd"/>
 
         </LinearLayout>
 
-        <Button
-            android:id="@+id/login_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/outcome_calclayout_selector"
-            android:text="登录"
-            android:textColor="#ffffff"/>
+        <com.dd.CircularProgressButton
+        android:id="@+id/login_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:textColor="#ffffff"
+        android:textSize="18sp"
+        app:cpb_colorProgress="@color/colorMainNormal"
+        app:cpb_selectorComplete="@drawable/register_error_selector"
+        app:cpb_selectorError="@drawable/register_selector"
+        app:cpb_selectorIdle="@drawable/register_error_selector"
+        app:cpb_textComplete="登录成功"
+        app:cpb_textError="登录失败"
+        app:cpb_textIdle="登录"/>
 
         <RelativeLayout
             android:layout_width="match_parent"

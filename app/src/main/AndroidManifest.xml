@@ -4,7 +4,6 @@
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
-
     <!--Bmob所需权限 -->
     <!--允许联网 -->
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -60,6 +59,7 @@
             </intent-filter>-->
         </activity>
         <activity android:name=".ValidateActivity"/>
+        <activity android:name=".ModifyPasswordActivity"/>
 
         <!--Bmob相关-->
         <activity

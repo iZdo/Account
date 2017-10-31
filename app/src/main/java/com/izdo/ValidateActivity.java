@@ -75,7 +75,7 @@ public class ValidateActivity extends AppCompatActivity implements View.OnClickL
                                 public void run() {
                                     Toast.makeText(ValidateActivity.this, "验证成功", Toast.LENGTH_SHORT).show();
                                     finish();
-                                    Intent intent = new Intent(ValidateActivity.this, RegisterActivity.class);
+                                    Intent intent= new Intent(ValidateActivity.this, RegisterActivity.class);
                                     intent.putExtra("phoneNumber", phoneNumberEdit.getText().toString().trim());
                                     startActivity(intent);
                                 }

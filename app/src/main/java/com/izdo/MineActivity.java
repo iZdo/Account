@@ -15,11 +15,12 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.izdo.Util.InitData;
+import com.izdo.Util.MyDialog;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -45,11 +46,12 @@ public class MineActivity extends AppCompatActivity implements View.OnClickListe
 
     private CompositeSubscription mCompositeSubscription;
 
+    private LinearLayout personalInfo;
     private CircleImageView pic;
-    private LinearLayout change;
-    private LinearLayout change_id;
+    private TextView username;
+    private LinearLayout changePic;
+    private LinearLayout changePassword;
     private LinearLayout logout;
-    private EditText id_edit;
 
     private Uri uri;
     private String path;
@@ -63,18 +65,21 @@ public class MineActivity extends AppCompatActivity implements View.OnClickListe
 
         mEditor = getSharedPreferences("data", MODE_PRIVATE).edit();
 
+        personalInfo = (LinearLayout) findViewById(R.id.personal_info);
         pic = (CircleImageView) findViewById(R.id.pic);
-        change = (LinearLayout) findViewById(R.id.change);
-        change_id = (LinearLayout) findViewById(R.id.change_id);
+        username = (TextView) findViewById(R.id.username);
+        changePic = (LinearLayout) findViewById(R.id.change_pic);
+        changePassword = (LinearLayout) findViewById(R.id.modify_password);
         logout = (LinearLayout) findViewById(R.id.logout);
-        id_edit = (EditText) findViewById(R.id.id_edit);
 
-
+        personalInfo.setOnClickListener(this);
         pic.setOnClickListener(this);
-        change.setOnClickListener(this);
-        change_id.setOnClickListener(this);
+        changePic.setOnClickListener(this);
+        changePassword.setOnClickListener(this);
         logout.setOnClickListener(this);
-        id_edit.setOnClickListener(this);
+
+        if (BmobUser.getObjectByKey("username") != null)
+            username.setText(BmobUser.getObjectByKey("username") + "");
 
         // /data/user/0/com.izdo/cache/bmob/mmexport1506676177578.jpg
         Bitmap bitmap = null;
@@ -136,41 +141,59 @@ public class MineActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void change() {
-        // 头像文件
-        if (path != null)
-            bmobFile = new BmobFile(new File(path));
+        // 如果path为空 说明没有选择图片
+        if (path == null) {
+            Toast.makeText(this, "请点击上方选择图片后再点我", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        //  流程:上传头像->缓存头像到本地
-        addSubscription(bmobFile.uploadblock(new UploadFileListener() {
+        final MyDialog myDialog = new MyDialog(MineActivity.this, R.style.dialog_style);
+        myDialog.initSelectDialog("确定要上传头像？");
+        myDialog.show();
+        myDialog.findViewById(R.id.dialog_select_confirm).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void done(BmobException e) {
-                if (e == null) {
-                    // 先缓存头像到本地
-                    bmobFile.download(new DownloadFileListener() {
-                        @Override
-                        public void done(String path, BmobException e) {
-                            if (e == null) {
-                                // 头像缓存完成后开始注册用户
+            public void onClick(View view) {
+                myDialog.dismiss();
+                // 头像文件
+                bmobFile = new BmobFile(new File(path));
 
-                                // 修改相关数据
-                                mEditor.putString("picPath", path);
-                                mEditor.commit();
-                                InitData.setPic();
-                            } else {
-                                e.printStackTrace();
-                            }
+                //  流程:上传头像->缓存头像到本地
+                addSubscription(bmobFile.uploadblock(new UploadFileListener() {
+                    @Override
+                    public void done(BmobException e) {
+                        if (e == null) {
+                            // 先缓存头像到本地
+                            bmobFile.download(new DownloadFileListener() {
+                                @Override
+                                public void done(String path, BmobException e) {
+                                    if (e == null) {
+                                        Toast.makeText(MineActivity.this, "上传成功", Toast.LENGTH_SHORT).show();
+                                        // 修改相关数据
+                                        mEditor.putString("picPath", path);
+                                        mEditor.commit();
+                                        InitData.setPic();
+                                    } else {
+                                        e.printStackTrace();
+                                    }
+                                }
+
+                                @Override
+                                public void onProgress(Integer integer, long l) {
+                                }
+                            });
+                        } else {
+                            e.printStackTrace();
                         }
-
-                        @Override
-                        public void onProgress(Integer integer, long l) {
-
-                        }
-                    });
-                } else {
-                    e.printStackTrace();
-                }
+                    }
+                }));
             }
-        }));
+        });
+        myDialog.findViewById(R.id.dialog_select_cancel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                myDialog.dismiss();
+            }
+        });
     }
 
     @Override
@@ -207,6 +230,9 @@ public class MineActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.personal_info:
+                finish();
+                break;
             case R.id.pic:
                 if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED) {
@@ -216,26 +242,37 @@ public class MineActivity extends AppCompatActivity implements View.OnClickListe
                     selectImage();
                 }
                 break;
-            case R.id.change:
+            case R.id.change_pic:
                 change();
                 break;
-            case R.id.change_id:
-                //                id_edit.getText().toString()
+            case R.id.modify_password:
+                startActivity(new Intent(this, ModifyPasswordActivity.class));
+//                Toast.makeText(this, "后续开放", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.logout:
-                BmobUser.logOut();
-                mEditor.putString("picPath", "");
-                InitData.picPath = "";
-                mEditor.putString("picPath", "");
-                mEditor.commit();
-                InitData.isLogin = false;
-                Toast.makeText(this, "退出登录成功", Toast.LENGTH_SHORT).show();
-                finish();
+                final MyDialog myDialog = new MyDialog(MineActivity.this, R.style.dialog_style);
+                myDialog.initSelectDialog("确定要退出登录？");
+                myDialog.show();
+                myDialog.findViewById(R.id.dialog_select_confirm).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        myDialog.dismiss();
+                        BmobUser.logOut();
+                        picPath = "";
+                        mEditor.putString("picPath", "");
+                        mEditor.commit();
+                        InitData.isLogin = false;
+                        Toast.makeText(MineActivity.this, "退出登录成功", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
+                });
+                myDialog.findViewById(R.id.dialog_select_cancel).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        myDialog.dismiss();
+                    }
+                });
                 break;
-            case R.id.id_edit:
-
-                break;
-
         }
     }
 }

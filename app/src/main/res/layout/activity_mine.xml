@@ -5,17 +5,64 @@
               android:background="@color/colorMainNormal"
               android:orientation="vertical">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#2f2f37">
+
+        <LinearLayout
+            android:id="@+id/personal_info"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/back_layout_selector"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="match_parent"
+                android:src="@drawable/back"/>
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@mipmap/ic_launcher"/>
+
+            <TextView
+                android:id="@+id/addOutcome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="5dp"
+                android:paddingLeft="10dp"
+                android:text="个人信息"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"/>
+        </LinearLayout>
+
+    </RelativeLayout>
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/pic"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
         android:src="@mipmap/ic_launcher"/>
 
+    <TextView
+        android:id="@+id/username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="20dp"
+        android:layout_marginTop="10dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="#B8B8B8"/>
 
     <LinearLayout
-        android:id="@+id/change"
+        android:id="@+id/change_pic"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -24,10 +71,11 @@
         android:paddingLeft="15dp">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_gravity="center_vertical"
-            android:src="@mipmap/ic_launcher"/>
+            android:padding="5dp"
+            android:src="@drawable/header"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -45,7 +93,7 @@
         android:background="#B8B8B8"/>
 
     <LinearLayout
-        android:id="@+id/change_id"
+        android:id="@+id/modify_password"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -54,33 +102,22 @@
         android:paddingLeft="15dp">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_gravity="center_vertical"
-            android:src="@mipmap/ic_launcher"/>
+            android:padding="4dp"
+            android:src="@drawable/password"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:paddingLeft="10dp"
-            android:text="修改用户名"
+            android:text="修改密码"
             android:textColor="#000000"
             android:textSize="18sp"/>
 
-        <EditText
-            android:id="@+id/id_edit"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="asd"/>
-
     </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:background="#B8B8B8"/>
 
     <View
         android:layout_width="match_parent"
@@ -97,13 +134,13 @@
         android:paddingLeft="15dp">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_gravity="center_vertical"
-            android:src="@mipmap/ic_launcher"/>
+            android:padding="5dp"
+            android:src="@drawable/logout"/>
 
         <TextView
-            android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -112,6 +149,11 @@
             android:textColor="#000000"
             android:textSize="18sp"/>
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="#B8B8B8"/>
 
     <LinearLayout
         android:layout_width="match_parent"
