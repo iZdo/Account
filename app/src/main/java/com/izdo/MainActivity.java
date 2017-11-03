@@ -202,7 +202,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     public void done(List<User> list, BmobException e) {
                         if (e == null) {
                             if (list.size() == 0) return;
-                            BmobFile bmobFile = new BmobFile(list.get(0).getPic().getFilename(), "", list.get(0).getPic().getFileUrl());
+                            final BmobFile bmobFile = new BmobFile(list.get(0).getPic().getFilename(), "", list.get(0).getPic().getFileUrl());
                             bmobFile.download(new DownloadFileListener() {
                                 @Override
                                 public void done(String path, BmobException e) {
@@ -212,6 +212,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                     InitData.picPath = path;
                                     setHeader();
                                 }
+
                                 @Override
                                 public void onProgress(Integer integer, long l) {
 

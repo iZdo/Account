@@ -19,17 +19,22 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.izdo.Bean.User;
 import com.izdo.Util.InitData;
 import com.izdo.Util.MyDialog;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.List;
 
+import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.DownloadFileListener;
+import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.UpdateListener;
 import cn.bmob.v3.listener.UploadFileListener;
 import de.hdodenhof.circleimageview.CircleImageView;
 import rx.Subscription;
@@ -81,11 +86,10 @@ public class MineActivity extends AppCompatActivity implements View.OnClickListe
         if (BmobUser.getObjectByKey("username") != null)
             username.setText(BmobUser.getObjectByKey("username") + "");
 
-        // /data/user/0/com.izdo/cache/bmob/mmexport1506676177578.jpg
         Bitmap bitmap = null;
         try {
-            if (picPath.equals("")) return;
-            FileInputStream fis = new FileInputStream(picPath);
+            if (InitData.picPath.equals("")) return;
+            FileInputStream fis = new FileInputStream(InitData.picPath);
             bitmap = BitmapFactory.decodeStream(fis);//把流转化为Bitmap图片
 
         } catch (FileNotFoundException e) {
@@ -117,27 +121,8 @@ public class MineActivity extends AppCompatActivity implements View.OnClickListe
                 path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
             }
             cursor.close();
-
         }
         return path;
-    }
-
-    /**
-     * 解决Subscription内存泄露问题
-     */
-    protected void addSubscription(Subscription s) {
-        if (this.mCompositeSubscription == null) {
-            this.mCompositeSubscription = new CompositeSubscription();
-        }
-        this.mCompositeSubscription.add(s);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (this.mCompositeSubscription != null) {
-            this.mCompositeSubscription.unsubscribe();
-        }
     }
 
     private void change() {
@@ -154,6 +139,9 @@ public class MineActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onClick(View view) {
                 myDialog.dismiss();
+
+                Toast.makeText(MineActivity.this, "上传中,请稍候", Toast.LENGTH_SHORT).show();
+
                 // 头像文件
                 bmobFile = new BmobFile(new File(path));
 
@@ -165,10 +153,11 @@ public class MineActivity extends AppCompatActivity implements View.OnClickListe
                             // 先缓存头像到本地
                             bmobFile.download(new DownloadFileListener() {
                                 @Override
-                                public void done(String path, BmobException e) {
+                                public void done(final String path, BmobException e) {
                                     if (e == null) {
-                                        Toast.makeText(MineActivity.this, "上传成功", Toast.LENGTH_SHORT).show();
-                                        // 修改相关数据
+                                        modifyUser();
+                                        // 删除旧头像文件
+                                        deleteOldFile();
                                         mEditor.putString("picPath", path);
                                         mEditor.commit();
                                         InitData.setPic();
@@ -176,7 +165,6 @@ public class MineActivity extends AppCompatActivity implements View.OnClickListe
                                         e.printStackTrace();
                                     }
                                 }
-
                                 @Override
                                 public void onProgress(Integer integer, long l) {
                                 }
@@ -185,15 +173,57 @@ public class MineActivity extends AppCompatActivity implements View.OnClickListe
                             e.printStackTrace();
                         }
                     }
+
                 }));
+                path = null;
             }
         });
+
         myDialog.findViewById(R.id.dialog_select_cancel).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 myDialog.dismiss();
             }
         });
+    }
+
+    private void deleteOldFile() {
+        File file = new File(InitData.picPath);
+        if (file.exists()) {
+            file.delete();
+        }
+    }
+
+    /**
+     * 修改用户表数据
+     */
+    private void modifyUser() {
+        // 查询用户
+        BmobQuery<User> query = new BmobQuery<>();
+        query.addWhereEqualTo("username", BmobUser.getObjectByKey("username"));
+        addSubscription(query.findObjects(new FindListener<User>() {
+            @Override
+            public void done(List<User> list, BmobException e) {
+                if (e == null) {
+                    if (list.size() == 0) return;
+                    User user = list.get(0);
+                    user.setPic(bmobFile);
+                    user.update(new UpdateListener() {
+                        @Override
+                        public void done(BmobException e) {
+                            if (e == null) {
+                                Toast.makeText(MineActivity.this, "上传成功", Toast.LENGTH_SHORT).show();
+                            } else {
+                                e.printStackTrace();
+                                Toast.makeText(MineActivity.this, "上传失败", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                } else {
+                    e.printStackTrace();
+                }
+            }
+        }));
     }
 
     @Override
@@ -247,7 +277,7 @@ public class MineActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.modify_password:
                 startActivity(new Intent(this, ModifyPasswordActivity.class));
-//                Toast.makeText(this, "后续开放", Toast.LENGTH_SHORT).show();
+                //                Toast.makeText(this, "后续开放", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.logout:
                 final MyDialog myDialog = new MyDialog(MineActivity.this, R.style.dialog_style);
@@ -273,6 +303,24 @@ public class MineActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 });
                 break;
+        }
+    }
+
+    /**
+     * 解决Subscription内存泄露问题
+     */
+    protected void addSubscription(Subscription s) {
+        if (this.mCompositeSubscription == null) {
+            this.mCompositeSubscription = new CompositeSubscription();
+        }
+        this.mCompositeSubscription.add(s);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (this.mCompositeSubscription != null) {
+            this.mCompositeSubscription.unsubscribe();
         }
     }
 }
