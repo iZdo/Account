@@ -90,11 +90,11 @@ public class MyDialog extends Dialog {
 
     // 未输入金额或类型对话框
     public void initSaveButtonDialog(String text) {
-        setContentView(R.layout.dialog_save);
-        TextView title = (TextView) findViewById(R.id.dialog_save_text);
+        setContentView(R.layout.dialog_confirmt);
+        TextView title = (TextView) findViewById(R.id.dialog_confirm_text);
         title.setText("请输入" + text);
 
-        findViewById(R.id.dialog_confirm_button).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.dialog_confirm).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dismiss();
@@ -179,10 +179,20 @@ public class MyDialog extends Dialog {
         ((TextView) findViewById(R.id.dialog_confirm_text)).setText(text);
     }
 
+    // 备份还原对话框
+    public void initBackupAndRestoreDialog(){
+        setContentView(R.layout.dialog_backup_and_restore);
+        findViewById(R.id.dialog_close).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dismiss();
+            }
+        });
+    }
+
     // 有固定支出时的删除对话框
     public void initDeleteDialog(){
         setContentView(R.layout.dialog_delete);
-
     }
 
     public String getSelect() {

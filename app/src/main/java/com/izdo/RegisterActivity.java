@@ -1,13 +1,11 @@
 package com.izdo;
 
 import android.Manifest;
-import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -24,11 +22,11 @@ import android.widget.Toast;
 import com.chaychan.viewlib.PowerfulEditText;
 import com.dd.CircularProgressButton;
 import com.izdo.Bean.User;
+import com.izdo.Util.Constant;
 import com.izdo.Util.InitData;
 import com.izdo.Util.MyDialog;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.List;
 
 import cn.bmob.v3.BmobQuery;
@@ -90,14 +88,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         init();
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (this.mCompositeSubscription != null) {
-            this.mCompositeSubscription.unsubscribe();
-        }
-    }
-
     private void init() {
         mEditor = getSharedPreferences("data", MODE_PRIVATE).edit();
 
@@ -116,16 +106,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         // 设置不确定精度
         registerButton.setIndeterminateProgressMode(true);
 
-    }
-
-    /**
-     * 解决Subscription内存泄露问题
-     */
-    protected void addSubscription(Subscription s) {
-        if (this.mCompositeSubscription == null) {
-            this.mCompositeSubscription = new CompositeSubscription();
-        }
-        this.mCompositeSubscription.add(s);
     }
 
     private void register() {
@@ -221,6 +201,26 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     }
 
     /**
+     * 获取真实路径
+     *
+     * @param uri
+     * @param selection
+     * @return
+     */
+    private String getImagePath(Uri uri, String selection) {
+        String path = null;
+        Cursor cursor = getContentResolver().query(uri, null, selection, null, null);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
+            }
+            cursor.close();
+
+        }
+        return path;
+    }
+
+    /**
      * Intent跳转本地图库选择图片
      */
     private void selectImage() {
@@ -230,7 +230,24 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         // 使用Intent.ACTION_GET_CONTENT这个Action
         intent.setAction(Intent.ACTION_GET_CONTENT);
         // 取得相片后返回本画面
-        startActivityForResult(intent, 0);
+        startActivityForResult(intent, Constant.IMAGE_REQUEST_CODE);
+    }
+
+    /**
+     * 裁剪图片
+     *
+     * @param uri
+     */
+    private void cropImage(Uri uri) {
+        Intent intent = new Intent("com.android.camera.action.CROP");
+        intent.setDataAndType(uri, "image/*");
+        intent.putExtra("crop", "true");
+        intent.putExtra("aspectX", 1);
+        intent.putExtra("aspectY", 1);
+        intent.putExtra("outputX", 150);
+        intent.putExtra("outputY", 150);
+        intent.putExtra("return-data", true);
+        startActivityForResult(intent, Constant.RESIZE_REQUEST_CODE);
     }
 
     @Override
@@ -286,32 +303,32 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 0 && resultCode == RESULT_OK && data != null) {
+        if (requestCode == Constant.IMAGE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             uri = data.getData();
+            cropImage(uri);
             path = getImagePath(uri, null);
-            ContentResolver cr = this.getContentResolver();
-            try {
-                Bitmap bitmap = BitmapFactory.decodeStream(cr.openInputStream(uri));
-                pic.setImageBitmap(bitmap);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
+        } else if (requestCode == Constant.RESIZE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
+            Bitmap bitmap = data.getExtras().getParcelable("data");
+            pic.setImageBitmap(bitmap);
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (this.mCompositeSubscription != null) {
+            this.mCompositeSubscription.unsubscribe();
         }
     }
 
-    // 获取真实路径
-    private String getImagePath(Uri uri, String selection) {
-        String path = null;
-        Cursor cursor = getContentResolver().query(uri, null, selection, null, null);
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
-            }
-            cursor.close();
-
+    /**
+     * 解决Subscription内存泄露问题
+     */
+    protected void addSubscription(Subscription s) {
+        if (this.mCompositeSubscription == null) {
+            this.mCompositeSubscription = new CompositeSubscription();
         }
-        return path;
-
+        this.mCompositeSubscription.add(s);
     }
 }

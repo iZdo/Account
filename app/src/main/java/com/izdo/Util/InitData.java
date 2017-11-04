@@ -27,6 +27,8 @@ public class InitData {
     public static boolean isShowBudget;
     public static boolean isNoLongerPrompt;
 
+    public static String preset;
+
     public static String picPath;
 
     public static List<String> dataList = new ArrayList<>();
@@ -42,6 +44,8 @@ public class InitData {
         isAddIncome = mSharedPreferences.getBoolean("isAddIncome", false);
         isShowBudget = mSharedPreferences.getBoolean("isShowBudget", true);
         isNoLongerPrompt = mSharedPreferences.getBoolean("isNoLongerPrompt", false);
+
+        preset = mSharedPreferences.getString("preset", "现金");
 
         setPic();
     }
@@ -73,7 +77,6 @@ public class InitData {
             String account = cursor.getString(cursor.getColumnIndex("account"));
             dataList.add(account);
         }
-
         return dataList;
     }
 

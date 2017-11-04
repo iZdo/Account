@@ -89,7 +89,7 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_gravity="center_vertical"
-                android:padding="8dp"
+                android:padding="5dp"
                 android:src="@drawable/account_black"/>
 
             <TextView
@@ -222,6 +222,7 @@
              android:background="#B8B8B8"/>-->
 
         <LinearLayout
+            android:id="@+id/backup_and_restore"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
@@ -234,14 +235,14 @@
                 android:layout_height="50dp"
                 android:layout_gravity="center_vertical"
                 android:padding="5dp"
-                android:src="@mipmap/ic_launcher"/>
+                android:src="@drawable/backup_and_restore"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:paddingLeft="10dp"
-                android:text="备份/还原"
+                android:text="备份/还原数据"
                 android:textColor="#000000"
                 android:textSize="18sp"/>
         </LinearLayout>

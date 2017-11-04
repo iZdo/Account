@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:gravity="center">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:background="@color/colorMainNormal"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="选取要执行的操作"
+            android:textColor="#000000"
+            android:textSize="20sp"/>
+
+        <com.dd.CircularProgressButton
+            android:id="@+id/backup_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:textColor="#ffffff"
+            android:textSize="18sp"
+            app:cpb_colorProgress="@color/colorMainNormal"
+            app:cpb_selectorComplete="@drawable/register_error_selector"
+            app:cpb_selectorError="@drawable/register_error_selector"
+            app:cpb_selectorIdle="@drawable/register_error_selector"
+            app:cpb_textComplete="备份成功"
+            app:cpb_textError="备份失败"
+            app:cpb_textIdle="我要备份"/>
+
+        <com.dd.CircularProgressButton
+            android:id="@+id/restore_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:textColor="#ffffff"
+            android:textSize="18sp"
+            app:cpb_colorProgress="@color/colorMainNormal"
+            app:cpb_selectorComplete="@drawable/register_selector"
+            app:cpb_selectorError="@drawable/register_selector"
+            app:cpb_selectorIdle="@drawable/register_selector"
+            app:cpb_textComplete="还原成功"
+            app:cpb_textError="还原失败"
+            app:cpb_textIdle="我要还原"/>
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/dialog_close"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/close"/>
+
+</RelativeLayout>

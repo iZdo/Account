@@ -1,6 +1,7 @@
 package com.izdo;
 
 import android.content.ContentValues;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import com.izdo.DataBase.MyDatabaseHelper;
+import com.izdo.Util.InitData;
 import com.izdo.Util.MyDialog;
 
 /**
@@ -24,6 +26,11 @@ public class EditAccountActivity extends AppCompatActivity implements View.OnCli
     private Button accountDelete;
     private MyDialog myDialog;
     private boolean isExist = false;
+    private String accountName;
+    // 是否是预设账户
+    private boolean isPreset = false;
+
+    private SharedPreferences.Editor mEditor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,12 +41,20 @@ public class EditAccountActivity extends AppCompatActivity implements View.OnCli
     }
 
     private void init() {
+        mEditor = getSharedPreferences("data", MODE_PRIVATE).edit();
+
         editAccount = (LinearLayout) findViewById(R.id.edit_account);
         accountSave = (Button) findViewById(R.id.account_save);
         accountEditText = (EditText) findViewById(R.id.account_edittext);
         accountDelete = (Button) findViewById(R.id.account_delete);
 
-        accountEditText.setText(getIntent().getStringExtra("account_name"));
+        accountName = getIntent().getStringExtra("account_name");
+        if (accountName.endsWith("(预设)")) {
+            accountName = accountName.substring(0, accountName.length() - 4);
+            isPreset = true;
+        }
+        accountEditText.setText(accountName);
+
         accountEditText.setSelection(accountEditText.getText().toString().length());
 
         myDialog = new MyDialog(EditAccountActivity.this, R.style.dialog_style);
@@ -84,7 +99,7 @@ public class EditAccountActivity extends AppCompatActivity implements View.OnCli
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.edit_account:
-                if(!accountEditText.getText().toString().equals(getIntent().getStringExtra("account_name"))){
+                if (!accountEditText.getText().toString().equals(getIntent().getStringExtra("account_name"))) {
                     myDialog.initSelectDialog("数据未保存,确定退出？");
                     myDialog.show();
                     myDialog.findViewById(R.id.dialog_select_confirm).setOnClickListener(new View.OnClickListener() {
@@ -100,7 +115,7 @@ public class EditAccountActivity extends AppCompatActivity implements View.OnCli
                             myDialog.dismiss();
                         }
                     });
-                }else
+                } else
                     finish();
                 break;
             case R.id.account_save:
@@ -110,7 +125,29 @@ public class EditAccountActivity extends AppCompatActivity implements View.OnCli
                     return;
 
                 updateData();
-                finish();
+
+                if (!isPreset) {
+                    myDialog.initSelectDialog("是否设定为预设账户?");
+                    myDialog.show();
+                    myDialog.findViewById(R.id.dialog_select_confirm).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            myDialog.dismiss();
+                            mEditor.putString("preset", accountName);
+                            mEditor.commit();
+                            InitData.preset = accountName;
+                            finish();
+                        }
+                    });
+                    myDialog.findViewById(R.id.dialog_select_cancel).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            myDialog.dismiss();
+                            finish();
+                        }
+                    });
+                } else
+                    finish();
                 break;
             case R.id.account_delete:
                 myDialog.initSelectDialog("确定删除此账户?");

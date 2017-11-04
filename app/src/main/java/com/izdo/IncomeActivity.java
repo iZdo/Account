@@ -135,6 +135,8 @@ public class IncomeActivity extends Activity implements View.OnClickListener {
         accountText = (TextView) findViewById(R.id.income_account);
         fixedChargeText = (TextView) findViewById(R.id.income_fixed_charge);
 
+        accountText.setText(InitData.preset);
+
         // ViewPager
         setViewpager();
 

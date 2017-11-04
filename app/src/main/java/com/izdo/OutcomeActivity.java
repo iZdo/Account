@@ -183,6 +183,8 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
         accountText = (TextView) findViewById(R.id.outcome_account);
         fixedChargeText = (TextView) findViewById(R.id.outcome_fixed_charge);
 
+        accountText.setText(InitData.preset);
+
         // ViewPager
         setViewpager();
 

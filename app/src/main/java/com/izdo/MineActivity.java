@@ -1,7 +1,6 @@
 package com.izdo;
 
 import android.Manifest;
-import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -20,8 +19,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.izdo.Bean.User;
+import com.izdo.Util.Constant;
 import com.izdo.Util.InitData;
 import com.izdo.Util.MyDialog;
+import com.orhanobut.logger.Logger;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -109,7 +110,23 @@ public class MineActivity extends AppCompatActivity implements View.OnClickListe
         // 使用Intent.ACTION_GET_CONTENT这个Action
         intent.setAction(Intent.ACTION_GET_CONTENT);
         // 取得相片后返回本画面
-        startActivityForResult(intent, 0);
+        startActivityForResult(intent, Constant.IMAGE_REQUEST_CODE);
+    }
+
+    /**
+     * 裁剪图片
+     * @param uri
+     */
+    private void cropImage(Uri uri) {
+        Intent intent = new Intent("com.android.camera.action.CROP");
+        intent.setDataAndType(uri, "image/*");
+        intent.putExtra("crop", "true");
+        intent.putExtra("aspectX", 1);
+        intent.putExtra("aspectY", 1);
+        intent.putExtra("outputX", 150);
+        intent.putExtra("outputY", 150);
+        intent.putExtra("return-data", true);
+        startActivityForResult(intent, Constant.RESIZE_REQUEST_CODE);
     }
 
     // 获取真实路径
@@ -155,6 +172,7 @@ public class MineActivity extends AppCompatActivity implements View.OnClickListe
                                 @Override
                                 public void done(final String path, BmobException e) {
                                     if (e == null) {
+                                        Logger.i(path);
                                         modifyUser();
                                         // 删除旧头像文件
                                         deleteOldFile();
@@ -165,6 +183,7 @@ public class MineActivity extends AppCompatActivity implements View.OnClickListe
                                         e.printStackTrace();
                                     }
                                 }
+
                                 @Override
                                 public void onProgress(Integer integer, long l) {
                                 }
@@ -243,18 +262,15 @@ public class MineActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 0 && resultCode == RESULT_OK && data != null) {
+        if (requestCode == Constant.IMAGE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             uri = data.getData();
+            cropImage(uri);
             path = getImagePath(uri, null);
-            ContentResolver cr = this.getContentResolver();
-            try {
-                Bitmap bitmap = BitmapFactory.decodeStream(cr.openInputStream(uri));
-                pic.setImageBitmap(bitmap);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
+        } else if (requestCode == Constant.RESIZE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
+            Bitmap bitmap = data.getExtras().getParcelable("data");
+            pic.setImageBitmap(bitmap);
         }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -277,7 +293,6 @@ public class MineActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.modify_password:
                 startActivity(new Intent(this, ModifyPasswordActivity.class));
-                //                Toast.makeText(this, "后续开放", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.logout:
                 final MyDialog myDialog = new MyDialog(MineActivity.this, R.style.dialog_style);
