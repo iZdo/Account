@@ -112,6 +112,9 @@ public class IncomeActivity extends Activity implements View.OnClickListener {
 
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
+    // 是否第一次点击计算器
+    private boolean isFirst = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -347,6 +350,7 @@ public class IncomeActivity extends Activity implements View.OnClickListener {
                     newString += "0";
                 }
             }
+            isFirst = false;
         } else if (string.equals("AC")) {
             newString = newString.substring(0, 1) + "0";
         } else {
@@ -365,6 +369,11 @@ public class IncomeActivity extends Activity implements View.OnClickListener {
             // 维持小数点后两位
             if (newString.contains(".") && newString.substring(newString.indexOf("."), newString.length()).length() > 2)
                 return;
+
+            if (isFirst) {
+                newString = newString.substring(0, 1);
+                isFirst = false;
+            }
 
             newString += string;
         }

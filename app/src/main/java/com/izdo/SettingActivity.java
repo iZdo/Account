@@ -50,6 +50,8 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
     private MyDialog myDialog;
     private BmobFile bmobFile;
 
+    private String flag;
+
     private CountDownTimer timer = new CountDownTimer(2000, 1000) {
         @Override
         public void onTick(long millisUntilFinished) {
@@ -92,28 +94,29 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
     private void requestPermission() {
         // 检查是否有权限
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            // 检查是否需要申请权限
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            }
+                != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-            return;
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                            Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
         } else {
-            // 有权限直接调用方法
-//            if(flag==Constant.AUTOUPDATE)
+            // 不需要申请权限则调用方法
+            if (flag.equals("update"))
                 BmobUpdateAgent.forceUpdate(this);
-//            else if(flag==Constant.BACKUPANDRESTORE){
-
-//            }
+            else if (flag.equals("backupAndRestore"))
+                backupAndRestore();
         }
     }
 
     // 备份和还原
-    private void backupAndRestore(MyDialog dialog) {
-        backupButton = (CircularProgressButton) dialog.findViewById(R.id.backup_button);
-        restoreButton = (CircularProgressButton) dialog.findViewById(R.id.restore_button);
+    private void backupAndRestore() {
+        myDialog.initBackupAndRestoreDialog();
+        myDialog.setCancelable(false);
+        myDialog.show();
+
+        backupButton = (CircularProgressButton) myDialog.findViewById(R.id.backup_button);
+        restoreButton = (CircularProgressButton) myDialog.findViewById(R.id.restore_button);
 
         // 设置不确定精度
         backupButton.setIndeterminateProgressMode(true);
@@ -128,7 +131,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                     Toast.makeText(SettingActivity.this, "已经备份过了,不需要重复备份", Toast.LENGTH_SHORT).show();
                     return;
                 } else if (backupButton.getText().toString().equals("备份失败")) {
-                    Toast.makeText(SettingActivity.this, "请检查您的网络状况再尝试备份", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SettingActivity.this, "网络状况不太好或者尝试重新登录试试？", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -156,7 +159,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                     Toast.makeText(SettingActivity.this, "已经还原过了,不需要重复还原", Toast.LENGTH_SHORT).show();
                     return;
                 } else if (restoreButton.getText().toString().equals("还原失败")) {
-                    Toast.makeText(SettingActivity.this, "请检查您的网络状况再尝试还原", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SettingActivity.this, "网络状况不太好或者尝试重新登录试试？", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -198,6 +201,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
 
     /**
      * 备份
+     *
      * @param user
      */
     private void backup(User user) {
@@ -217,6 +221,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
 
     /**
      * 还原
+     *
      * @param user
      */
     private void restore(User user) {
@@ -246,9 +251,13 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         switch (requestCode) {
             case 1: {
                 if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // 请求被被接收则调用更新方法
-                    BmobUpdateAgent.forceUpdate(this);
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                        && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                    // 请求被接受则调用方法
+                    if (flag.equals("update"))
+                        BmobUpdateAgent.forceUpdate(this);
+                    else if (flag.equals("backupAndRestore"))
+                        backupAndRestore();
                 } else {
                     Toast.makeText(this, "没有权限", Toast.LENGTH_SHORT).show();
                 }
@@ -277,10 +286,8 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                     finish();
                     return;
                 }
-                myDialog.initBackupAndRestoreDialog();
-                myDialog.setCancelable(false);
-                myDialog.show();
-                backupAndRestore(myDialog);
+                flag = "backupAndRestore";
+                requestPermission();
                 break;
             case R.id.update_announcement:
                 myDialog.initUpdateDialog();
@@ -289,6 +296,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                 break;
             case R.id.check_update:
                 // 请求权限并调用更新方法
+                flag = "update";
                 requestPermission();
                 BmobUpdateAgent.setUpdateListener(new BmobUpdateListener() {
                     @Override
