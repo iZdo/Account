@@ -53,10 +53,10 @@
         <activity android:name=".LoginActivity"/>
         <activity android:name=".MineActivity"/>
         <activity android:name=".RegisterActivity">
-            <!--<intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>-->
+            <!-- <intent-filter>
+                 <action android:name="android.intent.action.MAIN"/>
+                 <category android:name="android.intent.category.LAUNCHER"/>
+             </intent-filter>-->
         </activity>
         <activity android:name=".ValidateActivity"/>
         <activity android:name=".ModifyPasswordActivity"/>

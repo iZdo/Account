@@ -1,11 +1,13 @@
 package com.izdo;
 
 import android.Manifest;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -27,6 +29,7 @@ import com.izdo.Util.InitData;
 import com.izdo.Util.MyDialog;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.List;
 
 import cn.bmob.v3.BmobQuery;
@@ -76,7 +79,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         public void onFinish() {
             finish();
             startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
-
         }
     };
 
@@ -233,22 +235,22 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         startActivityForResult(intent, Constant.IMAGE_REQUEST_CODE);
     }
 
-    /**
-     * 裁剪图片
-     *
-     * @param uri
-     */
-    private void cropImage(Uri uri) {
-        Intent intent = new Intent("com.android.camera.action.CROP");
-        intent.setDataAndType(uri, "image/*");
-        intent.putExtra("crop", "true");
-        intent.putExtra("aspectX", 1);
-        intent.putExtra("aspectY", 1);
-        intent.putExtra("outputX", 150);
-        intent.putExtra("outputY", 150);
-        intent.putExtra("return-data", true);
-        startActivityForResult(intent, Constant.RESIZE_REQUEST_CODE);
-    }
+    //    /**
+    //     * 裁剪图片
+    //     *
+    //     * @param uri
+    //     */
+    //    private void cropImage(Uri uri) {
+    //        Intent intent = new Intent("com.android.camera.action.CROP");
+    //        intent.setDataAndType(uri, "image/*");
+    //        intent.putExtra("crop", "true");
+    //        intent.putExtra("aspectX", 1);
+    //        intent.putExtra("aspectY", 1);
+    //        intent.putExtra("outputX", 150);
+    //        intent.putExtra("outputY", 150);
+    //        intent.putExtra("return-data", true);
+    //        startActivityForResult(intent, Constant.RESIZE_REQUEST_CODE);
+    //    }
 
     @Override
     public void onClick(View view) {
@@ -305,11 +307,15 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == Constant.IMAGE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             uri = data.getData();
-            cropImage(uri);
+            //            cropImage(uri);
             path = getImagePath(uri, null);
-        } else if (requestCode == Constant.RESIZE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
-            Bitmap bitmap = data.getExtras().getParcelable("data");
-            pic.setImageBitmap(bitmap);
+            ContentResolver cr = this.getContentResolver();
+            try {
+                Bitmap bitmap = BitmapFactory.decodeStream(cr.openInputStream(uri));
+                pic.setImageBitmap(bitmap);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

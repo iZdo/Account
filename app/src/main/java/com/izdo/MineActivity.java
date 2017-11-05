@@ -1,6 +1,7 @@
 package com.izdo;
 
 import android.Manifest;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -113,21 +114,21 @@ public class MineActivity extends AppCompatActivity implements View.OnClickListe
         startActivityForResult(intent, Constant.IMAGE_REQUEST_CODE);
     }
 
-    /**
-     * 裁剪图片
-     * @param uri
-     */
-    private void cropImage(Uri uri) {
-        Intent intent = new Intent("com.android.camera.action.CROP");
-        intent.setDataAndType(uri, "image/*");
-        intent.putExtra("crop", "true");
-        intent.putExtra("aspectX", 1);
-        intent.putExtra("aspectY", 1);
-        intent.putExtra("outputX", 150);
-        intent.putExtra("outputY", 150);
-        intent.putExtra("return-data", true);
-        startActivityForResult(intent, Constant.RESIZE_REQUEST_CODE);
-    }
+    //    /**
+    //     * 裁剪图片
+    //     * @param uri
+    //     */
+    //    private void cropImage(Uri uri) {
+    //        Intent intent = new Intent("com.android.camera.action.CROP");
+    //        intent.setDataAndType(uri, "image/*");
+    //        intent.putExtra("crop", "true");
+    //        intent.putExtra("aspectX", 1);
+    //        intent.putExtra("aspectY", 1);
+    //        intent.putExtra("outputX", 150);
+    //        intent.putExtra("outputY", 150);
+    //        intent.putExtra("return-data", true);
+    //        startActivityForResult(intent, Constant.RESIZE_REQUEST_CODE);
+    //    }
 
     // 获取真实路径
     private String getImagePath(Uri uri, String selection) {
@@ -264,11 +265,15 @@ public class MineActivity extends AppCompatActivity implements View.OnClickListe
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == Constant.IMAGE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             uri = data.getData();
-            cropImage(uri);
+            //            cropImage(uri);
             path = getImagePath(uri, null);
-        } else if (requestCode == Constant.RESIZE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
-            Bitmap bitmap = data.getExtras().getParcelable("data");
-            pic.setImageBitmap(bitmap);
+            ContentResolver cr = this.getContentResolver();
+            try {
+                Bitmap bitmap = BitmapFactory.decodeStream(cr.openInputStream(uri));
+                pic.setImageBitmap(bitmap);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -324,6 +329,7 @@ public class MineActivity extends AppCompatActivity implements View.OnClickListe
     /**
      * 解决Subscription内存泄露问题
      */
+
     protected void addSubscription(Subscription s) {
         if (this.mCompositeSubscription == null) {
             this.mCompositeSubscription = new CompositeSubscription();

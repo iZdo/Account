@@ -388,4 +388,10 @@ public class BudgetSettingActivity extends AppCompatActivity implements View.OnC
                 break;
         }
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mSQLiteDatabase.close();
+    }
 }

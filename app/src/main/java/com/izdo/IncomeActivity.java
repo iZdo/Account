@@ -689,4 +689,10 @@ public class IncomeActivity extends Activity implements View.OnClickListener {
                 break;
         }
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mSQLiteDatabase.close();
+    }
 }

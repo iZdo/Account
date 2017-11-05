@@ -21,7 +21,7 @@ public class Constant {
     public static final int RESTORE = 2;
 
     public static final int IMAGE_REQUEST_CODE = 0;
-    public static final int RESIZE_REQUEST_CODE = 1;
+//    public static final int RESIZE_REQUEST_CODE = 1;
 
 //    public static int AUTOUPDATE= 1;
 //    public static int BACKUPANDRESTORE= 2;

@@ -838,4 +838,10 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
                 break;
         }
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mSQLiteDatabase.close();
+    }
 }
