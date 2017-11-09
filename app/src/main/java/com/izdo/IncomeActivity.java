@@ -580,7 +580,7 @@ public class IncomeActivity extends Activity implements View.OnClickListener {
                 startActivityForResult(intent, 1);
                 break;
             case R.id.income_accountLayout:
-                myDialog.initAccountOrFixedChargeDialog("请选择帐号", InitData.accountOption(this));
+                myDialog.initAccountOrFixedChargeOrStatisticsDialog("请选择帐号", InitData.accountOption(this), Constant.ACCOUNT_AND_FIXED_CHARGED);
                 myDialog.setSelect(accountText.getText().toString());
                 myDialog.show();
                 myDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
@@ -592,7 +592,7 @@ public class IncomeActivity extends Activity implements View.OnClickListener {
 
                 break;
             case R.id.income_fixed_chargeLayout:
-                myDialog.initAccountOrFixedChargeDialog("请选择自动输入的周期", InitData.fixedChargeOption());
+                myDialog.initAccountOrFixedChargeOrStatisticsDialog("请选择自动输入的周期", InitData.fixedChargeOption(), Constant.ACCOUNT_AND_FIXED_CHARGED);
                 myDialog.setSelect(fixedChargeText.getText().toString());
                 myDialog.show();
                 myDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
@@ -688,11 +688,5 @@ public class IncomeActivity extends Activity implements View.OnClickListener {
             default:
                 break;
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mSQLiteDatabase.close();
     }
 }

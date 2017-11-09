@@ -78,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private MenuItem mAdd;
 
     // 日期选择器弹出窗口
+    private DatePicker mDatePicker;
     private View mDatePickerView;
     private PopupWindow mPopupWindow;
     private Button confirm;
@@ -96,8 +97,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private MyFragmentPagerAdapter myFragmentPagerAdapter;
     // 记录最后一次的position
     private int lastPosition;
-
-    private DatePicker mDatePicker;
 
     // 预算控件
     private RelativeLayout budgetSetting;
@@ -361,8 +360,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         myFragmentPagerAdapter.notifyDataSetChanged();
                         break;
                     // 统计item
-                    case R.id.total_item:
-                        //TODO
+                    case R.id.statistics_item:
+                        startActivity(new Intent(MainActivity.this, StatisticsActivity.class));
                         break;
                     // 设置item
                     case R.id.setting_item:
@@ -436,7 +435,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     /**
-     * 为了使popupWindow不获取焦点、外部区域不能点击且后方控件不能被相应，需重写此方法
+     * 为了使popupWindow不获取焦点、外部区域不能点击且后方控件不能被响应，需重写此方法
      *
      * @param ev
      * @return
@@ -582,7 +581,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.main_budget_setting:
                 Intent intent = new Intent(this, BudgetSettingActivity.class);
-                //                intent.putExtra("total_budget", totalBudget.getText().toString());
                 intent.putExtra("date", getFormatDate(calendar).substring(0, getFormatDate(calendar).length() - 3));
                 startActivityForResult(intent, 1);
                 break;
@@ -591,7 +589,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (InitData.isLogin) {
                     // 如果已经登录 跳转到个人设置页面
                     startActivity(new Intent(MainActivity.this, MineActivity.class));
-                    //                    Toast.makeText(this, "后续开放", Toast.LENGTH_SHORT).show();
                 } else {
                     // 如果未登录 跳转到登录注册页面
                     startActivity(new Intent(MainActivity.this, LoginActivity.class));

@@ -710,7 +710,7 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
                 startActivityForResult(intent, 1);
                 break;
             case R.id.outcome_accountLayout:
-                myDialog.initAccountOrFixedChargeDialog("请选择帐号", InitData.accountOption(this));
+                myDialog.initAccountOrFixedChargeOrStatisticsDialog("请选择帐号", InitData.accountOption(this), Constant.ACCOUNT_AND_FIXED_CHARGED);
                 myDialog.setSelect(accountText.getText().toString());
                 myDialog.show();
                 myDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
@@ -722,7 +722,7 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
 
                 break;
             case R.id.outcome_fixed_chargeLayout:
-                myDialog.initAccountOrFixedChargeDialog("请选择自动输入的周期", InitData.fixedChargeOption());
+                myDialog.initAccountOrFixedChargeOrStatisticsDialog("请选择自动输入的周期", InitData.fixedChargeOption(), Constant.ACCOUNT_AND_FIXED_CHARGED);
                 myDialog.setSelect(fixedChargeText.getText().toString());
                 myDialog.show();
                 myDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
@@ -837,11 +837,5 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
             default:
                 break;
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mSQLiteDatabase.close();
     }
 }

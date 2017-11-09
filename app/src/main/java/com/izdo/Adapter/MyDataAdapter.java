@@ -75,7 +75,7 @@ public class MyDataAdapter extends RecyclerView.Adapter<MyDataAdapter.ViewHolder
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         DataBean dataBean = mList.get(position);
-        holder.mainImg.setImageResource(mTypeMap.queryTypeImg(dataBean.getType()));
+        holder.mainImg.setImageResource(mTypeMap.queryTypeWhiteImg(dataBean.getType()));
         holder.mainTypeText.setText(dataBean.getType());
         holder.mainMoneyText.setText("¥" + dataBean.getMoney());
         holder.mainItem.setTag(position);
