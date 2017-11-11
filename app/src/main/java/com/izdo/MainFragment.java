@@ -62,7 +62,7 @@ public class MainFragment extends Fragment {
     private String totalBudget = "1000";
     private String surplusBudget = "1000";
     // 小数格式
-    DecimalFormat decimalFormat = new DecimalFormat("0.00");
+    private DecimalFormat decimalFormat = new DecimalFormat("0.00");
     private Toolbar mToolbar;
     // 当前日期
     private Cursor mCursor;

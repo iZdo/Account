@@ -7,7 +7,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.izdo.Util.Constant;
 
@@ -20,11 +19,9 @@ import java.util.List;
 public class StatisticsActivity extends AppCompatActivity implements View.OnClickListener {
 
     private LinearLayout statistics;
-    private TextView pre;
-    private TextView next;
 
-    private ViewPager viewPager;
-    private List<StatisticsFragment> fragments;
+    private static ViewPager viewPager;
+    private List<Fragment> fragments;
     String[] fragmentType = {Constant.OUTCOME, Constant.INCOME, Constant.OUTCOME};
 
 
@@ -40,12 +37,7 @@ public class StatisticsActivity extends AppCompatActivity implements View.OnClic
         viewPager = (ViewPager) findViewById(R.id.statistics_viewpager);
 
         statistics = (LinearLayout) findViewById(R.id.statistics);
-//        pre = (TextView) findViewById(R.id.pre);
-//        next = (TextView) findViewById(R.id.next);
-
         statistics.setOnClickListener(this);
-//        pre.setOnClickListener(this);
-//        next.setOnClickListener(this);
 
         initViewpager();
     }
@@ -57,6 +49,9 @@ public class StatisticsActivity extends AppCompatActivity implements View.OnClic
             StatisticsFragment statisticsFragment = StatisticsFragment.newInstance(fragmentType[i]);
             fragments.add(statisticsFragment);
         }
+
+        StatisticsBudgetFragment statisticsBudgetFragment = new StatisticsBudgetFragment();
+        fragments.add(statisticsBudgetFragment);
 
         viewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
             @Override
@@ -91,18 +86,22 @@ public class StatisticsActivity extends AppCompatActivity implements View.OnClic
         });
     }
 
+    public static ViewPager getViewPager() {
+        return viewPager;
+    }
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.statistics:
                 finish();
                 break;
-//            case R.id.pre:
-//
-//                break;
-//            case R.id.next:
-//
-//                break;
+            //            case R.id.pre:
+            //
+            //                break;
+            //            case R.id.next:
+            //
+            //                break;
         }
     }
 }

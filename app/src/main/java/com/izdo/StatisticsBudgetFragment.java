@@ -1,78 +1,68 @@
 package com.izdo;
 
+import android.animation.ObjectAnimator;
 import android.database.Cursor;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
-import android.text.style.RelativeSizeSpan;
-import android.text.style.StyleSpan;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
-import com.github.mikephil.charting.charts.PieChart;
+import com.chaychan.viewlib.NumberRunningTextView;
+import com.github.mikephil.charting.charts.HorizontalBarChart;
 import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.data.PieData;
-import com.github.mikephil.charting.data.PieDataSet;
-import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.formatter.PercentFormatter;
-import com.github.mikephil.charting.utils.ColorTemplate;
-import com.izdo.Adapter.MyStatisticsAdapter;
-import com.izdo.Bean.DataBean;
-import com.izdo.Bean.StatisticsBean;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.izdo.DataBase.MyDatabaseHelper;
 import com.izdo.Util.Constant;
+import com.izdo.Util.InitData;
 import com.izdo.Util.MyDialog;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 /**
  * Created by iZdo on 2017/11/7.
  */
 
-public class StatisticsFragment extends Fragment implements View.OnClickListener {
+public class StatisticsBudgetFragment extends Fragment implements View.OnClickListener {
 
+    private HorizontalBarChart mChart;
     private TextView dateText;
     private TextView pre;
-    private TextView next;
     private TextView thisMonth;
     private TextView halfAYear;
     private TextView oneYear;
     private TextView userDefined;
+    private TextView allOutcome;
+    private TextView allBudget;
+    private TextView allIncome;
+    private ImageView image;
+    private TextView sign;
+    private NumberRunningTextView surplusBudget;
 
-    private PieChart mChart;
-    private List<Float> moneyList = new ArrayList<>();
-    private List<Float> percentList = new ArrayList<>();
-    private List<String> typeList = new ArrayList<>();
-    private List<StatisticsBean> mDataList = new ArrayList<>();
-    private List<DataBean> mDataBeanList = new ArrayList<>();
-    private float sum = 0;
-    private RecyclerView mRecyclerView;
+    String mString[] = {"收入", "预算", "支出"};
+    int colors[] = {Color.parseColor("#9ac93e"), Color.parseColor("#ef8750"), Color.parseColor("#E6534B")};
 
-    private int dateType = Constant.THIS_MONTH;
     private FragmentActivity mActivity;
-    public String fragmentType;
-
+    private int dateType = Constant.THIS_MONTH;
     private Cursor cursor = null;
-    private MyStatisticsAdapter mAdapter;
+    private int count = 0;
 
     // 日期选择器弹出窗口
     private DatePicker mDatePicker;
@@ -83,6 +73,10 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
     private MyDialog mDialog;
     private Calendar calendar = Calendar.getInstance();
 
+    private String beginOrEnd;
+    private Button beginDateButton;
+    private Button endDateButton;
+
     // 日期选择器选择的日期
     private int newYear;
     private int newMonth;
@@ -90,47 +84,33 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
     private String beginDate;
     private String endDate;
 
-    private String beginOrEnd;
-    private Button beginDateButton;
-    private Button endDateButton;
+    private List<Float> sumList = new ArrayList<>();
 
-    private ViewPager mViewPager;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Bundle arguments = getArguments();
-        if (arguments != null) {
-            fragmentType = arguments.getString("fragmentType");
-        }
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.statistics_fragment, container, false);
-        mChart = (PieChart) view.findViewById(R.id.pie_chart);
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.statistics_recycleView);
+        View view = inflater.inflate(R.layout.statistics_budget_fragment, container, false);
+        mChart = (HorizontalBarChart) view.findViewById(R.id.horizontal_bar_chart);
 
         dateText = (TextView) view.findViewById(R.id.date);
         pre = (TextView) view.findViewById(R.id.pre);
-        next = (TextView) view.findViewById(R.id.next);
 
         thisMonth = (TextView) view.findViewById(R.id.this_month);
         halfAYear = (TextView) view.findViewById(R.id.half_a_year);
         oneYear = (TextView) view.findViewById(R.id.one_year);
         userDefined = (TextView) view.findViewById(R.id.user_defined);
+        allOutcome = (TextView) view.findViewById(R.id.all_outcome);
+        allBudget = (TextView) view.findViewById(R.id.all_budget);
+        allIncome = (TextView) view.findViewById(R.id.all_income);
+        image = (ImageView) view.findViewById(R.id.statistics_image);
+        sign = (TextView) view.findViewById(R.id.sign);
+        surplusBudget = (NumberRunningTextView) view.findViewById(R.id.surplus_budget);
 
         pre.setOnClickListener(this);
-        next.setOnClickListener(this);
         thisMonth.setOnClickListener(this);
         halfAYear.setOnClickListener(this);
         oneYear.setOnClickListener(this);
         userDefined.setOnClickListener(this);
-
-        if (fragmentType.equals(Constant.OUTCOME)) {
-            pre.setVisibility(View.GONE);
-            view.findViewById(R.id.view).setVisibility(View.VISIBLE);
-        }
 
         return view;
     }
@@ -146,184 +126,79 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
     public void onResume() {
         super.onResume();
         if (mChart != null) {
-            mChart.animateXY(1500, 1500);
+            mChart.animateY(2500);
         }
-    }
-
-    public static StatisticsFragment newInstance(String fragmentType) {
-        Bundle bundle = new Bundle();
-        bundle.putString("fragmentType", fragmentType);
-        StatisticsFragment fragment = new StatisticsFragment();
-        fragment.setArguments(bundle);
-        return fragment;
     }
 
     private void init() {
         mActivity = getActivity();
 
-        mViewPager = (ViewPager) mActivity.findViewById(R.id.statistics_viewpager);
-
         thisMonth.setBackgroundColor(ContextCompat.getColor(mActivity, R.color.colorMainPressed));
         thisMonth.setClickable(false);
 
         initChart();
-        initRecyclerView();
     }
 
     private void initChart() {
-        // 是否使用百分比
-        mChart.setUsePercentValues(true);
-        // 描述信息
+        // description不可见
         mChart.getDescription().setEnabled(false);
-        // mChart距离屏幕的距离
-        mChart.setExtraOffsets(20.f, 0.f, 20.f, 0.f);
+        // 不可缩放
+        mChart.setPinchZoom(false);
+        mChart.setScaleEnabled(false);
 
-        mChart.setDragDecelerationFrictionCoef(0.95f);
+        mChart.getXAxis().setEnabled(false);
+        mChart.getAxisLeft().setEnabled(false);
+        mChart.getAxisRight().setEnabled(false);
 
-        // 是否空心
-        mChart.setDrawHoleEnabled(true);
-        mChart.setHoleColor(Color.parseColor("#edead1"));
+        mChart.getAxisLeft().setAxisMinValue(0f);
+        mChart.getAxisRight().setAxisMinValue(0f);
 
-        mChart.setRotationEnabled(true);
-        mChart.setRotationAngle(20);
+        mChart.setFitBars(true);
 
         Legend l = mChart.getLegend();
-        // 位于顶部
         l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
-        // 位于右方
-        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
-        // 垂直排列
-        l.setOrientation(Legend.LegendOrientation.VERTICAL);
+        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
+        l.setOrientation(Legend.LegendOrientation.HORIZONTAL);
         l.setDrawInside(false);
-        l.setXEntrySpace(7f);
+        l.setXEntrySpace(30f);
         l.setYEntrySpace(0f);
-        l.setYOffset(0f);
-
-        // 设置标签
-        mChart.setEntryLabelColor(Color.WHITE);
-        mChart.setEntryLabelTextSize(12f);
+        l.setYOffset(10f);
+        l.setFormSize(15f);
+        l.setTextSize(15f);
 
         setData();
     }
 
-    private void initRecyclerView() {
-        LinearLayoutManager mLayoutManager = new LinearLayoutManager(getContext());
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new MyStatisticsAdapter(getContext(), mDataList);
-        mAdapter.setOnItemClickListener(new MyStatisticsAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                MyDialog myDialog = new MyDialog(getContext(), R.style.dialog_style);
-                myDialog.initAccountOrFixedChargeOrStatisticsDialog(mDataList.get(position).getType(),
-                        dealList(mDataBeanList, mDataList.get(position).getType()), Constant.STATISTICS);
-                myDialog.show();
-            }
-        });
-        mRecyclerView.setAdapter(mAdapter);
-    }
+    private void setData() {
 
-    /**
-     * 挑出当前点击的item的类型的数据
-     *
-     * @param dataBeanList
-     * @param type
-     * @return
-     */
-    private List<DataBean> dealList(List<DataBean> dataBeanList, String type) {
-        List<DataBean> newList = new ArrayList();
+        float spaceForBar = 20f;
 
-        for (DataBean dataBean : dataBeanList)
-            if (dataBean.getType().equals(type))
-                newList.add(dataBean);
-
-        return newList;
-    }
-
-    public void setData() {
         queryData();
+        calcSurplusBudget();
 
-        List<PieEntry> data = new ArrayList<>();
+        allOutcome.setText(sumList.get(2) + "元");
+        allBudget.setText(sumList.get(1) + "元");
+        allIncome.setText(sumList.get(0) + "元");
 
-        for (int i = 0; i < mDataList.size(); i++) {
-            data.add(new PieEntry(mDataList.get(i).getPercent(), mDataList.get(i).getType()));
+        List<IBarDataSet> dataSets = new ArrayList<>();
+
+        for (int i = 0; i < sumList.size(); i++) {
+            ArrayList<BarEntry> valueSet = new ArrayList<>();
+            valueSet.add(new BarEntry(i * spaceForBar, sumList.get(i)));
+            BarDataSet barDataSet = new BarDataSet(valueSet, mString[i]);
+            barDataSet.setColor(colors[i]);
+            barDataSet.setDrawValues(false);
+            // 点击不高亮
+            barDataSet.setHighlightEnabled(false);
+            dataSets.add(barDataSet);
         }
 
-        PieDataSet dataSet = new PieDataSet(data, "");
+        BarData data = new BarData(dataSets);
+        data.setValueTextSize(10f);
+        data.setBarWidth(15f);
+        mChart.setData(data);
+        mChart.animateY(1500);
 
-        dataSet.setColors(setColors());
-        dataSet.setValueLinePart1OffsetPercentage(80.f);
-        dataSet.setValueLinePart1Length(0.3f);
-        dataSet.setValueLinePart2Length(0.4f);
-        dataSet.setYValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
-
-        PieData pieData = new PieData(dataSet);
-        pieData.setValueTextSize(10);
-        pieData.setValueTextColor(Color.BLACK);
-        pieData.setValueFormatter(new PercentFormatter());
-
-        mChart.setCenterText(generateCenterSpannableText());
-        mChart.setData(pieData);
-        mChart.animateXY(1500, 1500);
-        mChart.invalidate();
-
-        if (mAdapter != null) {
-            mAdapter.notifyDataSetChanged();
-        }
-    }
-
-    private SpannableString generateCenterSpannableText() {
-        String flag = "";
-        if (fragmentType.equals(Constant.OUTCOME)) flag = "支出";
-        else if (fragmentType.equals(Constant.INCOME)) flag = "收入";
-        SpannableString s = new SpannableString("总" + flag + "\n" + sum + "元");
-        s.setSpan(new RelativeSizeSpan(1.5f), 0, 3, 0);
-
-        s.setSpan(new StyleSpan(Typeface.ITALIC), 3, s.length(), 0);
-        s.setSpan(new ForegroundColorSpan(ColorTemplate.getHoloBlue()), 3, s.length(), 0);
-        s.setSpan(new RelativeSizeSpan(1.8f), 3, s.length(), 0);
-        return s;
-    }
-
-    /**
-     * 添加颜色
-     */
-    private ArrayList setColors() {
-        ArrayList<Integer> colors = new ArrayList<>();
-
-        String color[] = {"#d7433a", "#ef8750", "#f9f154", "#8dbe2e", "#00aaff", "#285afb", "#b44dee"};
-
-        // 添加颜色
-        for (String s : color) {
-            colors.add(Color.parseColor(s));
-        }
-
-        for (int c : ColorTemplate.VORDIPLOM_COLORS)
-            colors.add(c);
-
-        for (int c : ColorTemplate.PASTEL_COLORS)
-            colors.add(c);
-
-        for (int c : ColorTemplate.LIBERTY_COLORS)
-            colors.add(c);
-
-        for (int c : ColorTemplate.COLORFUL_COLORS)
-            colors.add(c);
-
-        for (int c : ColorTemplate.JOYFUL_COLORS)
-            colors.add(c);
-
-        return colors;
-    }
-
-    /**
-     * 清空数据集合
-     */
-    private void clearList() {
-        moneyList.clear();
-        percentList.clear();
-        typeList.clear();
-        mDataList.clear();
-        mDataBeanList.clear();
     }
 
     /**
@@ -331,18 +206,35 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
      */
     private void queryData() {
         // 清空数据
-        clearList();
+        sumList.clear();
 
         final Calendar calendar = Calendar.getInstance();
         String mDate;
-        final List<Cursor> cursorList = new ArrayList<>();
         mDate = getFormatDate(calendar);
 
+        List<Cursor> outComeCursorList = new ArrayList<>();
+        List<Cursor> budgetCursorList = new ArrayList<>();
+        List<Cursor> inComeCursorList = new ArrayList<>();
+
         if (dateType == Constant.THIS_MONTH) {
-            mDate = mDate.substring(0, mDate.length() - 3);
+            //            mDate = mDate.substring(0, mDate.length() - 3);
+            // 查询收入
             cursor = MyDatabaseHelper.getInstance(mActivity).query("Data", null, "date like ? and behavior = ?",
-                    new String[]{mDate + "%", fragmentType}, null, null, null);
-            cursorList.add(cursor);
+                    new String[]{mDate + "%", Constant.INCOME}, null, null, null);
+            if (cursor.getCount() != 0)
+                inComeCursorList.add(cursor);
+
+            // 查询预算
+            cursor = MyDatabaseHelper.getInstance(mActivity).query("Budget", null, "date = ?",
+                    new String[]{mDate}, null, null, null);
+            if (cursor.getCount() != 0)
+                budgetCursorList.add(cursor);
+
+            // 查询支出
+            cursor = MyDatabaseHelper.getInstance(mActivity).query("Data", null, "date like ? and behavior = ?",
+                    new String[]{mDate + "%", Constant.OUTCOME}, null, null, null);
+            if (cursor.getCount() != 0)
+                outComeCursorList.add(cursor);
 
             // 设置日期文本
             calendar.set(Calendar.DAY_OF_MONTH, 1);
@@ -361,12 +253,28 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
             beginDate = getFormatDate(calendar);
 
             for (int i = 0; i < 6; i++) {
-                mDate = mDate.substring(0, mDate.length() - 3);
+                Calendar newCalendar = calendar;
+                //                mDate = mDate.substring(0, mDate.length() - 3);
+                // 查询收入
                 cursor = MyDatabaseHelper.getInstance(mActivity).query("Data", null, "date like ? and behavior = ?",
-                        new String[]{mDate + "%", fragmentType}, null, null, null);
-                cursorList.add(cursor);
+                        new String[]{mDate + "%", Constant.INCOME}, null, null, null);
+                if (cursor.getCount() != 0)
+                    inComeCursorList.add(cursor);
+                // 查询预算
+                cursor = MyDatabaseHelper.getInstance(mActivity).query("Budget", null, "date = ?",
+                        new String[]{mDate}, null, null, null);
+                if (cursor.getCount() != 0) {
+                    budgetCursorList.add(cursor);
+                } else
+                    count++;
 
-                calendar.add(Calendar.MONTH, 1);
+                // 查询支出
+                cursor = MyDatabaseHelper.getInstance(mActivity).query("Data", null, "date like ? and behavior = ?",
+                        new String[]{mDate + "%", Constant.OUTCOME}, null, null, null);
+                if (cursor.getCount() != 0)
+                    outComeCursorList.add(cursor);
+
+                newCalendar.add(Calendar.MONTH, 1);
                 mDate = getFormatDate(calendar);
             }
 
@@ -381,86 +289,137 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
             beginDate = getFormatDate(calendar);
 
             for (int i = 0; i < 12; i++) {
-                mDate = mDate.substring(0, mDate.length() - 3);
+                Calendar newCalendar = calendar;
+                //                mDate = mDate.substring(0, mDate.length() - 3);
+                // 查询收入
                 cursor = MyDatabaseHelper.getInstance(mActivity).query("Data", null, "date like ? and behavior = ?",
-                        new String[]{mDate + "%", fragmentType}, null, null, null);
-                cursorList.add(cursor);
+                        new String[]{mDate + "%", Constant.INCOME}, null, null, null);
+                if (cursor.getCount() != 0)
+                    inComeCursorList.add(cursor);
+                // 查询预算
+                cursor = MyDatabaseHelper.getInstance(mActivity).query("Budget", null, "date = ?",
+                        new String[]{mDate}, null, null, null);
+                if (cursor.getCount() != 0) {
+                    budgetCursorList.add(cursor);
+                } else
+                    count++;
 
-                calendar.add(Calendar.MONTH, 1);
+                // 查询支出
+                cursor = MyDatabaseHelper.getInstance(mActivity).query("Data", null, "date like ? and behavior = ?",
+                        new String[]{mDate + "%", Constant.OUTCOME}, null, null, null);
+                if (cursor.getCount() != 0)
+                    outComeCursorList.add(cursor);
+
+                newCalendar.add(Calendar.MONTH, 1);
                 mDate = getFormatDate(calendar);
             }
+
         } else if (dateType == Constant.USER_DEFINED) {
             // 查询两个日期之间的数据
+            // 计算两个日期之间相差多少个月
+            int phaseMonth = calcPhaseMonth(beginDate, endDate);
+
+            // 查询收入
             cursor = MyDatabaseHelper.getInstance(mActivity).query("Data", null, "date between ? and ? and behavior = ?",
-                    new String[]{beginDate, endDate, fragmentType}, null, null, null);
-            cursorList.add(cursor);
+                    new String[]{beginDate + "-01", endDate + "-31", Constant.INCOME}, null, null, null);
+            if (cursor.getCount() != 0)
+                inComeCursorList.add(cursor);
+
+            // 查询预算
+            cursor = MyDatabaseHelper.getInstance(mActivity).query("Budget", null, "date between ? and ? ",
+                    new String[]{beginDate, endDate}, null, null, null);
+            if (phaseMonth - cursor.getCount() > 0)
+                count = phaseMonth - cursor.getCount();
+            budgetCursorList.add(cursor);
+
+            // 查询支出
+            cursor = MyDatabaseHelper.getInstance(mActivity).query("Data", null, "date between ? and ? and behavior = ?",
+                    new String[]{beginDate + "-01", endDate + "-31", Constant.OUTCOME}, null, null, null);
+            if (cursor.getCount() != 0)
+                outComeCursorList.add(cursor);
         }
 
+        dealData(inComeCursorList, Constant.INCOME);
+        dealData(budgetCursorList, Constant.TOTAL);
+        dealData(outComeCursorList, Constant.OUTCOME);
+
         dateText.setText(beginDate + "~" + endDate);
-        dealData(cursorList);
     }
 
-    private void dealData(List<Cursor> cursorList) {
+    private void dealData(List<Cursor> cursorList, String type) {
         if (cursorList == null) return;
 
-        sum = 0f;
+        float sum = 0f;
+
+        if (!type.equals(Constant.TOTAL)) type = "money";
 
         for (Cursor cursor : cursorList) {
             while (cursor.moveToNext()) {
-                DataBean dataBean = new DataBean();
-                Float money = Float.parseFloat(cursor.getString(cursor.getColumnIndex("money")));
-                String type = cursor.getString(cursor.getColumnIndex("type"));
-                String date = cursor.getString(cursor.getColumnIndex("date"));
-                String account = cursor.getString(cursor.getColumnIndex("account"));
-                dataBean.setMoney(money + "");
-                dataBean.setType(type);
-                dataBean.setDate(date);
-                dataBean.setAccount(account);
-                mDataBeanList.add(dataBean);
-                // 如果已有此类型
-                if (typeList.contains(type)) {
-                    // 找到此类型在typeList中索引
-                    int index = typeList.indexOf(type);
-                    // 修改moneys数组索引对应的金额
-                    moneyList.set(index, (float) (Math.round((moneyList.get(index) + money) * 100)) / 100);
-                } else {
-                    typeList.add(type);
-                    moneyList.add((float) (Math.round(money * 100)) / 100);
+                Float money = Float.parseFloat(cursor.getString(cursor.getColumnIndex(type)));
+                if (type.equals(Constant.TOTAL)) {
+                    sum += count * 1000f;
+                    count = 0;
                 }
                 sum += money;
                 sum = (float) (Math.round(sum * 100)) / 100;
             }
         }
 
-        for (int i = 0; i < moneyList.size(); i++) {
-            percentList.add(moneyList.get(i) / sum * 100);
-        }
-
-        setDataList();
+        sumList.add(sum);
     }
 
-    private void setDataList() {
-        for (int i = 0; i < typeList.size(); i++) {
-            StatisticsBean bean = new StatisticsBean();
-            bean.setPercent(percentList.get(i));
-            bean.setMoney(moneyList.get(i));
-            bean.setType(typeList.get(i));
-            mDataList.add(bean);
-        }
+    /**
+     * 计算剩余预算
+     */
+    private void calcSurplusBudget() {
 
-        Collections.sort(mDataList, new Comparator<StatisticsBean>() {
-            @Override
-            public int compare(StatisticsBean s1, StatisticsBean s2) {
-                return s2.getPercent() > s1.getPercent() ? 1 :
-                        (s2.getPercent() == s1.getPercent()) ? 0 : -1;
-            }
-        });
+        float surplus;
+
+
+        // 如果加入收入
+        if (InitData.isAddIncome) {
+            surplus = (Math.round((sumList.get(1) - sumList.get(2) + sumList.get(0)) * 100)) / 100;
+        } else {
+            surplus = (Math.round((sumList.get(1) - sumList.get(2) + sumList.get(0)) * 100)) / 100;
+        }
+        ObjectAnimator.ofFloat(image, "rotationY", 0f, 360f)
+                .setDuration(1500).start();
+        if (surplus < 0) {
+            sign.setVisibility(View.VISIBLE);
+            image.setBackgroundResource(R.drawable.unhappy);
+        } else if (surplus == 0) {
+            sign.setVisibility(View.GONE);
+            image.setBackgroundResource(R.drawable.smile);
+        } else {
+            sign.setVisibility(View.GONE);
+            image.setBackgroundResource(R.drawable.laugh);
+        }
+        surplusBudget.setContent(surplus + "");
     }
 
-    // 获取当前日期 yyyy-MM-hh
+    private int calcPhaseMonth(String beginDate, String endDate) {
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+        Calendar begin = Calendar.getInstance();
+        Calendar end = Calendar.getInstance();
+
+        try {
+            begin.setTime(sdf.parse(beginDate));
+            end.setTime(sdf.parse(endDate));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        int result = end.get(Calendar.MONTH) - begin.get(Calendar.MONTH);
+        int month = (end.get(Calendar.YEAR) - begin.get(Calendar.YEAR)) * 12;
+
+        return result + month;
+    }
+
+    // 获取当前日期 yyyy-MM-dd
     private String getFormatDate(Calendar calendar) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        // 将calendar的时间转换为yyyy-MM-hh格式
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
+        // 将calendar的时间转换为yyyy-MM-dd格式
         return simpleDateFormat.format(calendar.getTime());
     }
 
@@ -485,11 +444,11 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
     private void showDatePicker(String date) {
         int year;
         int month;
-        int day;
+        //        int day;
 
         year = Integer.parseInt(date.substring(0, 4));
         month = Integer.parseInt(date.substring(5, 7)) - 1;
-        day = Integer.parseInt(date.substring(8, 10));
+        //        day = Integer.parseInt(date.substring(8, 10));
 
         // 初始化popupWindow
         mDatePickerView = LayoutInflater.from(mActivity).inflate(R.layout.datepicker, null);
@@ -499,7 +458,7 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
         mDatePicker = (DatePicker) mDatePickerView.findViewById(R.id.datePicker);
 
         // 初始化datePicker
-        mDatePicker.init(year, month, day, new DatePicker.OnDateChangedListener() {
+        mDatePicker.init(year, month, 1, new DatePicker.OnDateChangedListener() {
             @Override
             public void onDateChanged(DatePicker datePicker, int year, int month, int day) {
                 setSelectDay(year, month, day);
@@ -547,8 +506,8 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
 
         String date = dateText.getText().toString();
 
-        beginDate = date.substring(0, 10);
-        endDate = date.substring(date.length() - 10, date.length());
+        beginDate = date.substring(0, 7);
+        endDate = date.substring(date.length() - 7, date.length());
 
         beginDateButton.setText(beginDate);
         endDateButton.setText(endDate);
@@ -570,12 +529,12 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
 
         calendar.set(Integer.parseInt(beginDate.substring(0, 4)),
                 Integer.parseInt(beginDate.substring(5, 7)) - 1,
-                Integer.parseInt(beginDate.substring(8, 10)));
+                1);
 
 
         anotherCalendar.set(Integer.parseInt(endDate.substring(0, 4)),
                 Integer.parseInt(endDate.substring(5, 7)) - 1,
-                Integer.parseInt(endDate.substring(8, 10)));
+                1);
 
         return calendar.compareTo(anotherCalendar);
     }
@@ -584,15 +543,9 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.pre:
-                mViewPager.setCurrentItem(0);
-                mViewPager.getAdapter().notifyDataSetChanged();
-                break;
-            case R.id.next:
-                if (fragmentType.equals(Constant.INCOME))
-                    mViewPager.setCurrentItem(2);
-                else
-                    mViewPager.setCurrentItem(1);
-                mViewPager.getAdapter().notifyDataSetChanged();
+                ViewPager viewpager = (ViewPager) mActivity.findViewById(R.id.statistics_viewpager);
+                viewpager.setCurrentItem(1);
+                viewpager.getAdapter().notifyDataSetChanged();
                 break;
             case R.id.this_month:
                 recoverColor();
@@ -661,11 +614,5 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
                 mPopupWindow.dismiss();
                 break;
         }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        cursor.close();
     }
 }

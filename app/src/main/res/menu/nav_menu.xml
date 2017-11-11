@@ -16,7 +16,7 @@
         <item
             android:id="@+id/statistics_item"
             android:icon="@drawable/statistics"
-            android:title="统计(未实现)"/>
+            android:title="统计"/>
     </group>
     <group android:checkableBehavior="single">
         <item

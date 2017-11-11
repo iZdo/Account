@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:background="@color/colorMainNormal"
@@ -21,13 +22,6 @@
             android:text="&lt;"
             android:textSize="20sp"/>
 
-        <View
-            android:id="@+id/view"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.5"
-            android:visibility="gone"/>
-
         <TextView
             android:id="@+id/date"
             android:layout_width="0dp"
@@ -37,16 +31,10 @@
             android:gravity="center"
             android:textSize="20sp"/>
 
-        <TextView
-            android:id="@+id/next"
+        <View
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.5"
-            android:background="@drawable/rela_outcome_selector"
-            android:clickable="true"
-            android:gravity="center"
-            android:text="&gt;"
-            android:textSize="20sp"/>
+            android:layout_weight="0.5"/>
 
     </LinearLayout>
 
@@ -117,12 +105,65 @@
         android:layout_marginRight="10dp"
         android:background="#B8B8B8"/>
 
-    <com.github.mikephil.charting.charts.PieChart
+    <LinearLayout
         android:id="@+id/pie_chart"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="5dp"
-        android:layout_weight="9"/>
+        android:layout_weight="8"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/statistics_image"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="30dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:text="剩余预算"
+            android:textSize="25dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/sign"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:text="-"
+                android:textSize="35sp"
+                android:visibility="gone"/>
+
+            <com.chaychan.viewlib.NumberRunningTextView
+                android:id="@+id/surplus_budget"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:maxLines="1"
+                android:textSize="35sp"
+                app:frameNum="50"
+                app:textType="money"
+                app:useCommaFormat="false"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:text="元"
+                android:textSize="35sp"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
 
     <View
         android:layout_width="match_parent"
@@ -131,13 +172,65 @@
         android:layout_marginRight="10dp"
         android:background="#B8B8B8"/>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/statistics_recycleView"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginBottom="5dp"
-        android:layout_weight="2"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"/>
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_weight="3"
+        android:orientation="horizontal">
+
+        <com.github.mikephil.charting.charts.HorizontalBarChart
+            android:id="@+id/horizontal_bar_chart"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="30dp"/>
+
+            <me.grantland.widget.AutofitTextView
+                android:id="@+id/all_outcome"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center|end"
+                android:maxLines="1"
+                android:textSize="20sp"/>
+
+            <me.grantland.widget.AutofitTextView
+                android:id="@+id/all_budget"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:gravity="center|end"
+                android:maxLines="1"
+                android:textSize="20sp"/>
+
+            <me.grantland.widget.AutofitTextView
+                android:id="@+id/all_income"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:gravity="center|end"
+                android:maxLines="1"
+                android:textSize="20sp"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="#B8B8B8"/>
 
 </LinearLayout>

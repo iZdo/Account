@@ -131,7 +131,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                     Toast.makeText(SettingActivity.this, "已经备份过了,不需要重复备份", Toast.LENGTH_SHORT).show();
                     return;
                 } else if (backupButton.getText().toString().equals("备份失败")) {
-                    Toast.makeText(SettingActivity.this, "服务器没有备份数据或者尝试重新登录试试？", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SettingActivity.this, "服务器没有备份数据或者请尝试重新登录", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -159,7 +159,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                     Toast.makeText(SettingActivity.this, "已经还原过了,不需要重复还原", Toast.LENGTH_SHORT).show();
                     return;
                 } else if (restoreButton.getText().toString().equals("还原失败")) {
-                    Toast.makeText(SettingActivity.this, "网络状况不太好或者尝试重新登录试试？", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SettingActivity.this, "请尝试重新登录", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
