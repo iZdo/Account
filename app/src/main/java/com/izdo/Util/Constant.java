@@ -40,6 +40,8 @@ public class Constant {
 
     public static String UPDATE;
 
+    public static String ABOUT="当前版本 v1.8\n联系我 401135451@qq.com";
+
     //    private static String dealString(String update) {
     //
     //        String string = "";

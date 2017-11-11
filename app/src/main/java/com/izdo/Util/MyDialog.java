@@ -146,7 +146,22 @@ public class MyDialog<T> extends Dialog {
                 dismiss();
             }
         });
+    }
 
+    // 关于about对话框
+    public void initAboutDialog() {
+        setContentView(R.layout.dialog_about);
+        TextView confirm = (TextView) findViewById(R.id.dialog_confirm);
+
+        update_content = (TextView) findViewById(R.id.update_content);
+        update_content.setText(Constant.ABOUT);
+
+        confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dismiss();
+            }
+        });
     }
 
     // 余量球颜色选择对话框

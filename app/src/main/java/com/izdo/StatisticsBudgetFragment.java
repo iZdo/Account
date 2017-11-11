@@ -127,6 +127,8 @@ public class StatisticsBudgetFragment extends Fragment implements View.OnClickLi
         super.onResume();
         if (mChart != null) {
             mChart.animateY(2500);
+            ObjectAnimator.ofFloat(image, "rotationY", 0f, 360f)
+                    .setDuration(1500).start();
         }
     }
 

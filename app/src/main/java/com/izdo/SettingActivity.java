@@ -46,6 +46,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
     private LinearLayout backupAndRestore;
     private LinearLayout updateAnnouncement;
     private LinearLayout checkUpdate;
+    private LinearLayout about;
 
     private MyDialog myDialog;
     private BmobFile bmobFile;
@@ -79,6 +80,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         backupAndRestore = (LinearLayout) findViewById(R.id.backup_and_restore);
         updateAnnouncement = (LinearLayout) findViewById(R.id.update_announcement);
         checkUpdate = (LinearLayout) findViewById(R.id.check_update);
+        about = (LinearLayout) findViewById(R.id.about);
 
         myDialog = new MyDialog(this, R.style.dialog_style);
 
@@ -88,6 +90,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         backupAndRestore.setOnClickListener(this);
         updateAnnouncement.setOnClickListener(this);
         checkUpdate.setOnClickListener(this);
+        about.setOnClickListener(this);
     }
 
     // android6.0动态申请权限 写入sd卡权限
@@ -306,6 +309,11 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                         }
                     }
                 });
+                break;
+            case R.id.about:
+                myDialog.initAboutDialog();
+                myDialog.setCancelable(false);
+                myDialog.show();
                 break;
         }
     }

@@ -20,7 +20,7 @@ public class StatisticsActivity extends AppCompatActivity implements View.OnClic
 
     private LinearLayout statistics;
 
-    private static ViewPager viewPager;
+    private ViewPager viewPager;
     private List<Fragment> fragments;
     String[] fragmentType = {Constant.OUTCOME, Constant.INCOME, Constant.OUTCOME};
 
@@ -86,22 +86,12 @@ public class StatisticsActivity extends AppCompatActivity implements View.OnClic
         });
     }
 
-    public static ViewPager getViewPager() {
-        return viewPager;
-    }
-
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.statistics:
                 finish();
                 break;
-            //            case R.id.pre:
-            //
-            //                break;
-            //            case R.id.next:
-            //
-            //                break;
         }
     }
 }

@@ -80,12 +80,7 @@
             android:screenOrientation="portrait"/>
         <activity
             android:name=".RegisterActivity"
-            android:screenOrientation="portrait">
-            <!-- <intent-filter>
-                 <action android:name="android.intent.action.MAIN"/>
-                 <category android:name="android.intent.category.LAUNCHER"/>
-             </intent-filter>-->
-        </activity>
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ValidateActivity"
             android:screenOrientation="portrait"/>
@@ -94,12 +89,7 @@
             android:screenOrientation="portrait"/>
         <activity
             android:name=".StatisticsActivity"
-            android:screenOrientation="portrait">
-            <!-- <intent-filter>
-                 <action android:name="android.intent.action.MAIN"/>
-                 <category android:name="android.intent.category.LAUNCHER"/>
-             </intent-filter>-->
-        </activity>
+            android:screenOrientation="portrait"/>
 
         <!--Bmob相关-->
         <activity
