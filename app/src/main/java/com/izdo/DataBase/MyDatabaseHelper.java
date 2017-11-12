@@ -62,7 +62,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         mContext = context;
 
         if (mDatabaseHelper == null)
-            mDatabaseHelper = new MyDatabaseHelper(context, "Account.db", null, 4);
+            mDatabaseHelper = new MyDatabaseHelper(context, "Account.db", null, 5);
 
         return mDatabaseHelper.getWritableDatabase();
     }
@@ -127,6 +127,49 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 
             // 插入新表
             sqLiteDatabase.execSQL(CREATE_FIXED_RECORD);
+        }
+
+        /**
+         * 5.0
+         * 修改date字段为date类型数据
+         */
+        if (oldVersion < 5) {
+            // 修改data表
+            sql = "alter table Data rename to Data_old";
+            sqLiteDatabase.execSQL(sql);
+
+            sql = "create table if not exists Data(" +
+                    "id integer primary key autoincrement," +
+                    "money text," +
+                    "type text," +
+                    "describe text," +
+                    "account text," +
+                    "fixed_charge text," +
+                    "date date," +
+                    "behavior text," +
+                    "fixedRecord_id integer)";
+            sqLiteDatabase.execSQL(sql);
+
+            sql = "insert into Data select * from Data_old";
+            sqLiteDatabase.execSQL(sql);
+
+            sql="drop table Data_old";
+            sqLiteDatabase.execSQL(sql);
+
+            // 修改budget表
+            sql = "alter table Budget rename to Budget_old";
+            sqLiteDatabase.execSQL(sql);
+
+            sql = "create table if not exists Budget(" +
+                    "total text," +
+                    "date date)";
+            sqLiteDatabase.execSQL(sql);
+
+            sql = "insert into Budget select * from Budget_old";
+            sqLiteDatabase.execSQL(sql);
+
+            sql="drop table Budget_old";
+            sqLiteDatabase.execSQL(sql);
         }
 
         Toast.makeText(mContext, "数据库升级成功!", Toast.LENGTH_SHORT).show();

@@ -1,17 +1,23 @@
 package com.izdo;
 
+import android.Manifest;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,13 +32,31 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.izdo.Adapter.MyFragmentPagerAdapter;
+import com.izdo.Bean.User;
 import com.izdo.DataBase.MyDatabaseHelper;
 import com.izdo.Util.Constant;
+import com.izdo.Util.InitData;
 import com.izdo.Util.MyDialog;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
+
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.datatype.BmobFile;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.DownloadFileListener;
+import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.update.BmobUpdateAgent;
+import de.hdodenhof.circleimageview.CircleImageView;
+import rx.Subscription;
+import rx.subscriptions.CompositeSubscription;
+
+import static com.izdo.R.id.username;
 
 /**
  * iZdo
@@ -41,15 +65,20 @@ import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private CompositeSubscription mCompositeSubscription;
+
     private Toolbar main_toolbar;
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
+    private CircleImageView userHeader;
+    private TextView usernameText;
 
     // Toolbar按钮
     private MenuItem mCalendarItem;
     private MenuItem mAdd;
 
     // 日期选择器弹出窗口
+    private DatePicker mDatePicker;
     private View mDatePickerView;
     private PopupWindow mPopupWindow;
     private Button confirm;
@@ -69,8 +98,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     // 记录最后一次的position
     private int lastPosition;
 
-    private DatePicker mDatePicker;
-
     // 预算控件
     private RelativeLayout budgetSetting;
     private TextView totalBudget;
@@ -86,6 +113,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         showUpdateAnnouncement();
 
         init();
+
+        // 检查是否需要更新版本
+        checkUpdate();
+    }
+
+    private void checkUpdate() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED) {
+            BmobUpdateAgent.forceUpdate(this);
+        }
     }
 
     private void showUpdateAnnouncement() {
@@ -108,6 +145,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
 
+        // 获取滑动菜单上的控件
+        initNavigation();
+
         budgetSetting = (RelativeLayout) findViewById(R.id.main_budget_setting);
         totalBudget = (TextView) findViewById(R.id.total_budget);
 
@@ -129,12 +169,86 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setViewPager();
     }
 
-    private void setBudgetData() {
+    private void initNavigation() {
+        View headerLayout = mNavigationView.getHeaderView(0);
+        // 初始化控件
+        userHeader = (CircleImageView) headerLayout.findViewById(R.id.user_header);
+        usernameText = (TextView) headerLayout.findViewById(username);
+        userHeader.setOnClickListener(this);
+        usernameText.setOnClickListener(this);
 
+        loadUserData();
+    }
+
+    private void loadUserData() {
+        // 获取本地用户信息
+        String username = (String) BmobUser.getObjectByKey("username");
+
+        // 设置相关信息
+        if (!TextUtils.isEmpty(username)) {
+            InitData.isLogin = true;
+            usernameText.setText(username);
+        } else {
+            usernameText.setText("您还没有登录");
+        }
+
+        if (InitData.picPath.equals("")) {
+            if (InitData.isLogin) {
+                BmobQuery<User> query = new BmobQuery<>();
+                query.addWhereEqualTo("username", username);
+                addSubscription(query.findObjects(new FindListener<User>() {
+                    @Override
+                    public void done(List<User> list, BmobException e) {
+                        if (e == null) {
+                            if (list.size() == 0) return;
+                            final BmobFile bmobFile = new BmobFile(list.get(0).getPic().getFilename(), "", list.get(0).getPic().getFileUrl());
+                            bmobFile.download(new DownloadFileListener() {
+                                @Override
+                                public void done(String path, BmobException e) {
+                                    SharedPreferences.Editor mEditor = getSharedPreferences("data", MODE_PRIVATE).edit();
+                                    mEditor.putString("picPath", path);
+                                    mEditor.commit();
+                                    InitData.picPath = path;
+                                    setHeader();
+                                }
+
+                                @Override
+                                public void onProgress(Integer integer, long l) {
+
+                                }
+                            });
+                        } else {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }));
+            } else {
+                Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+                userHeader.setImageBitmap(bitmap);
+                return;
+            }
+        } else
+            setHeader();
+    }
+
+    private void setHeader() {
+        Bitmap bitmap = null;
+        try {
+            FileInputStream fis = new FileInputStream(InitData.picPath);
+            bitmap = BitmapFactory.decodeStream(fis);//把流转化为Bitmap图片
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        if (bitmap != null)
+            userHeader.setImageBitmap(bitmap);
+    }
+
+
+    private void setBudgetData() {
         SharedPreferences mSharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
         BudgetSettingActivity.isAddIncome = mSharedPreferences.getBoolean("isAddIncome", false);
         BudgetSettingActivity.isShowBudget = mSharedPreferences.getBoolean("isShowBudget", true);
-
     }
 
     // 初始化月预算
@@ -246,8 +360,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         myFragmentPagerAdapter.notifyDataSetChanged();
                         break;
                     // 统计item
-                    case R.id.total_item:
-                        //TODO
+                    case R.id.statistics_item:
+                        startActivity(new Intent(MainActivity.this, StatisticsActivity.class));
                         break;
                     // 设置item
                     case R.id.setting_item:
@@ -321,7 +435,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     /**
-     * 为了使popupWindow不获取焦点、外部区域不能点击且后方控件不能被相应，需重写此方法
+     * 为了使popupWindow不获取焦点、外部区域不能点击且后方控件不能被响应，需重写此方法
      *
      * @param ev
      * @return
@@ -406,6 +520,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (behavior.equals(Constant.INCOME))
             mNavigationView.setCheckedItem(R.id.income_item);
 
+        loadUserData();
+
+    }
+
+    /**
+     * 解决Subscription内存泄露问题
+     */
+    protected void addSubscription(Subscription s) {
+        if (this.mCompositeSubscription == null) {
+            this.mCompositeSubscription = new CompositeSubscription();
+        }
+        this.mCompositeSubscription.add(s);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (this.mCompositeSubscription != null) {
+            this.mCompositeSubscription.unsubscribe();
+        }
     }
 
     @Override
@@ -433,7 +567,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 // datePicker更新数据
                 mDatePicker.updateDate(newYear, newMonth, newDay);
                 mPopupWindow.dismiss();
-                // 重新加载数据
 
                 // 计算出选择日期与当前系统日期的相差值
                 long l = (System.currentTimeMillis() / (1000 * 3600 * 24) - calendar.getTimeInMillis() / (1000 * 3600 * 24));
@@ -448,9 +581,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.main_budget_setting:
                 Intent intent = new Intent(this, BudgetSettingActivity.class);
-                //                intent.putExtra("total_budget", totalBudget.getText().toString());
                 intent.putExtra("date", getFormatDate(calendar).substring(0, getFormatDate(calendar).length() - 3));
                 startActivityForResult(intent, 1);
+                break;
+            case R.id.username:
+            case R.id.user_header:
+                if (InitData.isLogin) {
+                    // 如果已经登录 跳转到个人设置页面
+                    startActivity(new Intent(MainActivity.this, MineActivity.class));
+                } else {
+                    // 如果未登录 跳转到登录注册页面
+                    startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                }
                 break;
         }
     }

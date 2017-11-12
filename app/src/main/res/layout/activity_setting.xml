@@ -24,7 +24,7 @@
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:src="@drawable/icon"/>
+                android:src="@mipmap/ic_launcher"/>
 
             <TextView
                 android:id="@+id/addOutcome"
@@ -89,7 +89,7 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_gravity="center_vertical"
-                android:padding="8dp"
+                android:padding="5dp"
                 android:src="@drawable/account_black"/>
 
             <TextView
@@ -151,7 +151,8 @@
              android:layout_height="0.5dp"
              android:background="#B8B8B8"/>-->
 
-        <LinearLayout
+        <!--<LinearLayout
+            android:id="@+id/send"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
@@ -166,9 +167,10 @@
                 android:layout_weight="1">
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:layout_gravity="center_vertical"
+                    android:padding="5dp"
                     android:src="@mipmap/ic_launcher"/>
 
                 <TextView
@@ -190,7 +192,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
-            android:background="#B8B8B8"/>
+            android:background="#B8B8B8"/>-->
 
         <!-- <LinearLayout
              android:layout_width="match_parent"
@@ -221,6 +223,7 @@
              android:background="#B8B8B8"/>-->
 
         <LinearLayout
+            android:id="@+id/backup_and_restore"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
@@ -229,17 +232,18 @@
             android:paddingLeft="15dp">
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_gravity="center_vertical"
-                android:src="@mipmap/ic_launcher"/>
+                android:padding="5dp"
+                android:src="@drawable/backup_and_restore"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:paddingLeft="10dp"
-                android:text="备份/还原"
+                android:text="备份/还原数据"
                 android:textColor="#000000"
                 android:textSize="18sp"/>
         </LinearLayout>
@@ -281,6 +285,37 @@
             android:background="#B8B8B8"/>
 
         <LinearLayout
+            android:id="@+id/check_update"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@drawable/rela_outcome_selector"
+            android:clickable="true"
+            android:paddingLeft="15dp">
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center_vertical"
+                android:padding="5dp"
+                android:src="@drawable/setting_update"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:paddingLeft="10dp"
+                android:text="检查更新"
+                android:textColor="#000000"
+                android:textSize="18sp"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="#B8B8B8"/>
+
+        <LinearLayout
             android:id="@+id/about"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -290,13 +325,13 @@
             android:paddingLeft="15dp">
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_gravity="center_vertical"
-                android:src="@mipmap/ic_launcher"/>
+                android:padding="5dp"
+                android:src="@drawable/about"/>
 
             <TextView
-                android:id="@+id/textView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"

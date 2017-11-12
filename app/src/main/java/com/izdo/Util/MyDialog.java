@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.izdo.Adapter.MyBaseAdapter;
 import com.izdo.Bean.Ball;
+import com.izdo.Bean.DataBean;
 import com.izdo.R;
 
 import java.util.ArrayList;
@@ -27,14 +28,14 @@ import static android.content.Context.MODE_PRIVATE;
  * Created by iZdo on 2017/4/25.
  */
 
-public class MyDialog extends Dialog {
+public class MyDialog<T> extends Dialog {
 
     private ImageView dialogClose;
     private ListView mListView;
     private TextView title;
     private TextView update_content;
     private String select;
-    private List<String> mList;
+    private List<T> mList;
 
     private List<Ball> ballList;
     private String selectedColor;
@@ -52,8 +53,8 @@ public class MyDialog extends Dialog {
         super.onCreate(savedInstanceState);
     }
 
-    // account，fixed_charge对话框
-    public void initAccountOrFixedChargeDialog(String text, List<String> list) {
+    // account,fixed_charge,statistics对话框
+    public void initAccountOrFixedChargeOrStatisticsDialog(String text, List<T> list, int flag) {
         setContentView(R.layout.dialog);
         mList = list;
         dialogClose = (ImageView) findViewById(R.id.dialog_close);
@@ -69,32 +70,47 @@ public class MyDialog extends Dialog {
             }
         });
 
-        mListView.setAdapter(new MyBaseAdapter<String>(getContext(), mList) {
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                View view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_listview_item, null);
-                TextView text = (TextView) view.findViewById(R.id.dialog_listView_text);
-                text.setText(mList.get(position));
-                return view;
-            }
-        });
-
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                setSelect(mList.get(i));
-                dismiss();
-            }
-        });
+        if (flag == Constant.ACCOUNT_AND_FIXED_CHARGED) {
+            mListView.setAdapter(new MyBaseAdapter<T>(getContext(), mList) {
+                @Override
+                public View getView(int position, View convertView, ViewGroup parent) {
+                    View view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_listview_item, null);
+                    TextView text = (TextView) view.findViewById(R.id.dialog_listView_text);
+                    text.setText((String) mList.get(position));
+                    return view;
+                }
+            });
+            mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    setSelect((String) mList.get(i));
+                    dismiss();
+                }
+            });
+        } else if (flag == Constant.STATISTICS) {
+            mListView.setAdapter(new MyBaseAdapter<T>(getContext(), mList) {
+                @Override
+                public View getView(int position, View convertView, ViewGroup parent) {
+                    View view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_statistics_listview_item, null);
+                    TextView date = (TextView) view.findViewById(R.id.dialog_listView_date);
+                    TextView account = (TextView) view.findViewById(R.id.dialog_listView_account);
+                    TextView money = (TextView) view.findViewById(R.id.dialog_listView_money);
+                    date.setText(((DataBean) mList.get(position)).getDate());
+                    account.setText(((DataBean) mList.get(position)).getAccount());
+                    money.setText(((DataBean) mList.get(position)).getMoney());
+                    return view;
+                }
+            });
+        }
     }
 
     // 未输入金额或类型对话框
     public void initSaveButtonDialog(String text) {
-        setContentView(R.layout.dialog_save);
-        TextView title = (TextView) findViewById(R.id.dialog_save_text);
+        setContentView(R.layout.dialog_confirmt);
+        TextView title = (TextView) findViewById(R.id.dialog_confirm_text);
         title.setText("请输入" + text);
 
-        findViewById(R.id.dialog_confirm_button).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.dialog_confirm).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dismiss();
@@ -130,7 +146,22 @@ public class MyDialog extends Dialog {
                 dismiss();
             }
         });
+    }
 
+    // 关于about对话框
+    public void initAboutDialog() {
+        setContentView(R.layout.dialog_about);
+        TextView confirm = (TextView) findViewById(R.id.dialog_confirm);
+
+        update_content = (TextView) findViewById(R.id.update_content);
+        update_content.setText(Constant.ABOUT);
+
+        confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dismiss();
+            }
+        });
     }
 
     // 余量球颜色选择对话框
@@ -174,15 +205,37 @@ public class MyDialog extends Dialog {
     }
 
     // 自定义title确认对话框
-    public void initConfirmDialog(String text){
+    public void initConfirmDialog(String text) {
         setContentView(R.layout.dialog_confirmt);
         ((TextView) findViewById(R.id.dialog_confirm_text)).setText(text);
     }
 
-    // 有固定支出时的删除对话框
-    public void initDeleteDialog(){
-        setContentView(R.layout.dialog_delete);
+    // 备份还原对话框
+    public void initBackupAndRestoreDialog() {
+        setContentView(R.layout.dialog_backup_and_restore);
+        findViewById(R.id.dialog_close).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dismiss();
+            }
+        });
+    }
 
+    // 有固定支出时的删除对话框
+    public void initDeleteDialog() {
+        setContentView(R.layout.dialog_delete);
+    }
+
+    // 日期选择对话框
+    public void initDateDialog() {
+        setContentView(R.layout.dialog_statisctics_date);
+
+        findViewById(R.id.dialog_select_cancel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dismiss();
+            }
+        });
     }
 
     public String getSelect() {

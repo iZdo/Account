@@ -1,6 +1,7 @@
 package com.izdo;
 
 import android.content.ContentValues;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -10,6 +11,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import com.izdo.DataBase.MyDatabaseHelper;
+import com.izdo.Util.InitData;
 import com.izdo.Util.MyDialog;
 
 public class AddAccountActivity extends AppCompatActivity {
@@ -18,6 +20,8 @@ public class AddAccountActivity extends AppCompatActivity {
     private Button addAccountSave;
     private EditText addAccountEdit;
     private MyDialog myDialog;
+
+    private SharedPreferences.Editor mEditor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +32,8 @@ public class AddAccountActivity extends AppCompatActivity {
     }
 
     private void init() {
+        mEditor = getSharedPreferences("data", MODE_PRIVATE).edit();
+
         addAccount = (LinearLayout) findViewById(R.id.add_account);
         addAccountSave = (Button) findViewById(R.id.add_account_save);
         addAccountEdit = (EditText) findViewById(R.id.add_account_edit);
@@ -46,30 +52,49 @@ public class AddAccountActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 ContentValues values = new ContentValues();
-                String account_name = addAccountEdit.getText().toString();
+                final String accountName = addAccountEdit.getText().toString();
 
-                if (TextUtils.isEmpty(account_name)||account_name.equals("\n")||account_name.equals(" ")) {
+                if (TextUtils.isEmpty(accountName) || accountName.equals("\n") || accountName.equals(" ")) {
                     myDialog.initConfirmDialog("账户名不能为空!");
                     setDialogOnClickListener();
                     myDialog.show();
                 } else {
-                    values.put("account", account_name);
+                    values.put("account", accountName);
 
-                    // 查询账户名是否已存在
-                    if (MyDatabaseHelper.getInstance(AddAccountActivity.this).query("Account", null, "account=?", new String[]{account_name}, null, null, null).getCount() > 0) {
+                    // 查询账号名是否已存在
+                    if (MyDatabaseHelper.getInstance(AddAccountActivity.this).query("Account", null, "account=?", new String[]{accountName}, null, null, null).getCount() > 0) {
                         myDialog.initConfirmDialog("此账户已存在!");
                         setDialogOnClickListener();
                         myDialog.show();
                     } else {
                         MyDatabaseHelper.getInstance(AddAccountActivity.this).insert("Account", null, values);
-                        finish();
                     }
                 }
+
+                myDialog.initSelectDialog("是否设定为预设账户?");
+                myDialog.show();
+                myDialog.findViewById(R.id.dialog_select_confirm).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        myDialog.dismiss();
+                        mEditor.putString("preset", accountName);
+                        mEditor.commit();
+                        InitData.preset = accountName;
+                        finish();
+                    }
+                });
+                myDialog.findViewById(R.id.dialog_select_cancel).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        myDialog.dismiss();
+                        finish();
+                    }
+                });
             }
         });
     }
 
-    private void setDialogOnClickListener(){
+    private void setDialogOnClickListener() {
         myDialog.findViewById(R.id.dialog_confirm).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

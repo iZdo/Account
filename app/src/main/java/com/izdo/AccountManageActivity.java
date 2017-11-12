@@ -1,6 +1,7 @@
 package com.izdo;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +13,8 @@ import android.widget.ListView;
 
 import com.izdo.Adapter.MyAccountAdapter;
 import com.izdo.DataBase.MyDatabaseHelper;
+import com.izdo.Util.InitData;
+import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +27,11 @@ public class AccountManageActivity extends AppCompatActivity implements View.OnC
     private List<String> accountList;
     private MyAccountAdapter mAccountAdapter;
 
+    // 是否有预设账户
+    private boolean isPreset;
+
+    private SharedPreferences.Editor mEditor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,6 +41,8 @@ public class AccountManageActivity extends AppCompatActivity implements View.OnC
     }
 
     private void init() {
+        mEditor = getSharedPreferences("data", MODE_PRIVATE).edit();
+
         accountManage = (LinearLayout) findViewById(R.id.account_manage);
         accountAdd = (Button) findViewById(R.id.account_add);
         mListView = (ListView) findViewById(R.id.account_manage_listView);
@@ -58,16 +68,29 @@ public class AccountManageActivity extends AppCompatActivity implements View.OnC
     }
 
     private void queryAccount() {
+        isPreset = false;
 
         accountList.clear();
 
         Cursor cursor = MyDatabaseHelper.getInstance(this).query("Account", null, null, null, null, null, null);
 
         while (cursor.moveToNext()) {
-            String account = cursor.getString(cursor.getColumnIndex("account"));
-            accountList.add(account);
+            String accountName = cursor.getString(cursor.getColumnIndex("account"));
+            if (accountName.equals(InitData.preset)) {
+                accountName += "(预设)";
+                isPreset = true;
+            }
+            accountList.add(accountName);
         }
 
+        if (!isPreset) {
+            String firstAccount = accountList.get(0);
+            InitData.preset = firstAccount;
+            mEditor.putString("preset", firstAccount);
+            mEditor.commit();
+            firstAccount += "(预设)";
+            accountList.set(0, firstAccount);
+        }
     }
 
     @Override

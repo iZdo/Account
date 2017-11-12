@@ -37,7 +37,7 @@
                 android:background="@drawable/viewpager_radiobutton_selector"
                 android:button="@null"
                 android:drawablePadding="5dp"
-                android:drawableTop="@drawable/lunch_blcak"
+                android:drawableTop="@drawable/lunch_black"
                 android:gravity="center"
                 android:text="午餐"
                 android:textColor="#2d3037"/>

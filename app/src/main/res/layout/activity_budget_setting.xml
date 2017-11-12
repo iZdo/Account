@@ -25,7 +25,7 @@
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:src="@drawable/icon"/>
+                android:src="@mipmap/ic_launcher"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -66,7 +66,7 @@
             android:background="@drawable/budget_setting_calclayout_selector"
             android:clickable="true"
             android:gravity="center|end"
-            android:maxLength="20"
+            android:maxLength="10"
             android:maxLines="1"
             android:paddingRight="10dp"
             android:text="¥0"

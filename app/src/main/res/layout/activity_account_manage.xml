@@ -24,7 +24,7 @@
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:src="@drawable/icon"/>
+                android:src="@mipmap/ic_launcher"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -44,7 +44,7 @@
             android:layout_marginRight="15dp"
             android:layout_marginTop="10dp"
             android:background="@drawable/save_outcome_selector"
-            android:text="添加用户"
+            android:text="添加账户"
             android:textColor="#FFFFFF"
             android:textSize="16sp"/>
 

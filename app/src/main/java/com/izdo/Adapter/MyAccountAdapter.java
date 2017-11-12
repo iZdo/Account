@@ -30,7 +30,8 @@ public class MyAccountAdapter extends MyBaseAdapter<String> {
         View view = LayoutInflater.from(mContext).inflate(R.layout.account_manage_listview_item, null);
 
         TextView text = (TextView) view.findViewById(R.id.account_text);
-        text.setText(mList.get(position));
+        String accountName = mList.get(position);
+        text.setText(accountName);
 
         return view;
     }

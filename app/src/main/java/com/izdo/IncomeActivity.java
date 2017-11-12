@@ -112,6 +112,9 @@ public class IncomeActivity extends Activity implements View.OnClickListener {
 
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
+    // 是否第一次点击计算器
+    private boolean isFirst = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -135,6 +138,8 @@ public class IncomeActivity extends Activity implements View.OnClickListener {
         accountText = (TextView) findViewById(R.id.income_account);
         fixedChargeText = (TextView) findViewById(R.id.income_fixed_charge);
 
+        accountText.setText(InitData.preset);
+
         // ViewPager
         setViewpager();
 
@@ -151,6 +156,7 @@ public class IncomeActivity extends Activity implements View.OnClickListener {
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
 
         myDialog = new MyDialog(this, R.style.dialog_style);
+        myDialog.setCancelable(false);
 
         // 与弹出窗口有关的控件需要在初始化弹出窗口后再初始化
         one = (Button) mCalculatorView.findViewById(R.id.one);
@@ -344,6 +350,7 @@ public class IncomeActivity extends Activity implements View.OnClickListener {
                     newString += "0";
                 }
             }
+            isFirst = false;
         } else if (string.equals("AC")) {
             newString = newString.substring(0, 1) + "0";
         } else {
@@ -362,6 +369,11 @@ public class IncomeActivity extends Activity implements View.OnClickListener {
             // 维持小数点后两位
             if (newString.contains(".") && newString.substring(newString.indexOf("."), newString.length()).length() > 2)
                 return;
+
+            if (isFirst) {
+                newString = newString.substring(0, 1);
+                isFirst = false;
+            }
 
             newString += string;
         }
@@ -534,22 +546,18 @@ public class IncomeActivity extends Activity implements View.OnClickListener {
                 finish();
                 break;
             case R.id.income_save:
-                if (showIncome.getText().toString().substring(1, 2).equals("0") && typeId == 0) {
+                if (Float.parseFloat(showIncome.getText().toString().substring(1)) <= 0 && typeId == 0) {
                     myDialog.initSaveButtonDialog("金额和类别");
-                    myDialog.setCancelable(false);
                     myDialog.show();
                     break;
                 }
-                if (showIncome.getText().toString().substring(1, 2).equals("0")) {
-                    myDialog.initSaveButtonDialog("金额");
-                    myDialog.setCancelable(false);
+                if (Float.parseFloat(showIncome.getText().toString().substring(1)) <= 0) {
+                    myDialog.initSaveButtonDialog("正确的金额");
                     myDialog.show();
                     break;
                 }
                 if (typeId == 0) {
-
                     myDialog.initSaveButtonDialog("类别");
-                    myDialog.setCancelable(false);
                     myDialog.show();
                     break;
                 }
@@ -572,7 +580,7 @@ public class IncomeActivity extends Activity implements View.OnClickListener {
                 startActivityForResult(intent, 1);
                 break;
             case R.id.income_accountLayout:
-                myDialog.initAccountOrFixedChargeDialog("请选择帐号", InitData.accountOption(this));
+                myDialog.initAccountOrFixedChargeOrStatisticsDialog("请选择帐号", InitData.accountOption(this), Constant.ACCOUNT_AND_FIXED_CHARGED);
                 myDialog.setSelect(accountText.getText().toString());
                 myDialog.show();
                 myDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
@@ -584,7 +592,7 @@ public class IncomeActivity extends Activity implements View.OnClickListener {
 
                 break;
             case R.id.income_fixed_chargeLayout:
-                myDialog.initAccountOrFixedChargeDialog("请选择自动输入的周期", InitData.fixedChargeOption());
+                myDialog.initAccountOrFixedChargeOrStatisticsDialog("请选择自动输入的周期", InitData.fixedChargeOption(), Constant.ACCOUNT_AND_FIXED_CHARGED);
                 myDialog.setSelect(fixedChargeText.getText().toString());
                 myDialog.show();
                 myDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {

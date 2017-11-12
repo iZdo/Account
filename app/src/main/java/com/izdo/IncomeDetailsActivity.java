@@ -73,7 +73,7 @@ public class IncomeDetailsActivity extends AppCompatActivity implements View.OnC
 
     // 获取数据并显示
     private void data() {
-        detailsImg.setImageResource(mTypeMap.queryTypeImg(mDataBean.getType()));
+        detailsImg.setImageResource(mTypeMap.queryTypeWhiteImg(mDataBean.getType()));
         detailsType.setText(mDataBean.getType());
         detailsMoney.setText("¥" + mDataBean.getMoney());
         detailsAccount.setText(mDataBean.getAccount());

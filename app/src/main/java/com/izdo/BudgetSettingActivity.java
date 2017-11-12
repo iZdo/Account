@@ -78,6 +78,9 @@ public class BudgetSettingActivity extends AppCompatActivity implements View.OnC
     private Button OK;
     private ImageButton back;
 
+    // 是否第一次点击计算器
+    private boolean isFirst = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -215,7 +218,6 @@ public class BudgetSettingActivity extends AppCompatActivity implements View.OnC
                     new String[]{dateStr}, null, null, null);
         }
         cursor.moveToNext();
-//        Logger.i(cursor.getString(cursor.getColumnIndex("date")));
         showBudget.setText("¥" + cursor.getString(cursor.getColumnIndex("total")));
 
 
@@ -246,6 +248,7 @@ public class BudgetSettingActivity extends AppCompatActivity implements View.OnC
                     newString += "0";
                 }
             }
+            isFirst = false;
         } else if (string.equals("AC")) {
             newString = newString.substring(0, 1) + "0";
         } else {
@@ -253,6 +256,11 @@ public class BudgetSettingActivity extends AppCompatActivity implements View.OnC
             if (string.equals("0") && newString.length() == 1) return;
             if (newString.equals("¥0"))
                 newString = newString.substring(0, 1);
+
+            if (isFirst) {
+                newString = newString.substring(0, 1);
+                isFirst = false;
+            }
 
             newString += string;
         }
@@ -379,5 +387,11 @@ public class BudgetSettingActivity extends AppCompatActivity implements View.OnC
             default:
                 break;
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mSQLiteDatabase.close();
     }
 }

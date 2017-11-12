@@ -14,9 +14,9 @@
     </group>
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/total_item"
-            android:icon="@drawable/total"
-            android:title="统计(未实现)"/>
+            android:id="@+id/statistics_item"
+            android:icon="@drawable/statistics"
+            android:title="统计"/>
     </group>
     <group android:checkableBehavior="single">
         <item
