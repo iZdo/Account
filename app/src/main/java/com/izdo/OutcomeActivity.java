@@ -399,6 +399,7 @@ public class OutcomeActivity extends AppCompatActivity implements View.OnClickLi
         mPopupWindow.showAsDropDown(mCalculatorView);
 
         isPop = true;
+        isFirst = true;
 
     }
 

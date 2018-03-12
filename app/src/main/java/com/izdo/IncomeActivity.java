@@ -271,6 +271,7 @@ public class IncomeActivity extends Activity implements View.OnClickListener {
         mPopupWindow.showAsDropDown(mCalculatorView);
 
         isPop = true;
+        isFirst = true;
 
     }
 

@@ -235,6 +235,8 @@ public class BudgetSettingActivity extends AppCompatActivity implements View.OnC
         mPopupWindow.showAtLocation(BudgetSettingActivity.this.findViewById(R.id.activity_budget_setting), Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 0);
         // 显示弹出窗口
         mPopupWindow.showAsDropDown(mCalculatorView);
+
+        isFirst = true;
     }
 
     // 显示金额
