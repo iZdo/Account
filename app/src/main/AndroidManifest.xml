@@ -43,52 +43,52 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".IncomeActivity"
+            android:name=".activity.IncomeActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".SettingActivity"
+            android:name=".activity.SettingActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".OutcomeActivity"
+            android:name=".activity.OutcomeActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".DescribeActivity"
+            android:name=".activity.DescribeActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".OutcomeDetailsActivity"
+            android:name=".activity.OutcomeDetailsActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".IncomeDetailsActivity"
+            android:name=".activity.IncomeDetailsActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".BudgetSettingActivity"
+            android:name=".activity.BudgetSettingActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".AccountManageActivity"
+            android:name=".activity.AccountManageActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".EditAccountActivity"
+            android:name=".activity.EditAccountActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".AddAccountActivity"
+            android:name=".activity.AddAccountActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".LoginActivity"
+            android:name=".activity.LoginActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".MineActivity"
+            android:name=".activity.MineActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".RegisterActivity"
+            android:name=".activity.RegisterActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".ValidateActivity"
+            android:name=".activity.ValidateActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".ModifyPasswordActivity"
+            android:name=".activity.ModifyPasswordActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".StatisticsActivity"
+            android:name=".activity.StatisticsActivity"
             android:screenOrientation="portrait"/>
 
         <!--Bmob相关-->

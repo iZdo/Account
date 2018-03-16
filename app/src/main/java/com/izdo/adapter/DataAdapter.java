@@ -1,0 +1,122 @@
+package com.izdo.adapter;
+
+import android.content.Context;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import com.izdo.bean.DataBean;
+import com.izdo.MainActivity;
+import com.izdo.R;
+import com.izdo.util.Constant;
+import com.izdo.util.TypeMap;
+
+import java.util.List;
+
+/**
+ * Created by iZdo on 2017/10/3.
+ */
+
+public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ViewHolder> implements View.OnClickListener, View.OnLongClickListener {
+
+    private Context mContext;
+
+    public List<DataBean> mList;
+    private TypeMap mTypeMap;
+
+    private OnItemClickListener mOnItemClickListener = null;
+    private OnItemLongClickListener mOnItemLongClickListener = null;
+
+    public DataAdapter(Context mContext) {
+        this.mContext = mContext;
+        mTypeMap = new TypeMap();
+    }
+
+    public void setList(List<DataBean> list) {
+        mList = list;
+    }
+
+    static class ViewHolder extends RecyclerView.ViewHolder {
+
+        LinearLayout mainItem;
+        ImageView mainImg;
+        TextView mainTypeText;
+        TextView mainMoneyText;
+
+        public ViewHolder(View itemView) {
+            super(itemView);
+            mainItem = (LinearLayout) itemView.findViewById(R.id.main_listView_item);
+            mainImg = (ImageView) itemView.findViewById(R.id.main_listView_type_img);
+            mainTypeText = (TextView) itemView.findViewById(R.id.main_listView_type_text);
+            mainMoneyText = (TextView) itemView.findViewById(R.id.main_listView_money_text);
+        }
+    }
+
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view;
+        if (MainActivity.behavior.equals(Constant.OUTCOME))
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.main_outcome_listview_item, parent, false);
+        else
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.main_income_listview_item, parent, false);
+
+        ViewHolder holder = new ViewHolder(view);
+
+        view.setOnClickListener(this);
+        view.setOnLongClickListener(this);
+
+        return holder;
+    }
+
+    @Override
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        DataBean dataBean = mList.get(position);
+        holder.mainImg.setImageResource(mTypeMap.queryTypeWhiteImg(dataBean.getType()));
+        holder.mainTypeText.setText(dataBean.getType());
+        holder.mainMoneyText.setText("¥" + dataBean.getMoney());
+        holder.mainItem.setTag(position);
+    }
+
+    @Override
+    public int getItemCount() {
+        return mList.size();
+    }
+
+    @Override
+    public void onClick(View view) {
+        if (mOnItemClickListener != null) {
+            mOnItemClickListener.onItemClick(view, (int) view.getTag());
+        }
+    }
+
+    @Override
+    public boolean onLongClick(View view) {
+        if (mOnItemLongClickListener != null) {
+            mOnItemLongClickListener.onItemLongClick(view, (int) view.getTag());
+        }
+        // 返回true 不再执行单击事件
+        return true;
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.mOnItemClickListener = listener;
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(View view, int position);
+    }
+
+    public void setOnItemLongClickListener(OnItemLongClickListener listener) {
+        this.mOnItemLongClickListener = listener;
+    }
+
+    public interface OnItemLongClickListener {
+        void onItemLongClick(View view, int position);
+    }
+}
+
+

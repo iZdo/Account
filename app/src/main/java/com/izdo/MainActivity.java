@@ -31,12 +31,20 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.izdo.Adapter.MyFragmentPagerAdapter;
-import com.izdo.Bean.User;
-import com.izdo.DataBase.MyDatabaseHelper;
-import com.izdo.Util.Constant;
-import com.izdo.Util.InitData;
-import com.izdo.Util.MyDialog;
+import com.izdo.activity.BudgetSettingActivity;
+import com.izdo.activity.IncomeActivity;
+import com.izdo.activity.LoginActivity;
+import com.izdo.activity.MineActivity;
+import com.izdo.activity.OutcomeActivity;
+import com.izdo.activity.SettingActivity;
+import com.izdo.activity.StatisticsActivity;
+import com.izdo.adapter.FragmentPagerAdapter;
+import com.izdo.bean.User;
+import com.izdo.dataBase.DatabaseHelper;
+import com.izdo.fragment.MainFragment;
+import com.izdo.util.Constant;
+import com.izdo.util.InitData;
+import com.izdo.util.MyDialog;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -94,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private ViewPager mViewPager;
     private ArrayList<MainFragment> mViewList;
-    private MyFragmentPagerAdapter myFragmentPagerAdapter;
+    private FragmentPagerAdapter fragmentPagerAdapter;
     // 记录最后一次的position
     private int lastPosition;
 
@@ -254,14 +262,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     // 初始化月预算
     private void initBudget() {
         String mMonth = main_toolbar.getTitle().toString().substring(0, main_toolbar.getTitle().toString().length() - 3);
-        Cursor cursor = MyDatabaseHelper.getInstance(this).query("Budget", null, "date = ? ", new String[]{mMonth}, null, null, null);
+        Cursor cursor = DatabaseHelper.getInstance(this).query("Budget", null, "date = ? ", new String[]{mMonth}, null, null, null);
 
         if (cursor.getCount() == 0) {
             ContentValues values = new ContentValues();
             // 添加数据
             values.put("total", "1000");
             values.put("date", mMonth);
-            MyDatabaseHelper.getInstance(this).insert("Budget", null, values);
+            DatabaseHelper.getInstance(this).insert("Budget", null, values);
         }
         cursor.close();
     }
@@ -285,8 +293,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             mViewList.add(mainFragment);
         }
 
-        myFragmentPagerAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager(), mViewList);
-        mViewPager.setAdapter(myFragmentPagerAdapter);
+        fragmentPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager(), mViewList);
+        mViewPager.setAdapter(fragmentPagerAdapter);
         mViewPager.setCurrentItem(Integer.MAX_VALUE / 2);
         //        mViewPager.setCurrentItem(Integer.MAX_VALUE / 2 / 4 * 4);
 
@@ -352,12 +360,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     // 支出item
                     case R.id.outcome_item:
                         behavior = Constant.OUTCOME;
-                        myFragmentPagerAdapter.notifyDataSetChanged();
+                        fragmentPagerAdapter.notifyDataSetChanged();
                         break;
                     // 收入item
                     case R.id.income_item:
                         behavior = Constant.INCOME;
-                        myFragmentPagerAdapter.notifyDataSetChanged();
+                        fragmentPagerAdapter.notifyDataSetChanged();
                         break;
                     // 统计item
                     case R.id.statistics_item:
@@ -559,7 +567,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 MainFragment.phaseDay = lastPosition;
                 main_toolbar.setTitle(getFormatDate(calendar));
-                myFragmentPagerAdapter.notifyDataSetChanged();
+                fragmentPagerAdapter.notifyDataSetChanged();
 
                 break;
             case R.id.datePicker_confirm:
@@ -574,7 +582,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 MainFragment.phaseDay = phaseDay;
                 main_toolbar.setTitle(getFormatDate(calendar));
-                myFragmentPagerAdapter.notifyDataSetChanged();
+                fragmentPagerAdapter.notifyDataSetChanged();
                 break;
             case R.id.datePicker_cancel:
                 mPopupWindow.dismiss();

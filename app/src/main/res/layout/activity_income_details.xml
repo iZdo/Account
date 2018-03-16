@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/colorMainNormal"
     android:orientation="vertical"
-    tools:context="com.izdo.OutcomeActivity">
+    tools:context="com.izdo.activity.OutcomeActivity">
 
     <LinearLayout
         android:layout_width="match_parent"

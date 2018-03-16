@@ -1,8 +1,8 @@
 package com.izdo;
 
-import com.izdo.Util.BallListUtil;
-import com.izdo.Util.Constant;
-import com.izdo.Util.InitData;
+import com.izdo.util.BallListUtil;
+import com.izdo.util.Constant;
+import com.izdo.util.InitData;
 import com.mob.MobApplication;
 
 import cn.bmob.v3.Bmob;
