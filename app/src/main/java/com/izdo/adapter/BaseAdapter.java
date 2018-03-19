@@ -1,7 +1,6 @@
 package com.izdo.adapter;
 
 import android.content.Context;
-import android.widget.BaseAdapter;
 
 import java.util.List;
 
